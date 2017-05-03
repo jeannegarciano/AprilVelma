@@ -69,7 +69,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 b.putString("eventEndDate", remoteMessage.getData().get("eventEndDate"));
                 b.putString("eventEndTime", remoteMessage.getData().get("eventEndTime"));
 //                b.putString("notify", remoteMessage.getData().get("notify"));
-                b.putString("invitedfirends", remoteMessage.getData().get("invitedfirends"));
+                //b.putString("invitedfirends", remoteMessage.getData().get("invitedfirends"));
                 b.putString("lat", remoteMessage.getData().get("lat"));
                 b.putString("lng", remoteMessage.getData().get("lng"));
                 b.putString("creatorEmail", remoteMessage.getData().get("creatorEmail"));
@@ -84,11 +84,11 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 detailsIntent2.putExtras(b);
 
 
-                LandingActivity.db.saveEventPending(Integer.parseInt(remoteMessage.getData().get("userid")), Integer.parseInt(remoteMessage.getData().get("eventid")),
+                LandingActivity.db.saveEventPending(Integer.parseInt(remoteMessage.getData().get("userid")), Long.parseLong(remoteMessage.getData().get("eventid")),
                         remoteMessage.getData().get("eventname"), remoteMessage.getData().get("eventDescription"), remoteMessage.getData().get("eventLocation")
                         , remoteMessage.getData().get("lng"), remoteMessage.getData().get("lang"), remoteMessage.getData().get("eventStartDate")
                         , remoteMessage.getData().get("eventStartTime"), remoteMessage.getData().get("eventEndDate"), remoteMessage.getData().get("eventEndTime")
-                        , "", "", "", "Pending",remoteMessage.getData().get("creatorEmail"));
+                        , "", "", "", "Pending", remoteMessage.getData().get("creatorEmail"));
 
 
                 String[] mydates = remoteMessage.getData().get("eventStartDate").split("-");

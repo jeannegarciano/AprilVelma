@@ -70,7 +70,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     }
 
-    public void saveEvent(int user_id, int event_id, String event_name, String event_description, String event_location,
+    public void saveEvent(int user_id, String event_id, String event_name, String event_description, String event_location,
                           String longitude, String latitude, String start_date, String start_time, String end_date, String end_time,
                           String is_whole_day, String role, String recipients) {
 
@@ -91,11 +91,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         cv.put(DataInfo.IS_WHOLE_DAY, is_whole_day);
         cv.put(DataInfo.ROLE, role);
         cv.put(DataInfo.RECIPIENTS, recipients);
+        cv.put(DataInfo.EventStatus, "ACCEPTED");
 
         sql.insert(DataInfo.TABLE_EVENTS, null, cv);
     }
 
-    public void saveEventPending(int user_id, int event_id, String event_name, String event_description, String event_location,
+    public void saveEventPending(int user_id, Long event_id, String event_name, String event_description, String event_location,
                                  String longitude, String latitude, String start_date, String start_time, String end_date, String end_time,
                                  String is_whole_day, String role, String recipients, String status, String creator_email) {
 
