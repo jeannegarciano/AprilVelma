@@ -25,6 +25,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.tibolte.agendacalendarview.AgendaCalendarView;
 import com.github.tibolte.agendacalendarview.CalendarPickerController;
@@ -453,6 +455,11 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
                 }
 
                 return true;
+
+            case R.id.action_notification:
+
+                Toast.makeText(getApplicationContext(), "You clicked the notification icon", Toast.LENGTH_LONG).show();
+
             default:
                 return super.onOptionsItemSelected(item);
         }

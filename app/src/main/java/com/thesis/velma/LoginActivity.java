@@ -284,6 +284,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
             pass.putString("userid", imei);
             pass.putString("useremail", mEmail);
             p.putExtras(pass);
+            Log.d("Fullname", mFullName);
             OkHttp.getInstance(mcontext).saveProfile(mEmail, mFullName);
 
         }

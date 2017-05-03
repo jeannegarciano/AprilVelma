@@ -12,7 +12,6 @@ import android.util.Log;
 
 public class Alarm_Receiver  extends BroadcastReceiver {
 
-
     @Override
     public void onReceive(Context context, Intent intent) {
 

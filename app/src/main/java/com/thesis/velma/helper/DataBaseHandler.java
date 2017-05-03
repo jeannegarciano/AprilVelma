@@ -258,7 +258,7 @@ public Cursor getid(String eId){
     }
 
     public void updateEvent(int event_id, String event_name, String event_description, String event_location, String longitude,
-                            String latitude, String start_date, String start_time, String end_date, String end_time, String recipients) {
+                            String latitude, String start_date, String start_time, String end_date, String end_time, String is_whole_day, String recipients) {
 
         SQLiteDatabase sql = this.getWritableDatabase();
 
@@ -271,6 +271,9 @@ public Cursor getid(String eId){
         cv.put(DataInfo.LATITUDE, latitude);
         cv.put(DataInfo.START_DATE, start_date);
         cv.put(DataInfo.START_TIME, start_time);
+        cv.put(DataInfo.END_DATE, end_date);
+        cv.put(DataInfo.END_TIME, end_time);
+        cv.put(DataInfo.IS_WHOLE_DAY, is_whole_day);
         cv.put(DataInfo.RECIPIENTS, recipients);
 
         sql.update(DataInfo.TABLE_EVENTS, cv, DataInfo.EVENT_ID+ " = " + event_id, null);

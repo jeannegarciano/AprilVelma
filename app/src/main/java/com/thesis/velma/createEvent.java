@@ -34,6 +34,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.AutocompleteFilter;
@@ -193,7 +194,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 
                 String v;
 
-
                 latitude = place.getLatLng().latitude;
                 longtiude = place.getLatLng().longitude;
 
@@ -217,9 +217,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 Log.i(TAG, "An error occurred: " + status);
             }
         });
-
-
-
 
 
         datePickerDialog = new DatePickerDialog(createEvent.this,
@@ -277,8 +274,8 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         Cursor c = LandingActivity.db.getContacts();
 
         while (c.moveToNext()) {
-            myContacts.add(c.getString(c.getColumnIndex(DBInfo.DataInfo.CONTACT_NAME)));
-            Log.i("Event contacts", c.getString(c.getColumnIndex(DBInfo.DataInfo.CONTACT_NAME)));//this adds an element to the list.
+            myContacts.add(c.getString(c.getColumnIndex(DBInfo.DataInfo.CONTACT_EMAIL)));
+            Log.i("Event contacts", c.getString(c.getColumnIndex(DBInfo.DataInfo.CONTACT_EMAIL)));//this adds an element to the list.
         }
 
         ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(createEvent.this, android.R.layout.simple_list_item_1, android.R.id.text1, myContacts);
@@ -332,7 +329,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-
 
         if (view == editSdate) {
             final Calendar c = Calendar.getInstance();
@@ -488,7 +484,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                             SimpleDateFormat sdf;
                             try {
 
-
                                 sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
                                 Date mDate = sdf.parse(st);
@@ -503,8 +498,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 
             timePickerDialog.show();
         }
-
-
 
 
         if(view == buttonAddFriends )
@@ -959,6 +952,46 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         pendingIntent = PendingIntent.getBroadcast(mcontext, count+1, myIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
+
+        Log.i("Event allDay", eventAllDay);
+        Log.i("Event name", name);
+        Log.i("Event SD", startDate);
+        Log.i("Event coord", lat +","+lng);
+        Toast.makeText(mcontext, "Event is added successfully.", Toast.LENGTH_SHORT).show();
+        String invitedlist = editFriends.getText().toString();
+
+        String[] separated = invitedlist.split("\n");
+        Cursor b = LandingActivity.db.getContacts();
+        ArrayList<String> invitesid = new ArrayList<String>();
+        ArrayList<String> invitesemail = new ArrayList<String>();
+
+        String[] listid = new String[separated.length];
+
+        String listinvitesid="";
+
+        while (b.moveToNext()){
+            String contactsname = b.getString(b.getColumnIndex("contact_name"));
+            String contactsid = b.getString(b.getColumnIndex("contact_user_id"));
+            String contactsemail = b.getString(b.getColumnIndex("contact_email"));
+
+            int i;
+
+            for (i=0; i<separated.length; i++){
+
+                if (contactsname.equals(separated[i])){
+
+                    listid[i] = contactsid;
+                    invitesid.add(contactsid);
+                    invitesemail.add(contactsemail);
+                }
+
+            }
+
+        }
+
+        String invitedids = invitesid.toString();
+        String invitedemails = invitesemail.toString();
+
         Calendar calNow = Calendar.getInstance();
         Calendar calSet = (Calendar) calNow.clone();
         calSet.setTimeInMillis(System.currentTimeMillis());
@@ -1006,17 +1039,32 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mcontext);
         String sharedPrefUserId = sharedPreferences.getString("user_id", null);
 
-        OkHttp.getInstance(getBaseContext()).saveEvent(sharedPrefUserId, name, eventDescription, eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, recipients);
+        OkHttp.getInstance(getBaseContext()).saveEvent(sharedPrefUserId, name, eventDescription, eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
         eventID = prefs.getString("eventID", null);
-       // Log.i("Event ID: ", eventID);
+//        Log.i("Event ID: ", eventID);
+//        Log.i("User ID: ", sharedPrefUserId);
 
 //
         LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), Integer.parseInt(eventID), name, eventDescription,
                 eventLocation, lng, lat, startDate, startTime, endDate, endTime, null, "Creator", null);
 
-                    Intent i = new Intent(createEvent.this, LandingActivity.class);
+
+//        String myEmail = "gjeannevie";
+//        OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, eventID, name,
+//                eventDescription, eventLocation, startDate, startTime, endDate, endTime, myEmail + "Velma",
+//                lat, lng, LandingActivity.useremail);
+
+        for (int i = 0; i <= invitedContacts.size() - 1; i++) {
+            String[] target = invitedContacts.get(i).split("@");
+            OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, eventID, name,
+                    eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[0] + "Velma",
+                    lat, lng, LandingActivity.useremail);//target[0]
+        }
+
+
+        Intent i = new Intent(createEvent.this, LandingActivity.class);
                     finish();
                   startActivity(i);
 

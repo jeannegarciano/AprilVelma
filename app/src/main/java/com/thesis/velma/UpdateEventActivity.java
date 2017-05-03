@@ -1,9 +1,7 @@
 package com.thesis.velma;
 
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,12 +31,15 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.thesis.velma.helper.DBInfo;
+import com.thesis.velma.helper.DataBaseHandler;
 import com.thesis.velma.helper.OkHttp;
 
 import org.apache.http.HttpEntity;
@@ -59,17 +60,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.StringTokenizer;
 
 import static android.content.ContentValues.TAG;
-import static com.thesis.velma.LandingActivity.db;
-import static com.thesis.velma.LandingActivity.useremail;
 
-/**
- * Created by admin on 3/24/2017.
- */
-
-public class ConflictActivity  extends AppCompatActivity implements View.OnClickListener{
+public class UpdateEventActivity extends AppCompatActivity implements View.OnClickListener{
 
     View rootView;
     EditText editEname, editDescription, editSdate, editEdate, editStime, editEtime, editFriends, editLoc;
@@ -77,6 +71,11 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
     Button buttonAddFriends;
     CheckBox allday;
     Context mcontext;
+    DataBaseHandler db;
+    String eventID;
+    String list = "";
+
+    String id;
 
     public static int sYear, sMonth, sDay, sHour, sMinute;
     public static int eYear, eMonth, eDay, eHour, eMinute;
@@ -86,25 +85,22 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
     String modetravel = "driving";
     Double latitude, longtiude;
     public static String geolocation;
+    boolean locationIsClick = false;
+    String name="", desc="", sdate="", edate="", stime="", etime="", loc="", friends="", longi="", lati="";
 
     int REQUEST_INVITE = 1;
 
     ArrayList<String> myContacts = new ArrayList<String>();
     public static ArrayList<String> invitedContacts = new ArrayList<String>();
-    ArrayList<String> recipients = new ArrayList<>();
 
-    String userID, allDay;
+    String user_id, allDay;
     FloatingActionButton save;
-    String new_st, new_et;
-    ArrayList<String> myConflictEvents = new ArrayList<String>();
-    ArrayList<String> myCurrentEvent = new ArrayList<>();
-    String eventID;
-    private PendingIntent pendingIntent;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create);
+        setContentView(R.layout.activity_update_event);
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
@@ -121,32 +117,64 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/avenir-next-regular.ttf");
 
         mcontext = this;
+
+        Bundle bundle = getIntent().getExtras();
+        id = bundle.getString("key");
+
+        Cursor a = LandingActivity.db.getEventDetails(Long.valueOf(id));
+
+
+        while (a.moveToNext()){
+            name = a.getString(a.getColumnIndex(DBInfo.DataInfo.EVENT_NAME));
+            desc = a.getString(a.getColumnIndex(DBInfo.DataInfo.EVENT_DESCRIPTION));
+            sdate = a.getString(a.getColumnIndex(DBInfo.DataInfo.START_DATE));
+            edate = a.getString(a.getColumnIndex(DBInfo.DataInfo.END_DATE));
+            stime = a.getString(a.getColumnIndex(DBInfo.DataInfo.START_TIME));
+            etime = a.getString(a.getColumnIndex(DBInfo.DataInfo.END_TIME));
+            loc = a.getString(a.getColumnIndex(DBInfo.DataInfo.EVENT_LOCATION));
+            friends = a.getString(a.getColumnIndex(DBInfo.DataInfo.RECIPIENTS))
+                    .replace("(Pending)", " ")
+                    .replace("(Accepted)", " ")
+                    .replace("(Declined)", " ")
+                    .trim();
+            longi = a.getString(a.getColumnIndex(DBInfo.DataInfo.LONGITUDE));
+            lati = a.getString(a.getColumnIndex(DBInfo.DataInfo.LATITUDE));
+
+        }
+
         editEname = (EditText) findViewById(R.id.eName);
+        editEname.setText(name);
         editEname.setTypeface(custom_font);
         editDescription = (EditText) findViewById(R.id.desc);
+        editDescription.setText(desc);
         editDescription.setTypeface(custom_font);
         editSdate = (EditText) findViewById(R.id.sDate);
+        editSdate.setText(sdate);
         editSdate.setTypeface(custom_font);
         editSdate.setInputType(InputType.TYPE_NULL);
         editEdate = (EditText) findViewById(R.id.eDate);
+        editEdate.setText(edate);
         editEdate.setTypeface(custom_font);
         editEdate.setInputType(InputType.TYPE_NULL);
         editStime = (EditText) findViewById(R.id.sTime);
+        editStime.setText(stime);
         editStime.setTypeface(custom_font);
         editStime.setInputType(InputType.TYPE_NULL);
         editEtime = (EditText) findViewById(R.id.eTime);
+        editEtime.setText(etime);
         editEtime.setTypeface(custom_font);
         editEtime.setInputType(InputType.TYPE_NULL);
         allday = (CheckBox) findViewById(R.id.checkAllDay);
         allday.setTypeface(custom_font);
         editLoc = (EditText) findViewById(R.id.loc);
+        editLoc.setText(loc);
         editLoc.setTypeface(custom_font);
         editFriends = (EditText) findViewById(R.id.friends);
+        editFriends.setText(friends);
         editFriends.setTypeface(custom_font);
         buttonAddFriends = (Button) findViewById(R.id.addFriends);
         buttonAddFriends.setTypeface(custom_font);
         save = (FloatingActionButton) findViewById(R.id.fabSave);
-
         searchLoc = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 //        searchLoc.setBoundsBias(new LatLngBounds(
 //                new LatLng(14.599512, 120.984222),
@@ -157,31 +185,6 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
         editEtime.setOnClickListener(this);
         buttonAddFriends.setOnClickListener(this);
         save.setOnClickListener(this);
-
-        Intent i = getIntent();
-        new_st= i.getStringExtra("new_st");
-        new_et= i.getStringExtra("new_et");
-        Log.i("Event new_st", new_st);
-        Log.i("Event new_et", new_et);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mcontext);
-
-        String name = preferences.getString("name", "value");
-        String description = preferences.getString("desc", "value");
-        String coordinates = preferences.getString("coordinates", "value");
-        String location = preferences.getString("loc", "value");
-        String sd = preferences.getString("startdate", "value");
-        String ed = preferences.getString("enddate", "value");
-        userID = preferences.getString("user_id", null);
-
-
-        editEname.setText(name);
-        editDescription.setText(description);
-        editLoc.setText(location);
-        editSdate.setText(sd);
-        editEdate.setText(ed);
-        editStime.setText(new_st);
-        editEtime.setText(new_et);
-
 
 
         AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
@@ -196,6 +199,8 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
                 Log.i(TAG, "Place: " + place.getAddress());//get place details here
+
+                locationIsClick = true;
 
                 editLoc.setText("" + place.getName());
                 geolocation = place.getAddress().toString();
@@ -216,7 +221,8 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
 
                 Log.d("latlang", "" + latitude + ":" + longtiude);
 
-                new getDetails().execute();
+                new UpdateEventActivity.getDetails().execute();
+
             }
 
             @Override
@@ -230,7 +236,7 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
 
 
 
-        datePickerDialog = new DatePickerDialog(ConflictActivity.this,
+        datePickerDialog = new DatePickerDialog(UpdateEventActivity.this,
                 new DatePickerDialog.OnDateSetListener() {
 
                     @Override
@@ -255,15 +261,21 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
                 }, sYear, sMonth, sDay);
         datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 10000);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(ConflictActivity.this)
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(UpdateEventActivity.this)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String list = "";
+
+
                         for (int i = 0; i < invitedContacts.size(); i++) {
-                            list = list + invitedContacts.get(i) + ", \n";
+
+                            list = list + invitedContacts.get(i) + "\n";
                         }
                         editFriends.setText(list);
+
+                        Log.d("InvitedList:", list);
+
                     }
                 }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 
@@ -276,22 +288,22 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
                 });
         builder.setTitle("Select From Contacts");
 
-        ListView modeList = new ListView(ConflictActivity.this);
+        ListView modeList = new ListView(UpdateEventActivity.this);
         //modeList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         //modeList.setItemsCanFocus(false);
         // String[] stringArray = new String[] { "Bright Mode", "Normal Mode" };
 
 
-        //   Cursor c = LandingActivity.db.getContacts();
-//
-//        while (c.moveToNext()) {
-//            myContacts.add(c.getString(c.getColumnIndex("EmailAdd"))); //this adds an element to the list.
-//        }
+        Cursor c = LandingActivity.db.getContacts();
 
-//        ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(createEvent.this, android.R.layout.simple_list_item_1, android.R.id.text1, myContacts);
-//        modeList.setAdapter(modeAdapter);
-//
-//        builder.setView(modeList);
+        while (c.moveToNext()) {
+            myContacts.add(c.getString(c.getColumnIndex(DBInfo.DataInfo.CONTACT_NAME))); //this adds an element to the list.
+        }
+
+        ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(UpdateEventActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, myContacts);
+        modeList.setAdapter(modeAdapter);
+
+        builder.setView(modeList);
 
         dialog = builder.create();
 
@@ -309,6 +321,7 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
                         flag=1;
                 }
                 if(flag==0){
+
                     invitedContacts.add(((TextView) view).getText().toString());
                 }
             }
@@ -359,7 +372,7 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
                 }
 
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(ConflictActivity.this,
+                DatePickerDialog datePickerDialog = new DatePickerDialog(UpdateEventActivity.this,
                         new DatePickerDialog.OnDateSetListener() {
 
                             @Override
@@ -390,14 +403,14 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
         }
 
 
-        if(allday.isChecked()) {
+        if(allday.isChecked())
+        {
 
             allDay = "All Day";
+
         }else{
             allDay = "Daily";
         }
-
-
 
         if (view == editStime) {
 
@@ -412,8 +425,7 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
             }
             else {
                 // Launch Time Picker Dialog
-                TimePickerDialog timePickerDialog = new TimePickerDialog(ConflictActivity.this,
-
+                TimePickerDialog timePickerDialog = new TimePickerDialog(UpdateEventActivity.this,
                         new TimePickerDialog.OnTimeSetListener() {
 
                             @Override
@@ -454,7 +466,7 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
 
 
             // Launch Time Picker Dialog
-            TimePickerDialog timePickerDialog = new TimePickerDialog(ConflictActivity.this,
+            TimePickerDialog timePickerDialog = new TimePickerDialog(UpdateEventActivity.this,
                     new TimePickerDialog.OnTimeSetListener() {
 
                         @Override
@@ -502,8 +514,6 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
         }
 
         if(view == save){
-
-
             String name = editEname.getText().toString();
             String eventDescription = editDescription.getText().toString();
             String eventLocation = editLoc.getText().toString();
@@ -515,135 +525,74 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
             String endTime = editEtime.getText().toString();
             String eventAllDay = allDay;
 
+            String invitedlist = editFriends.getText().toString();
 
+            String[] separated = invitedlist.split("\n");
+            Cursor b = LandingActivity.db.getContacts();
+            ArrayList<String> invitesemail = new ArrayList<String>();
 
+            String[] listid = new String[separated.length];
 
-            if(name.isEmpty() || eventLocation.isEmpty() || eventDescription.isEmpty() ||
-                    startDate.isEmpty() || endDate.isEmpty() || startTime.isEmpty() || endTime.isEmpty()) {
+            String listinvitesid="";
 
-                if (name.isEmpty()) {
-                    editEname.setError("Enter event name");
-                }
-                if (eventDescription.isEmpty()) {
-                    editDescription.setError("Enter description");
-                }
-                if (eventLocation.isEmpty()) {
-                    AlertDialog.Builder builder1 = new AlertDialog.Builder(mcontext);
-                    builder1.setMessage("Enter Location");
-                    builder1.setCancelable(true);
-                    builder1.setNeutralButton(
-                            "Okay",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
+            while (b.moveToNext()){
+                String contactsname = b.getString(b.getColumnIndex("contact_name"));
+                String contactsid = b.getString(b.getColumnIndex("contact_user_id"));
+                String contactsemail = b.getString(b.getColumnIndex("contact_email"));
 
+                int i;
 
+                for (i=0; i<separated.length; i++){
 
-                    AlertDialog alert11 = builder1.create();
-                    alert11.show();
-                }
-                if (startDate.isEmpty()) {
-                    editSdate.setError("Enter start date");
-                }
-                if (endDate.isEmpty()) {
-                    editEdate.setError("Enter end date");
-                }
-                if (startTime.isEmpty()) {
-                    editStime.setError("Enter start time");
-                }
-                if (endTime.isEmpty()) {
-                    editEtime.setError("Enter end time");
-                }
-            }
+                    if (contactsname.equals(separated[i])){
 
-            else if(!name.isEmpty() || !eventLocation.isEmpty() || !eventDescription.isEmpty() ||
-                    !startDate.isEmpty() || !endDate.isEmpty() || !startTime.isEmpty() || !endTime.isEmpty()) {
-                StringTokenizer sd = new StringTokenizer(startDate, "-");
-                StringTokenizer ed = new StringTokenizer(endDate, "-");
-                StringTokenizer st = new StringTokenizer(startTime, ":");
-                StringTokenizer et = new StringTokenizer(endTime, ":");
-
-                String sdate = sd.nextToken() + sd.nextToken() + sd.nextToken();
-                String edate = ed.nextToken() + ed.nextToken() + ed.nextToken();
-                String stime = st.nextToken() + st.nextToken();
-                String etime = et.nextToken() + et.nextToken();
-
-                int sdd = Integer.parseInt(sdate);
-                int edd = Integer.parseInt(edate);
-                int stt = Integer.parseInt(stime);
-                int ett = Integer.parseInt(etime);
-
-                if (sdd > edd) {
-                    AlertDialog.Builder builder1 = new AlertDialog.Builder(mcontext);
-                    builder1.setMessage("Start date is greater than end date");
-                    builder1.setCancelable(true);
-                    builder1.setNeutralButton(
-                            "Okay",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-
-
-
-                    AlertDialog alert11 = builder1.create();
-                    alert11.show();
-                } else if (stt > ett) {
-                    if (eventAllDay.equals("Daily")) {
-
-                        allDay = "Reverse Daily";
-                    }else{
-                        allDay = "All Day";
-                    }
-                }
-
-
-                eventAllDay=allDay;
-                Log.i("Event allDay", eventAllDay);
-                Log.i("Event name", name);
-                Log.i("Event coord", lat + "," + lng);
-                Log.i("Event loc: ", eventLocation);
-                Log.i("Event SD", startDate);
-                Log.i("Event ED: ", endDate);
-                Log.i("Event ST: ", startTime);
-                Log.i("Event ET: ", endTime);
-                Log.i("Event email: ", useremail);
-                Cursor con = db.conflictCheckerDaily(startDate, startTime, endDate, endTime, eventAllDay);
-
-                Cursor all = LandingActivity. db.getids();
-                Log.i("Event all count", "" + all.getCount());
-
-
-                if (con != null && con.getCount() > 0) {
-
-                    con.moveToFirst();
-                    while (con.moveToNext()) {
-
-                        Log.i("Event nameCON :", con.getString(con.getColumnIndex("event_name")));
-                        Log.i("Event coordCON :" ,con.getString(con.getColumnIndex("latitude")) +","+ con.getString(con.getColumnIndex("longitude")));
-                        Log.i("Event locCON : ", con.getString(con.getColumnIndex("event_location")));
-                        Log.i("Event SDCON :", con.getString(con.getColumnIndex("start_date")));
-                        Log.i("Event EDCON : ", con.getString(con.getColumnIndex("end_date")));
-                        Log.i("Event STCON : ", con.getString(con.getColumnIndex("start_time")));
-                        Log.i("Event ETCON : ", con.getString(con.getColumnIndex("end_time")));
-
+                        listid[i] = contactsid;
+                        listinvitesid = listinvitesid + contactsname + " (Pending)\n";
+                        invitesemail.add(contactsemail);
                     }
 
-                    timeconflict(con, name, eventDescription, eventLocation, startDate,
-                            startTime, endDate, endTime, useremail, lat, lng);
                 }
 
-                else
-                {
-
-
-                    saveEventFunction(userID, name, eventDescription, eventLocation, startDate, startTime,
-                            endDate,  endTime,  lat, lng, allDay, recipients);
-                }
             }
+
+
+            String invitedemails = invitesemail.toString();
+
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mcontext);
+            String sharedPrefUserId = sharedPreferences.getString("user_id", null);
+
+            if (locationIsClick==true){
+                OkHttp.getInstance(getBaseContext()).updateEvent(Integer.valueOf(id), name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
+                LandingActivity.db.updateEvent(Integer.valueOf(id), name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listinvitesid);
+            } else {
+                OkHttp.getInstance(getBaseContext()).updateEvent(Integer.valueOf(id), name, eventDescription, eventLocation, longi,  lati, startDate, startTime, endDate, endTime, eventAllDay, listid);
+                LandingActivity.db.updateEvent(Integer.valueOf(id), name, eventDescription, eventLocation, longi,  lati, startDate, startTime, endDate, endTime, eventAllDay, listinvitesid);
+            }
+
+
+            Log.i("Event allDay", eventAllDay);
+            Log.i("Event name", name);
+            Log.i("Event SD", startDate);
+            Log.i("Event coord", lat +","+lng);
+            Toast.makeText(mcontext, "Event is added successfully.", Toast.LENGTH_SHORT).show();
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
+            eventID = prefs.getString("sharedEventID", eventID);
+
+
+//            GitID gitID = null;
+//            String eventIDnew = gitID.getGitEventId();
+//
+//            Log.i("Cathlyn", eventID +" "+ sharedPrefUserId);
+//
+//            LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), Integer.valueOf(eventID), name, eventDescription,
+//                    eventLocation, lng, lat, startDate, startTime, endDate, endTime, null, "Creator", null);
+
+            Intent i = new Intent(UpdateEventActivity.this, LandingActivity.class);
+            finish();
+            startActivity(i);
+
+
         }
     }
 
@@ -728,280 +677,5 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
     }
 
 
-    public void timeconflict(final Cursor con, final String name, final String
-            eventDescription, final String eventLocation, final String startDate, final String startTime, final
-                             String endDate, final String endTime, final String
-                                     userEmail, final String lat, final String lng) {
-        Log.i("Event con", "2");
-        final String flag="original";
-
-        myCurrentEvent.add(name);
-        myCurrentEvent.add(eventDescription);
-        myCurrentEvent.add(eventLocation);
-        myCurrentEvent.add(startDate);
-        myCurrentEvent.add(endDate);
-        myCurrentEvent.add(startTime);
-        myCurrentEvent.add(endTime);
-//        myCurrentEvent.add(notify);
-//        myCurrentEvent.add(invitedContacts);
-        con.moveToFirst();
-        while (!con.isAfterLast()) {
-//
-////            Toast.makeText(OnboardingActivity.this, "Conflict in: " + c.getString(1) + "   " +
-//            c.getString(2) + "  " + c.getString(3) + "  " + c.getString(4), Toast.LENGTH_LONG).show();
-////            Log.i("Event log", c.getString(0) + " >> " + c.getString(1) + " >> " + c.getString(2) + " >> " +
-//            c.getString(3) + " >> " + c.getString(4) + " >> ");
-
-
-            con.moveToNext();
-        }
-
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(mcontext)
-                .setTitle("Event Time Conflict")
-                .setIcon(R.drawable.time)
-                .setMessage("The event you created ago has the following conflict(s).")
-                .setPositiveButton("Add Anyway", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-//                        saveEventFunction(unixtime, name, eventDescription, eventLocation, startDate,
-//                                startTime, endDate, endTime, notify, invitedContacts, userEmail, lat, lng);
-
-                        dialog.dismiss();
-
-
-                    }
-
-
-                }).setNeutralButton("Suggest",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                SharedPreferences.Editor editor =
-                                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
-                                editor.putString("name", name);
-                                editor.putString("desc", eventDescription);
-                                editor.putString("loc", eventLocation);
-                                editor.putString("startdate", startDate);
-                                editor.putString("enddate", endDate);
-//                                editor.putString("invitedfriends", invitedContacts);
-//                                editor.putString("flag", flag);
-                                editor.putLong("key",0);
-                                editor.apply();
-                                Intent in = new Intent(ConflictActivity.this, DateListView.class);
-                                finish();
-                                startActivity(in);
-
-                            }
-                        }
-
-                );
-
-        ListView modeList = new ListView(mcontext);
-        myConflictEvents.clear();
-        myConflictEvents.add(myCurrentEvent.get(0));
-        con.moveToFirst();
-        eventID= con.getString(0);
-        Log.i("Event con", "5");
-
-        while (!con.isAfterLast()) {
-
-            StringTokenizer display1 = new StringTokenizer(con.getString(con.getColumnIndex("start_time")),
-                    ":");
-            String s_hour = display1.nextToken();
-            String s_min = display1.nextToken();
-            StringTokenizer display2 = new StringTokenizer(con.getString(con.getColumnIndex("end_time")),
-                    ":");
-            String e_hour = display2.nextToken();
-            String e_min = display2.nextToken();
-            String sdisplay = "";
-            String edisplay = "";
-            if (s_hour.length() == 1) {
-                s_hour = "0" + s_hour;
-            }
-            if (s_min.length() == 1) {
-                s_min = "0" + s_min;
-            }
-            if (Integer.parseInt(s_hour) > 12) {
-                s_hour = "" + (Integer.parseInt(s_hour) - 12);
-
-                sdisplay = s_hour + ":" + s_min + " PM";
-
-            } else if (Integer.parseInt(s_hour) == 12) {
-                sdisplay = s_hour + ":" + s_min + " PM";
-            } else {
-                sdisplay = s_hour + ":" + s_min + " AM";
-            }
-            if (e_hour.length() == 1) {
-                e_hour = "0" + e_hour;
-            }
-            if (e_min.length() == 1) {
-                e_min = "0" + e_min;
-            }
-            if (Integer.parseInt(e_hour) > 12) {
-                e_hour = "" + (Integer.parseInt(e_hour) - 12);
-
-                edisplay = e_hour + ":" + e_min + " PM";
-
-            } else if (Integer.parseInt(e_hour) == 12) {
-                edisplay = e_hour + ":" + e_min + " PM";
-            } else {
-                edisplay = e_hour + ":" + e_min + " AM";
-            }
-
-
-            Log.i("Event conn", " " + con.getString(con.getColumnIndex("event_name")));
-            Log.i("Event id", eventID);
-
-            myConflictEvents.add(con.getString(con.getColumnIndex("event_name")) + "   " + sdisplay + " to " + edisplay); //this adds an element to the list.
-            con.moveToNext();
-        }
-
-        ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(mcontext,
-                android.R.layout.simple_list_item_1, android.R.id.text1, myConflictEvents);
-        modeList.setAdapter(modeAdapter);
-
-        builder.setView(modeList);
-
-        builder.create();
-        builder.show();
-    }
-
-
-    public void saveEventFunction(String user_id, String name, String eventDescription, String eventLocation, String startDate, String startTime,
-                                  String endDate, String endTime, String lat, String lng, String eventAllDay, ArrayList<String> recipients) {
-
-        String[] mydates = startDate.split("-");
-        String[] mytimes = startTime.split(":");
-
-        int count;
-        Cursor c = db.getMaxId();
-        c.moveToFirst();
-        if(c.getCount() == 0)
-        {
-            count = 1;
-        }
-        else {
-            count = Integer.parseInt(c.getString(0));
-            count +=1;
-        }
-
-        Log.d("Count", "" + count);
-
-        AlarmManager alarmManager = (AlarmManager) mcontext.getSystemService
-                (Context.ALARM_SERVICE);
-        Intent myIntent = new Intent(mcontext, AlarmReceiver.class);
-        myIntent.putExtra("userID", user_id);
-        myIntent.putExtra("name", name);
-        myIntent.putExtra("description", eventDescription);
-        myIntent.putExtra("location", eventLocation);
-        myIntent.putExtra("start", startTime);
-        myIntent.putExtra("end", endTime);
-        myIntent.putExtra("dateS", startDate);
-        myIntent.putExtra("dateE", endDate);
-        myIntent.putExtra("people", recipients);
-        Log.d("MyData", name);
-        pendingIntent = PendingIntent.getBroadcast(mcontext, count+1, myIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Calendar calNow = Calendar.getInstance();
-        Calendar calSet = (Calendar) calNow.clone();
-        calSet.setTimeInMillis(System.currentTimeMillis());
-
-//
-//        Log.d("Calendar.YEAR", "" + Integer.parseInt(mydates[2]));
-//        Log.d("Calendar.MONTH", "" + Integer.parseInt(mydates[1]));
-//        Log.d("Calendar.DATE", "" + Integer.parseInt(mydates[0]));
-//        Log.d("Calendar.HOUR_OF_DAY", "" + Integer.parseInt(mytimes[0]));
-//        Log.d("Calendar.MINUTE", "" + Integer.parseInt(mytimes[1]));
-
-        String date = "" + mydates[0] + "-" + mydates[1] + "-" + mydates[2];
-//        mytimes[0]= ""+(Integer.parseInt(mytimes[0]));
-//        int AM_PM=0;
-//        if (Integer.parseInt(mytimes[0]) == 12) {
-//            AM_PM = 1;
-//        } else if(Integer.parseInt(mytimes[0]) > 12) {
-//            mytimes[0]= ""+(Integer.parseInt(mytimes[0])-12);
-//            AM_PM = 1;
-//        }
-
-        calSet.set(Calendar.YEAR, Integer.parseInt(mydates[0]));
-        calSet.set(Calendar.MONTH, Integer.parseInt(mydates[1])-1);
-        calSet.set(Calendar.DATE, Integer.parseInt(mydates[2]));
-        calSet.set(Calendar.HOUR_OF_DAY, Integer.parseInt(mytimes[0]));
-        calSet.set(Calendar.MINUTE, Integer.parseInt(mytimes[1]));
-        calSet.set(Calendar.SECOND, 0);
-        calSet.set(Calendar.MILLISECOND, 0);
-//        calSet.set(Calendar.AM_PM, AM_PM);
-
-//        calSet.setTimeInMillis(System.currentTimeMillis());
-//        calSet.clear();
-//        calSet.set(Integer.parseInt(mydates[2]), Integer.parseInt(mydates[1]) - 1, Integer.parseInt
-        //   (mydates[0]), Integer.parseInt(mytimes[0]), Integer.parseInt(mytimes[1]));
-
-        Log.d("AlaramJeanne", "" + calSet.getTimeInMillis());
-        Log.d("AlaramJeanne1", "" + System.currentTimeMillis());
-
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calSet.getTimeInMillis(),
-                pendingIntent);
-
-        //  ArrayList<String> recipients = new ArrayList<>();
-
-
-        String invitedlist = editFriends.getText().toString();
-
-        String[] separated = invitedlist.split("\n");
-        Cursor b = LandingActivity.db.getContacts();
-        ArrayList<String> invitesid = new ArrayList<String>();
-        ArrayList<String> invitesemail = new ArrayList<String>();
-
-        String[] listid = new String[separated.length];
-
-        String listinvitesid="";
-
-        while (b.moveToNext()){
-            String contactsname = b.getString(b.getColumnIndex("contact_name"));
-            String contactsid = b.getString(b.getColumnIndex("contact_user_id"));
-            String contactsemail = b.getString(b.getColumnIndex("contact_email"));
-
-            int i;
-
-            for (i=0; i<separated.length; i++){
-
-                if (contactsname.equals(separated[i])){
-
-                    listid[i] = contactsid;
-                    invitesid.add(contactsid);
-                    invitesemail.add(contactsemail);
-                }
-
-            }
-
-        }
-
-        String invitedids = invitesid.toString();
-        String invitedemails = invitesemail.toString();
-
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mcontext);
-        String sharedPrefUserId = sharedPreferences.getString("user_id", null);
-
-
-
-        OkHttp.getInstance(getBaseContext()).saveEvent(sharedPrefUserId, name, eventDescription, eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
-        eventID = prefs.getString("eventID", null);
-        Log.i("Event ID: ", eventID);
-
-//
-        LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), Integer.parseInt(eventID), name, eventDescription,
-                eventLocation, lng, lat, startDate, startTime, endDate, endTime, null, "Creator", null);
-
-        Intent i = new Intent(ConflictActivity.this, LandingActivity.class);
-        finish();
-        startActivity(i);
-
-    }
 }
+

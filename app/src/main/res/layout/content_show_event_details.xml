@@ -175,7 +175,6 @@
             android:textSize="14dp"
             android:text=""/>
 
-
     </RelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>

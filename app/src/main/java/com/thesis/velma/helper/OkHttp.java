@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -183,7 +184,7 @@ public class OkHttp {
 
     public void saveEvent(String user_id, String event_name, String event_description, String event_location,
                           String longitude, String latitude, String start_date, String start_time,
-                          String end_date, String end_time, String is_whole_day, ArrayList<String> recipients) {
+                          String end_date, String end_time, String is_whole_day, String[] recipients) {
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/add_event.php").newBuilder();
         urlBuilder.addQueryParameter("user_id", user_id);
@@ -401,7 +402,7 @@ public class OkHttp {
 //
 //    }
 
-    public void sendNotification(String invitationTitle, Integer userid, Integer eventid, String eventname, String eventDescription, String eventLocation,
+    public void sendNotification(String invitationTitle, String userid, String eventid, String eventname, String eventDescription, String eventLocation,
                                  String eventStartDate, String eventStartTime, String eventEndDate,
                                  String eventEndTime, String target,String lat, String lng, String creatorEmail) {
 
@@ -428,6 +429,55 @@ public class OkHttp {
         String Url = urlBuilder.build().toString();
 
         Log.d("URL", Url);
+
+        Request request = new Request.Builder()
+                .url(Url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                // ... check for failure using `isSuccessful` before proceeding
+                // Read data on the worker thread
+                final String responseData = response.body().string();
+                Log.d("Data", responseData);
+                if (response.code() == 200) {
+                    // Run view-related code back on the main thread
+
+                } else {
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(mcontext, "Failed to register", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+
+                }
+            }
+        });
+
+
+    }
+
+    public void sendNotificationReply(String invitationTitle, String eventname, String eventDescription, String target) {
+
+
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/sendNotificationReply.php").newBuilder();
+        urlBuilder.addQueryParameter("invitationTitle", invitationTitle);
+        urlBuilder.addQueryParameter("eventname", eventname);
+        urlBuilder.addQueryParameter("eventDescription", eventDescription);
+        urlBuilder.addQueryParameter("target", target);
+        urlBuilder.addQueryParameter("name", LandingActivity.profilename);
+
+
+        String Url = urlBuilder.build().toString();
+
+        Log.d("URL accept", Url);
 
         Request request = new Request.Builder()
                 .url(Url)
@@ -656,7 +706,7 @@ public class OkHttp {
 
     public void updateEvent(int event_id, String event_name, String event_description, String event_location,
                             String longitude, String latitude, String start_date, String start_time, String end_date,
-                            String end_time, String[] recipients ) {
+                            String end_time, String is_whole_day, String[] recipients ) {
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/update_event.php").newBuilder();
         urlBuilder.addQueryParameter("event_id", "" + event_id);
@@ -669,8 +719,9 @@ public class OkHttp {
         urlBuilder.addQueryParameter("start_time", start_time);
         urlBuilder.addQueryParameter("end_date", end_date);
         urlBuilder.addQueryParameter("end_time", end_time);
+        urlBuilder.addQueryParameter("is_whole_day", is_whole_day);
         for (int i=0; i<recipients.length; i++){
-            urlBuilder.addQueryParameter("recipients", recipients[i]);
+            urlBuilder.addQueryParameter("recipients[]", recipients[i]);
         }
 
         String Url = urlBuilder.build().toString();

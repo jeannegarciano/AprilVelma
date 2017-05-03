@@ -77,7 +77,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
                 Log.d("DataBundle1", remoteMessage.getData().get("eventname"));
                 Log.d("DataBundle2", remoteMessage.getData().get("eventid"));
-                Log.d("DataBundle2", remoteMessage.getData().get("invitedfirends"));
+//                Log.d("DataBundle2", remoteMessage.getData().get("invitedfirends"));
                 Log.d("DataBundle1", remoteMessage.getData().get("creatorEmail"));
 
                 detailsIntent1.putExtras(b);
@@ -224,20 +224,32 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
                 break;
 
-
+            //This will be called if the person who is invited will accept the invitation.
+            // This will send back a notification to the event creator informing that he/she accepted the invitation.
             case "confirmEvent":
-                String confirmMessage = "Your friend will attend to this event.";
 
                 builder = new NotificationCompat.Builder(this)
                         .setAutoCancel(true)
-                        .setContentTitle("Event title: " +remoteMessage.getData().get("eventname"))
-                        .setContentText(confirmMessage)
+                        .setContentTitle("" +remoteMessage.getData().get("name"))
+                        .setContentText("Accepted invitation which is " +remoteMessage.getData().get("eventname"))
                         .setSmallIcon(R.drawable.velmalogo);
 
                 manager.notify(0, builder.build());
 
                 break;
 
+
+            case "declineEvent":
+
+                builder = new NotificationCompat.Builder(this)
+                        .setAutoCancel(true)
+                        .setContentTitle("" +remoteMessage.getData().get("name"))
+                        .setContentText("Declined invitation which is " +remoteMessage.getData().get("eventname"))
+                        .setSmallIcon(R.drawable.velmalogo);
+
+                manager.notify(0, builder.build());
+
+                break;
 
             case "unableAttend":
                 String unableMessage = "Your friend will not attend to this event.";

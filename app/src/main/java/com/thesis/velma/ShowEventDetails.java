@@ -38,9 +38,9 @@ public class ShowEventDetails extends AppCompatActivity {
     String eventName, eventDesc, sdate, edate, stime, etime, location, friends, lng, lat, role;
     Long unixtime = null;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         mcontext=this;
         db = new DataBaseHandler(mcontext);
@@ -89,7 +89,6 @@ public class ShowEventDetails extends AppCompatActivity {
         }
 
         Log.d("StartTimeeeee: ", stime);
-
 
         collapsingToolbarLayout.setTitle(eventName);
         mdesc.setText(eventDesc);
@@ -144,11 +143,12 @@ public class ShowEventDetails extends AppCompatActivity {
 
         metime.setText(newEtime);
         mlocation.setText(location);
-//
-//        String[] separated = friends.split(",");
-//        for (int i=0; i<separated.length; i++){
-//        }
-//        mfriends.setText(friends);
+
+        String[] separated = friends.split(",");
+        for (int i=0; i<separated.length; i++)
+        {
+        }
+        mfriends.setText(friends);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -163,7 +163,7 @@ public class ShowEventDetails extends AppCompatActivity {
                         CheckInternet.showConnectionDialog(mcontext);
                     }else {
 
-                        Intent intent = new Intent(getBaseContext(), UpdateOnboardingActivity.class);
+                        Intent intent = new Intent(getBaseContext(), UpdateEventActivity.class);
                         intent.putExtra("key", id);
                         Log.d("id: ", id);
                         startActivity(intent);
@@ -214,7 +214,6 @@ public class ShowEventDetails extends AppCompatActivity {
                                 .setPositiveButton("No", null)
                                 .show();
                     }
-
                 }
 
                 return true;
