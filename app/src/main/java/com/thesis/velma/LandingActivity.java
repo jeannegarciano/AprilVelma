@@ -116,6 +116,18 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
 
     private boolean refreshOnClick = false;
 
+
+    private static LandingActivity landingActivity;
+
+    public static void setLandingActivity(LandingActivity landingActivity) {
+        LandingActivity.landingActivity = landingActivity;
+    }
+
+    public static LandingActivity getLandingActivity() {
+        return landingActivity;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,6 +136,8 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        landingActivity.setLandingActivity(this);
 
         mAgendaCalendarView = (AgendaCalendarView) findViewById(R.id.agenda_calendar_view);
         mcontext = this;
@@ -153,7 +167,6 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
         LoadEvents();
 
 
-
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
@@ -170,6 +183,51 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
         }
 
     }
+
+
+    //region Functions
+
+    public void displayDetails(String eventid) {
+        Toast.makeText(getBaseContext(), eventid, Toast.LENGTH_LONG).show();
+
+
+        Long myid = Long.valueOf(eventid);
+
+        Cursor cursor = db.getEventDetails(myid);
+
+        Log.d("Count", "" + cursor.getCount());
+
+        if (cursor.getCount() > 0) {
+
+            while (cursor.moveToNext()) {
+
+                Bundle b = new Bundle();
+                b.putString("userid", cursor.getString(cursor.getColumnIndex("user_id")));
+                b.putLong("eventid", cursor.getLong(cursor.getColumnIndex("event_id")));
+                b.putString("eventname", cursor.getString(cursor.getColumnIndex("event_name")));
+                b.putString("eventDescription", cursor.getString(cursor.getColumnIndex("event_description")));
+                b.putString("eventLocation", cursor.getString(cursor.getColumnIndex("event_location")));
+                b.putString("eventStartDate", cursor.getString(cursor.getColumnIndex("start_date")));
+                b.putString("eventStartTime", cursor.getString(cursor.getColumnIndex("start_time")));
+                b.putString("eventEndDate", cursor.getString(cursor.getColumnIndex("end_date")));
+                b.putString("eventEndTime", cursor.getString(cursor.getColumnIndex("end_time")));
+                b.putString("invitedfirends", cursor.getString(cursor.getColumnIndex("recipients")));
+                b.putString("lat", cursor.getString(cursor.getColumnIndex("latitude")));
+                b.putString("lng", cursor.getString(cursor.getColumnIndex("longitude")));
+                b.putString("creatorEmail", cursor.getString(cursor.getColumnIndex("contact_email")));
+
+
+                Intent intent = new Intent(LandingActivity.this, acceptEvent.class);
+                intent.putExtras(b);
+                startActivity(intent);
+
+            }
+        }
+
+
+    }
+
+    //endregion
 
 
     @Override
@@ -194,7 +252,7 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
         Calendar minDate = Calendar.getInstance();
         Calendar maxDate = Calendar.getInstance();
 
-        List<CalendarEvent> eventList =  getEventList();
+        List<CalendarEvent> eventList = getEventList();
         minDate.set(Calendar.DAY_OF_YEAR, 1);
         maxDate.add(Calendar.YEAR, 1);
 
@@ -241,7 +299,7 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
 
 
         } else {
-     //       Toast.makeText(getBaseContext(), "Location Failed", Toast.LENGTH_SHORT).show();
+            //       Toast.makeText(getBaseContext(), "Location Failed", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -274,6 +332,7 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
 
         }
     }
+
     @Override
     public void onScrollToDate(Calendar calendar) {
         if (getSupportActionBar() != null) {
@@ -326,8 +385,7 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
 
 
     @Override
-    public void onClick(View view)
-    {
+    public void onClick(View view) {
         if (view == fab) {
 
             int status = NetworkUtil.getConnectivityStatusString(mcontext);
@@ -358,18 +416,15 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
                 final String sharedPrefUserId = prefs.getString("user_id", null);
 
 
-
-
-
                 int status = NetworkUtil.getConnectivityStatusString(mcontext);
 
                 if (status == 0) {
                     CheckInternet.showConnectionDialog(mcontext);
-                }else {
+                } else {
 
                     refreshOnClick = true;
-                    if (refreshOnClick){
-                        final ProgressDialog loading = android.app.ProgressDialog.show(this,"Fetching Events","Please wait...",false,false);
+                    if (refreshOnClick) {
+                        final ProgressDialog loading = android.app.ProgressDialog.show(this, "Fetching Events", "Please wait...", false, false);
 
                         RestAdapter adapter = new RestAdapter.Builder()
                                 .setEndpoint(ROOT_URL)
@@ -388,7 +443,7 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
 
                                 for (int i = 0; i < eventsEntityList.size(); i++) {
 
-                                    int j=0;
+                                    int j = 0;
 
                                     final ArrayList<String> recipients = new ArrayList<>();
                                     recipients.clear();
@@ -410,7 +465,7 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
                                     String name = eventsEntityList.get(i).getName();
                                     String email = eventsEntityList.get(i).getEmail();
 
-                                    for (j=0; j<eventsEntityList.size(); j++) {
+                                    for (j = 0; j < eventsEntityList.size(); j++) {
 
                                         int userID = eventsEntityList.get(j).getUser_id();
                                         int eventID = eventsEntityList.get(j).getEvent_id();
@@ -457,33 +512,12 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
                 return true;
 
             case R.id.action_notification:
-
-                Toast.makeText(getApplicationContext(), "You clicked the notification icon", Toast.LENGTH_LONG).show();
-
+                Intent intent = new Intent(LandingActivity.this, NotificationList.class);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }
 
-    }
-
-
-
-//
-//    @Override
-//    protected void onRestart() {
-//
-//        // TODO Auto-generated method stub
-//        super.onRestart();
-//        Intent i = new Intent(LandingActivity.this, LandingActivity.class);  //your class
-//        startActivity(i);
-//        finish();
-//    }
-
-
-
-
-    protected String getEventTitle(Calendar time) {
-        return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH) + 1, time.get(Calendar.DAY_OF_MONTH));
     }
 
 
@@ -512,8 +546,7 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
                                     Intent intent) {
 
 
-        if (requestCode == CREATE_EVENT)
-        {
+        if (requestCode == CREATE_EVENT) {
 //            MyEvent myevent = null;
 
             if (responseCode == RESULT_OK) {
@@ -567,8 +600,8 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
             String description = cursor.getString(cursor.getColumnIndex("event_description"));
             String location = cursor.getString(cursor.getColumnIndex("event_location"));
 
-            Log.d("Kevin:", id+ " "+name);
-            if (!sdate.equals(edate)){
+            Log.d("Kevin:", id + " " + name);
+            if (!sdate.equals(edate)) {
                 edate.add(Calendar.DATE, 1);
             }
 

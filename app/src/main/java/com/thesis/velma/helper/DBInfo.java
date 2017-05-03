@@ -39,5 +39,12 @@ public class DBInfo {
         public static final String CONTACT_NAME = "contact_name";
         public static final String CONTACT_EMAIL = "contact_email";
 
+
+        public static final String EventStatus = "EventStatus";
+        public static final String Extra1 = "Extra1";
+        public static final String Extra2 = "Extra2";
+        public static final String Extra3 = "Extra3";
+        public static final String Extra4 = "Extra4";
+
     }
 }

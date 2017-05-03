@@ -624,69 +624,10 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 
                     Cursor all = LandingActivity. db.getids();
                     Log.i("Event all count", "" + all.getCount());
-//
-//                Cursor con = db.conflictCheckerDaily(startDate, startTime, endDate, endTime, eventAllDay);
-//                final Cursor prev = db.compareLocationA(startDate,startTime);
-//                final Cursor next = db.compareLocationB(startDate,endTime);
-//
-//                if((prev != null && prev.getCount() > 0)||(next != null && next.getCount()
-//                        > 0)){
-//
-//                    if((prev != null && prev.getCount() > 0)&&(next != null &&
-//                            next.getCount() > 0)){
-//                        String resultA = getPreviousLocation(prev,  name, eventLocation, startDate, startTime,
-//                                endDate, endTime,lat, lng );
-//                        String resultB = getNextLocation(next,  name, eventLocation, startDate,
-//                                startTime, endDate, endTime,lat, lng );
-//                        locationConflict(resultA,resultB, name, eventDescription,
-//                                eventLocation, startDate, startTime, endDate, endTime, eventAllDay, useremail, lat,
-//                                lng);
-//                    }
-//
-//                    else if((next != null && next.getCount() > 0)){
-//                        String resultB = getNextLocation(next,  name, eventLocation, startDate,
-//                                startTime, endDate, endTime,lat, lng );
-//                        String resultA="";
-//                        locationConflict(resultA,resultB, name, eventDescription,
-//                                eventLocation, startDate, startTime, endDate, endTime, eventAllDay, useremail, lat,
-//                                lng);
-//                    }
-//                    else if((prev != null && prev.getCount() > 0)){
-//                        String resultA = getPreviousLocation(prev,  name, eventLocation, startDate, startTime,
-//                                endDate, endTime,lat, lng );
-//                        String resultB ="";
-//                        locationConflict(resultA,resultB, name, eventDescription,
-//                                eventLocation, startDate, startTime, endDate, endTime, eventAllDay, useremail, lat,
-//                                lng);
-//                    }
-//                }
-//                 else if (con != null && con.getCount() > 0) {
-//
-//                    con.moveToFirst();
-//                    while (con.isAfterLast()) {
-//
-//                        Log.i("Event nameCON :", con.getString(con.getColumnIndex("event_name")));
-//                        Log.i("Event latCON :" ,con.getString(con.getColumnIndex("latitude")));
-//                        Log.i("Event lngCON :", con.getString(con.getColumnIndex("longitude")));
-//                        Log.i("Event locCON :", con.getString(con.getColumnIndex("event_location")));
-//                        Log.i("Event SDCON :", con.getString(con.getColumnIndex("start_date")));
-//                        Log.i("Event EDCON : ", con.getString(con.getColumnIndex("end_date")));
-//                        Log.i("Event STCON : ", con.getString(con.getColumnIndex("start_time")));
-//                        Log.i("Event ETCON : ", con.getString(con.getColumnIndex("end_time")));
-//                        con.moveToNext();
-//                    }
-//
-//                    timeconflict(con, name, eventDescription, eventLocation, startDate,
-//                            startTime, endDate, endTime, useremail, lat, lng);
-//                }
-//
-//                else
-//                 {
-
 
                 saveEventFunction(user_id, name, eventDescription, eventLocation, startDate, startTime,
                          endDate,  endTime,  lat, lng, allDay, recipients);
-      //          }
+
             }
       }
 
@@ -996,22 +937,9 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         Calendar calSet = (Calendar) calNow.clone();
         calSet.setTimeInMillis(System.currentTimeMillis());
 
-//
-//        Log.d("Calendar.YEAR", "" + Integer.parseInt(mydates[2]));
-//        Log.d("Calendar.MONTH", "" + Integer.parseInt(mydates[1]));
-//        Log.d("Calendar.DATE", "" + Integer.parseInt(mydates[0]));
-//        Log.d("Calendar.HOUR_OF_DAY", "" + Integer.parseInt(mytimes[0]));
-//        Log.d("Calendar.MINUTE", "" + Integer.parseInt(mytimes[1]));
+
 
         String date = "" + mydates[0] + "-" + mydates[1] + "-" + mydates[2];
-//        mytimes[0]= ""+(Integer.parseInt(mytimes[0]));
-//        int AM_PM=0;
-//        if (Integer.parseInt(mytimes[0]) == 12) {
-//            AM_PM = 1;
-//        } else if(Integer.parseInt(mytimes[0]) > 12) {
-//            mytimes[0]= ""+(Integer.parseInt(mytimes[0])-12);
-//            AM_PM = 1;
-//        }
 
         calSet.set(Calendar.YEAR, Integer.parseInt(mydates[0]));
         calSet.set(Calendar.MONTH, Integer.parseInt(mydates[1])-1);
@@ -1020,12 +948,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         calSet.set(Calendar.MINUTE, Integer.parseInt(mytimes[1]));
         calSet.set(Calendar.SECOND, 0);
         calSet.set(Calendar.MILLISECOND, 0);
-//        calSet.set(Calendar.AM_PM, AM_PM);
-
-//        calSet.setTimeInMillis(System.currentTimeMillis());
-//        calSet.clear();
-//        calSet.set(Integer.parseInt(mydates[2]), Integer.parseInt(mydates[1]) - 1, Integer.parseInt
-        //   (mydates[0]), Integer.parseInt(mytimes[0]), Integer.parseInt(mytimes[1]));
 
         Log.d("AlaramJeanne", "" + calSet.getTimeInMillis());
         Log.d("AlaramJeanne1", "" + System.currentTimeMillis());
@@ -1033,7 +955,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calSet.getTimeInMillis(),
                 pendingIntent);
 
-      //  ArrayList<String> recipients = new ArrayList<>();
 
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mcontext);
@@ -1050,11 +971,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), Integer.parseInt(eventID), name, eventDescription,
                 eventLocation, lng, lat, startDate, startTime, endDate, endTime, null, "Creator", null);
 
-
-//        String myEmail = "gjeannevie";
-//        OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, eventID, name,
-//                eventDescription, eventLocation, startDate, startTime, endDate, endTime, myEmail + "Velma",
-//                lat, lng, LandingActivity.useremail);
 
         for (int i = 0; i <= invitedContacts.size() - 1; i++) {
             String[] target = invitedContacts.get(i).split("@");

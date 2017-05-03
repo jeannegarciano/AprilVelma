@@ -69,7 +69,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 b.putString("eventEndDate", remoteMessage.getData().get("eventEndDate"));
                 b.putString("eventEndTime", remoteMessage.getData().get("eventEndTime"));
 //                b.putString("notify", remoteMessage.getData().get("notify"));
-//                b.putString("invitedfirends", remoteMessage.getData().get("invitedfirends"));
+                b.putString("invitedfirends", remoteMessage.getData().get("invitedfirends"));
                 b.putString("lat", remoteMessage.getData().get("lat"));
                 b.putString("lng", remoteMessage.getData().get("lng"));
                 b.putString("creatorEmail", remoteMessage.getData().get("creatorEmail"));
@@ -84,12 +84,12 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 detailsIntent2.putExtras(b);
 
 
+                LandingActivity.db.saveEventPending(Integer.parseInt(remoteMessage.getData().get("userid")), Integer.parseInt(remoteMessage.getData().get("eventid")),
+                        remoteMessage.getData().get("eventname"), remoteMessage.getData().get("eventDescription"), remoteMessage.getData().get("eventLocation")
+                        , remoteMessage.getData().get("lng"), remoteMessage.getData().get("lang"), remoteMessage.getData().get("eventStartDate")
+                        , remoteMessage.getData().get("eventStartTime"), remoteMessage.getData().get("eventEndDate"), remoteMessage.getData().get("eventEndTime")
+                        , "", "", "", "Pending",remoteMessage.getData().get("creatorEmail"));
 
-//        LandingActivity.db.saveEvent(remoteMessage.getData().get("userid"), Long.parseLong(remoteMessage.getData().get("eventid")),
-//                remoteMessage.getData().get("eventname"), remoteMessage.getData().get("eventDescription"), remoteMessage.getData().get("eventLocation")
-//                , remoteMessage.getData().get("eventStartDate"), remoteMessage.getData().get("eventStartTime"),
-//                remoteMessage.getData().get("eventEndDate"), remoteMessage.getData().get("eventEndTime"), remoteMessage.getData().get("notify"),
-//                remoteMessage.getData().get("invitedfirends"));
 
                 String[] mydates = remoteMessage.getData().get("eventStartDate").split("-");
                 String[] mytimes = remoteMessage.getData().get("eventStartTime").split(":");
@@ -144,45 +144,12 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 String[] mytimes1 = remoteMessage.getData().get("eventStartTime").split(":");
 
                 builder = new NotificationCompat.Builder(this)
-                        .addAction(R.drawable.ic_check_circle_blue_500_18dp, "View", PendingIntent.getActivity(this,dummyuniqueInt, detailsIntent3, PendingIntent.FLAG_UPDATE_CURRENT)) // #0
+                        .addAction(R.drawable.ic_check_circle_blue_500_18dp, "View", PendingIntent.getActivity(this, dummyuniqueInt, detailsIntent3, PendingIntent.FLAG_UPDATE_CURRENT)) // #0
 //                        .addAction(R.drawable.ic_cancel_blue_500_18dp, "Decline", PendingIntent.getActivity(this, dummyuniqueInt, detailsIntent4, PendingIntent.FLAG_UPDATE_CURRENT))  // #1
 //                        .setAutoCancel(true)
                         .setContentTitle(remoteMessage.getData().get("eventname"))
                         .setContentText("This event was updated. Click update button to view changes.")
                         .setSmallIcon(R.drawable.velmalogo);
-
-                //HARDCODED VALUES 10:51
-//        Calendar calNow = Calendar.getInstance();
-//        Calendar calSet = (Calendar) calNow.clone();
-
-
-//        int AM_PM;
-//        if (Integer.parseInt(mytimes[0]) < 12) {
-//            AM_PM = 0;
-//        } else {
-//            AM_PM = 1;
-//        }
-
-//        calSet.set(Calendar.YEAR, Integer.parseInt(mydates[2]));
-//        calSet.set(Calendar.MONTH, Integer.parseInt(mydates[1])-1);
-//        calSet.set(Calendar.DATE, Integer.parseInt(mydates[0]));
-//        calSet.set(Calendar.HOUR, Integer.parseInt(mytimes[0]));
-//        calSet.set(Calendar.MINUTE, Integer.parseInt(mytimes[1]));
-//        calSet.set(Calendar.SECOND, 0);
-//        calSet.set(Calendar.MILLISECOND, 0);
-//        calSet.set(Calendar.AM_PM, AM_PM);
-
-//        calSet.clear();
-//        calSet.set(Integer.parseInt(mydates[2]), Integer.parseInt(mydates[1]) - 1, Integer.parseInt(mydates[0]), Integer.parseInt(mytimes[0]), Integer.parseInt(mytimes[1]));
-
-
-//        PendingIntent mypendingintent;
-//        Intent myIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
-//        myIntent.putExtra("name", remoteMessage.getData().get("eventname"));
-//        mypendingintent = PendingIntent.getBroadcast(getApplicationContext(), 0, myIntent, 0);
-
-//        AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-//        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calSet.getTimeInMillis(), mypendingintent);
 
 
                 manager.notify(0, builder.build());
@@ -195,7 +162,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
                 builder = new NotificationCompat.Builder(this)
                         .setAutoCancel(true)
-                        .setContentTitle("Event title: " +remoteMessage.getData().get("eventname"))
+                        .setContentTitle("Event title: " + remoteMessage.getData().get("eventname"))
                         .setContentText(deleteMessage)
                         .setSmallIcon(R.drawable.velmalogo);
 
@@ -213,10 +180,9 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
                 builder = new NotificationCompat.Builder(this)
                         .setAutoCancel(true)
-                        .setContentTitle("Event title: " +remoteMessage.getData().get("eventname"))
+                        .setContentTitle("Event title: " + remoteMessage.getData().get("eventname"))
                         .setContentText(cancelMessage)
                         .setSmallIcon(R.drawable.velmalogo);
-
 
 
                 manager.notify(0, builder.build());
@@ -230,8 +196,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
                 builder = new NotificationCompat.Builder(this)
                         .setAutoCancel(true)
-                        .setContentTitle("" +remoteMessage.getData().get("name"))
-                        .setContentText("Accepted invitation which is " +remoteMessage.getData().get("eventname"))
+                        .setContentTitle("" + remoteMessage.getData().get("name"))
+                        .setContentText("Accepted invitation which is " + remoteMessage.getData().get("eventname"))
                         .setSmallIcon(R.drawable.velmalogo);
 
                 manager.notify(0, builder.build());
@@ -243,8 +209,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
                 builder = new NotificationCompat.Builder(this)
                         .setAutoCancel(true)
-                        .setContentTitle("" +remoteMessage.getData().get("name"))
-                        .setContentText("Declined invitation which is " +remoteMessage.getData().get("eventname"))
+                        .setContentTitle("" + remoteMessage.getData().get("name"))
+                        .setContentText("Declined invitation which is " + remoteMessage.getData().get("eventname"))
                         .setSmallIcon(R.drawable.velmalogo);
 
                 manager.notify(0, builder.build());
@@ -255,7 +221,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 String unableMessage = "Your friend will not attend to this event.";
                 builder = new NotificationCompat.Builder(this)
                         .setAutoCancel(true)
-                        .setContentTitle("Event title: " +remoteMessage.getData().get("eventname"))
+                        .setContentTitle("Event title: " + remoteMessage.getData().get("eventname"))
                         .setContentText(unableMessage)
                         .setSmallIcon(R.drawable.velmalogo);
 
@@ -269,7 +235,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
                 builder = new NotificationCompat.Builder(this)
                         .setAutoCancel(true)
-                        .setContentTitle("Event title: " +remoteMessage.getData().get("eventname"))
+                        .setContentTitle("Event title: " + remoteMessage.getData().get("eventname"))
                         .setContentText(lateMessage)
                         .setSmallIcon(R.drawable.velmalogo);
 

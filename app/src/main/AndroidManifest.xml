@@ -31,7 +31,7 @@
     <application
         android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
-        android:icon="@drawable/logonew"
+        android:icon="@drawable/ic_action_call"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -129,11 +129,11 @@
         <!-- <action android:name="com.google.firebase.MESSAGING_EVENT" /> -->
         <!-- </intent-filter> -->
         <!-- </service> -->
-         <service android:name=".FirebaseInstanceIDService">
-         <intent-filter>
-         <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-         </intent-filter>
-         </service>
+        <service android:name=".FirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
 
         <receiver android:name=".Alarm_Receiver" />
 
@@ -187,7 +187,8 @@
         <activity
             android:name=".createEvent"
             android:label="@string/title_activity_create_event"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".NotificationList"></activity>
     </application>
 
 </manifest>

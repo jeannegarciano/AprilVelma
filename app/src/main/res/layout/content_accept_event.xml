@@ -8,17 +8,17 @@
     tools:showIn="@layout/activity_show_event_details">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <ImageView
+            android:id="@+id/imgDesc"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:id="@+id/imgDesc"
-            android:src="@drawable/textdocument"
-            android:layout_marginTop="50dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="10dp"/>
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="50dp"
+            android:src="@drawable/textdocument" />
 
         <TextView
             android:id="@+id/desc"
@@ -26,30 +26,30 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/imgDesc"
             android:layout_alignParentRight="true"
-            android:layout_toRightOf="@+id/imgDesc"
             android:layout_marginRight="10dp"
-            android:textSize="14dp"
-            android:text="This is a description."/>
+            android:layout_toRightOf="@+id/imgDesc"
+            android:text="This is a description."
+            android:textSize="14dp" />
 
         <ImageView
             android:id="@+id/imgDate"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:src="@drawable/calendaricon"
             android:layout_below="@+id/imgDesc"
-            android:layout_marginTop="35dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="10dp"/>
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="35dp"
+            android:src="@drawable/calendaricon" />
 
         <TextView
             android:id="@+id/sDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/imgDate"
-            android:layout_toRightOf="@+id/imgDate"
             android:layout_marginRight="10dp"
-            android:textSize="14dp"
-            android:text="0000-00-00"/>
+            android:layout_toRightOf="@+id/imgDate"
+            android:text="0000-00-00"
+            android:textSize="14dp" />
 
         <!--<TextView-->
         <!--android:id="@+id/dash"-->
@@ -66,60 +66,60 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/sDate"
-            android:layout_toRightOf="@+id/imgDate"
             android:layout_marginRight="20dp"
-            android:textSize="14dp"
-            android:text="0000-00-00"/>
+            android:layout_toRightOf="@+id/imgDate"
+            android:text="0000-00-00"
+            android:textSize="14dp" />
 
         <ImageView
             android:id="@+id/imgTime"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:src="@drawable/timetimetime"
             android:layout_below="@+id/imgDate"
-            android:layout_marginTop="38dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="10dp"/>
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="38dp"
+            android:src="@drawable/timetimetime" />
 
         <TextView
             android:id="@+id/sTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/imgTime"
-            android:layout_toRightOf="@+id/imgTime"
             android:layout_marginRight="10dp"
-            android:textSize="14dp"
-            android:text="00:00:00"/>
+            android:layout_toRightOf="@+id/imgTime"
+            android:text="00:00:00"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/dashTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/imgTime"
-            android:layout_toRightOf="@+id/sTime"
             android:layout_marginRight="10dp"
-            android:textSize="14dp"
-            android:text="-"/>
+            android:layout_toRightOf="@+id/sTime"
+            android:text="-"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/eTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/imgTime"
-            android:layout_toRightOf="@+id/dashTime"
             android:layout_marginRight="20dp"
-            android:textSize="14dp"
-            android:text="00:00:00"/>
+            android:layout_toRightOf="@+id/dashTime"
+            android:text="00:00:00"
+            android:textSize="14dp" />
 
         <ImageView
             android:id="@+id/imgLoc"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:src="@drawable/placeholder"
             android:layout_below="@+id/imgTime"
-            android:layout_marginTop="43dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="10dp"/>
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="43dp"
+            android:src="@drawable/placeholder" />
 
         <TextView
             android:id="@+id/loc"
@@ -127,10 +127,10 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/imgLoc"
             android:layout_alignParentRight="true"
-            android:layout_toRightOf="@+id/imgLoc"
             android:layout_marginRight="20dp"
-            android:textSize="14dp"
-            android:text="Magallanes St Cebu City 6000 Cebu Philippines"/>
+            android:layout_toRightOf="@+id/imgLoc"
+            android:text="Magallanes St Cebu City 6000 Cebu Philippines"
+            android:textSize="14dp" />
 
 
         <!--<ImageView-->
@@ -158,40 +158,41 @@
             android:id="@+id/imgFriends"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:src="@drawable/friends"
             android:layout_below="@+id/imgLoc"
-            android:layout_marginTop="27dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="10dp"/>
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="27dp"
+            android:src="@drawable/friends" />
 
         <TextView
             android:id="@+id/friends"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/imgFriends"
             android:layout_below="@+id/loc"
-            android:layout_marginTop="25dp"
             android:layout_marginRight="20dp"
-            android:textSize="14dp"
-            android:text=""/>
+            android:layout_marginTop="25dp"
+            android:layout_toRightOf="@+id/imgFriends"
+            android:text=""
+            android:textSize="14dp" />
 
 
         <Button
 
-            android:layout_below="@+id/friends"
             android:id="@+id/accept"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Accept"
-            android:layout_marginBottom="25dp"/>
+            android:layout_below="@+id/friends"
+            android:layout_marginBottom="25dp"
+            android:layout_marginTop="25dp"
+            android:text="Accept" />
 
         <Button
-            android:layout_below="@+id/accept"
             android:id="@+id/decline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Decline"
-            android:layout_marginBottom="25dp"/>
+            android:layout_below="@+id/accept"
+            android:layout_marginBottom="25dp"
+            android:text="Decline" />
     </RelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>
