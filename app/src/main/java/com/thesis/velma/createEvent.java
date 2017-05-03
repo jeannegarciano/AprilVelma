@@ -68,6 +68,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
@@ -79,7 +80,7 @@ import static com.thesis.velma.LandingActivity.useremail;
  * Created by admin on 3/24/2017.
  */
 
-public class createEvent extends AppCompatActivity implements View.OnClickListener{
+public class createEvent extends AppCompatActivity implements View.OnClickListener {
 
     View rootView;
     EditText editEname, editDescription, editSdate, editEdate, editStime, editEtime, editFriends, editLoc;
@@ -110,9 +111,9 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
     String eventID;
     private PendingIntent pendingIntent;
 
-    String prevName = "", prevLat= "", prevLng= "", prevLoc = "", prevStartDate= "", prevEndDate= "",
+    String prevName = "", prevLat = "", prevLng = "", prevLoc = "", prevStartDate = "", prevEndDate = "",
             prevStartTime = "", prevEndTime = "";
-    String nextName = "", nextLat= "", nextLng = "", nextLoc= "", nextStartDate= "", nextEndDate= "",
+    String nextName = "", nextLat = "", nextLng = "", nextLoc = "", nextStartDate = "", nextEndDate = "",
             nextStartTime = "", nextEndTime = "";
     long diffInMinutesPrev, diffInMinutesNext;
     String diffPrev, diffNext;
@@ -293,17 +294,16 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 //Toast.makeText(getContext(), ((TextView) view).getText(),
                 //        Toast.LENGTH_SHORT).show();
 
-                int flag=0;
-                for(int i=0 ; i<invitedContacts.size() ; i++){
-                    if(invitedContacts.get(i).equals(((TextView) view).getText().toString()))
-                        flag=1;
+                int flag = 0;
+                for (int i = 0; i < invitedContacts.size(); i++) {
+                    if (invitedContacts.get(i).equals(((TextView) view).getText().toString()))
+                        flag = 1;
                 }
-                if(flag==0){
+                if (flag == 0) {
                     invitedContacts.add(((TextView) view).getText().toString());
                 }
             }
         });
-
 
 
         modeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -313,12 +313,12 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 //Toast.makeText(getContext(), ((TextView) view).getText(),
                 //        Toast.LENGTH_SHORT).show();
 
-                int flag=0;
-                for(int i=0 ; i<invitedContacts.size() ; i++){
-                    if(invitedContacts.get(i).equals(((TextView) view).getText().toString()))
-                        flag=1;
+                int flag = 0;
+                for (int i = 0; i < invitedContacts.size(); i++) {
+                    if (invitedContacts.get(i).equals(((TextView) view).getText().toString()))
+                        flag = 1;
                 }
-                if(flag==0){
+                if (flag == 0) {
                     invitedContacts.add(((TextView) view).getText().toString());
                 }
             }
@@ -337,16 +337,17 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
             sDay = c.get(Calendar.DAY_OF_MONTH);
 
             datePickerDialog.show();
-        }  if (view == editEdate) {
+        }
+        if (view == editEdate) {
             final Calendar c = Calendar.getInstance();
             eYear = c.get(Calendar.YEAR);
             eMonth = c.get(Calendar.MONTH);
             eDay = c.get(Calendar.DAY_OF_MONTH);
             String datetime;
             //i'll just put a static starttime kay para mmugana ang validation whether ni
-            if(editSdate.getText() == null){
+            if (editSdate.getText() == null) {
                 editEdate.setClickable(false);
-            }else {
+            } else {
                 datetime = editSdate.getText().toString() + " 00:00";
 
                 //    datetime = dateStart.getText().toString() + " " + timeStart.getText().toString();
@@ -399,13 +400,12 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         }
 
 
-        if(allday.isChecked()) {
+        if (allday.isChecked()) {
 
             allDay = "All Day";
-        }else{
+        } else {
             allDay = "Daily";
         }
-
 
 
         if (view == editStime) {
@@ -415,11 +415,10 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
             sMinute = cal.get(Calendar.MINUTE);
 
             long start = cal.getTimeInMillis();
-            Log.i("Event start", ""+start);
-            if(editStime.getText()== null ){
+            Log.i("Event start", "" + start);
+            if (editStime.getText() == null) {
                 editEtime.setEnabled(false);
-            }
-            else {
+            } else {
                 // Launch Time Picker Dialog
                 TimePickerDialog timePickerDialog = new TimePickerDialog(createEvent.this,
                         new TimePickerDialog.OnTimeSetListener() {
@@ -427,7 +426,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay,
                                                   int minute) {
-
 
 
                                 String st = hourOfDay + ":" + minute;
@@ -452,7 +450,8 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 timePickerDialog.show();
             }
 
-        }  if (view == editEtime) {
+        }
+        if (view == editEtime) {
 
             // Get Current Time
 
@@ -495,27 +494,25 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                         }
                     }, eHour, eMinute, false);
 
-
             timePickerDialog.show();
         }
 
 
-        if(view == buttonAddFriends )
-        {
+        if (view == buttonAddFriends) {
             dialog.show();
 
         }
 
-        if(view == save){
+        if (view == save) {
 
             String name = editEname.getText().toString();
             String eventDescription = editDescription.getText().toString();
             String eventLocation = editLoc.getText().toString();
-            String lat = " "+latitude;
-            String lng = " "+longtiude;
+            String lat = " " + latitude;
+            String lng = " " + longtiude;
             String startDate = editSdate.getText().toString();
             String startTime = editStime.getText().toString();
-            String endDate= editEdate.getText().toString();
+            String endDate = editEdate.getText().toString();
             String endTime = editEtime.getText().toString();
             String eventAllDay = allDay;
 
@@ -528,8 +525,8 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
             Log.i("Event ET: ", endTime);
             Log.i("Event email: ", useremail);
 
-            if(name.isEmpty() || eventLocation.isEmpty() || eventDescription.isEmpty() ||
-            startDate.isEmpty() || endDate.isEmpty() || startTime.isEmpty() || endTime.isEmpty()) {
+            if (name.isEmpty() || eventLocation.isEmpty() || eventDescription.isEmpty() ||
+                    startDate.isEmpty() || endDate.isEmpty() || startTime.isEmpty() || endTime.isEmpty()) {
 
                 if (name.isEmpty()) {
                     editEname.setError("Enter event name");
@@ -550,7 +547,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                             });
 
 
-
                     AlertDialog alert11 = builder1.create();
                     alert11.show();
                 }
@@ -566,9 +562,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 if (endTime.isEmpty()) {
                     editEtime.setError("Enter end time");
                 }
-            }
-
-                else  {
+            } else {
                 StringTokenizer sd = new StringTokenizer(startDate, "-");
                 StringTokenizer ed = new StringTokenizer(endDate, "-");
                 StringTokenizer st = new StringTokenizer(startTime, ":");
@@ -597,20 +591,19 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                             });
 
 
-
                     AlertDialog alert11 = builder1.create();
                     alert11.show();
                 } else if (stt > ett) {
                     if (eventAllDay.equals("Daily")) {
 
                         allDay = "Reverse Daily";
-                    }else{
+                    } else {
                         allDay = "All Day";
                     }
                 }
 
 
-                eventAllDay=allDay;
+                eventAllDay = allDay;
                 Log.i("Event allDay", eventAllDay);
                 Log.i("Event name", name);
                 Log.i("Event coord", lat + "," + lng);
@@ -622,15 +615,14 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 Log.i("Event email: ", useremail);
 
 
-                    Cursor all = LandingActivity. db.getids();
-                    Log.i("Event all count", "" + all.getCount());
+                Cursor all = LandingActivity.db.getids();
+                Log.i("Event all count", "" + all.getCount());
 
                 saveEventFunction(user_id, name, eventDescription, eventLocation, startDate, startTime,
-                         endDate,  endTime,  lat, lng, allDay, recipients);
+                        endDate, endTime, lat, lng, allDay, recipients);
 
             }
-      }
-
+        }
 
 
     }
@@ -721,7 +713,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                              String endDate, final String endTime, final String
                                      userEmail, final String lat, final String lng) {
         Log.i("Event con", "2");
-        final String flag="original";
+        final String flag = "original";
 
         myCurrentEvent.add(name);
         myCurrentEvent.add(eventDescription);
@@ -754,7 +746,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                     public void onClick(DialogInterface dialog, int which) {
 
                         saveEventFunction(user_id, name, eventDescription, eventLocation, startDate, startTime,
-                                endDate,  endTime,  lat, lng, allDay, recipients);
+                                endDate, endTime, lat, lng, allDay, recipients);
 
                         dialog.dismiss();
 
@@ -775,7 +767,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                                 editor.putString("enddate", endDate);
 //                                editor.putString("invitedfriends", invitedContacts);
 //                                editor.putString("flag", flag);
-                                editor.putLong("key",0);
+                                editor.putLong("key", 0);
                                 editor.apply();
                                 Intent in = new Intent(createEvent.this, DateListView.class);
                                 finish();
@@ -790,7 +782,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         myConflictEvents.clear();
         myConflictEvents.add(myCurrentEvent.get(0));
         con.moveToFirst();
-        eventID= con.getString(0);
+        eventID = con.getString(0);
         Log.i("Event con", "5");
 
         while (!con.isAfterLast()) {
@@ -860,19 +852,23 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
     public void saveEventFunction(String user_id, String name, String eventDescription, String eventLocation, String startDate, String startTime,
                                   String endDate, String endTime, String lat, String lng, String eventAllDay, ArrayList<String> recipients) {
 
+        Random r = new Random();
+        long unixtime = (long) (1293861599 + r.nextDouble() * 60 * 60 * 24 * 365);
+        Long tsLong = System.currentTimeMillis() / 1000;
+
+        String unique_id = tsLong.toString() + String.valueOf(unixtime);
+
         String[] mydates = startDate.split("-");
         String[] mytimes = startTime.split(":");
 
         int count;
         Cursor c = db.getMaxId();
         c.moveToFirst();
-        if(c.getCount() == 0)
-        {
+        if (c.getCount() == 0) {
             count = 1;
-        }
-        else {
+        } else {
             count = Integer.parseInt(c.getString(0));
-            count +=1;
+            count += 1;
         }
 
         Log.d("Count", "" + count);
@@ -890,14 +886,14 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         myIntent.putExtra("dateE", endDate);
         myIntent.putExtra("people", recipients);
         Log.d("MyData", name);
-        pendingIntent = PendingIntent.getBroadcast(mcontext, count+1, myIntent,
+        pendingIntent = PendingIntent.getBroadcast(mcontext, count + 1, myIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         Log.i("Event allDay", eventAllDay);
         Log.i("Event name", name);
         Log.i("Event SD", startDate);
-        Log.i("Event coord", lat +","+lng);
+        Log.i("Event coord", lat + "," + lng);
         Toast.makeText(mcontext, "Event is added successfully.", Toast.LENGTH_SHORT).show();
         String invitedlist = editFriends.getText().toString();
 
@@ -908,18 +904,18 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 
         String[] listid = new String[separated.length];
 
-        String listinvitesid="";
+        String listinvitesid = "";
 
-        while (b.moveToNext()){
+        while (b.moveToNext()) {
             String contactsname = b.getString(b.getColumnIndex("contact_name"));
             String contactsid = b.getString(b.getColumnIndex("contact_user_id"));
             String contactsemail = b.getString(b.getColumnIndex("contact_email"));
 
             int i;
 
-            for (i=0; i<separated.length; i++){
+            for (i = 0; i < separated.length; i++) {
 
-                if (contactsname.equals(separated[i])){
+                if (contactsname.equals(separated[i])) {
 
                     listid[i] = contactsid;
                     invitesid.add(contactsid);
@@ -938,11 +934,10 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         calSet.setTimeInMillis(System.currentTimeMillis());
 
 
-
         String date = "" + mydates[0] + "-" + mydates[1] + "-" + mydates[2];
 
         calSet.set(Calendar.YEAR, Integer.parseInt(mydates[0]));
-        calSet.set(Calendar.MONTH, Integer.parseInt(mydates[1])-1);
+        calSet.set(Calendar.MONTH, Integer.parseInt(mydates[1]) - 1);
         calSet.set(Calendar.DATE, Integer.parseInt(mydates[2]));
         calSet.set(Calendar.HOUR_OF_DAY, Integer.parseInt(mytimes[0]));
         calSet.set(Calendar.MINUTE, Integer.parseInt(mytimes[1]));
@@ -956,7 +951,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 pendingIntent);
 
 
-
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mcontext);
         String sharedPrefUserId = sharedPreferences.getString("user_id", null);
 
@@ -968,8 +962,11 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 //        Log.i("User ID: ", sharedPrefUserId);
 
 //
-        LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), Integer.parseInt(eventID), name, eventDescription,
-                eventLocation, lng, lat, startDate, startTime, endDate, endTime, null, "Creator", null);
+//        LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), Integer.parseInt(eventID), name, eventDescription,
+//                eventLocation, lng, lat, startDate, startTime, endDate, endTime, null, "Creator", null);
+
+        LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), unique_id, name, eventDescription,
+                eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, "Creator", listinvitesid);
 
 
         for (int i = 0; i <= invitedContacts.size() - 1; i++) {
@@ -981,16 +978,16 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 
 
         Intent i = new Intent(createEvent.this, LandingActivity.class);
-                    finish();
-                  startActivity(i);
+        finish();
+        startActivity(i);
 
     }
 
 
     public String getPreviousLocation(final Cursor prev, final String name, final String eventLocation, final
     String startDate, final String startTime, final String endDate, final String endTime, final String lat,
-                              final String lng )
-    {String disdur="";
+                                      final String lng) {
+        String disdur = "";
         Log.i("Event locA", "1");
 
         if ((prev != null && prev.getCount() > 0)) {
@@ -1032,8 +1029,8 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 
                 Log.i("Event laaa", "im in tho5");
                 // new getLocationDetails().execute(latA, lngA);
-                disdur=  getjjson(LL_Prev);
-                Log.i("json method: ",disdur);
+                disdur = getjjson(LL_Prev);
+                Log.i("json method: ", disdur);
 
 
             } catch (ParseException ex) {
@@ -1050,12 +1047,12 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         return disdur;
 
     }
+
     public String getNextLocation(final Cursor next, final String name, final String eventLocation, final
     String startDate, final String startTime, final String endDate, final String endTime, final String lat,
-                              final String lng )
-    {
+                                  final String lng) {
         Log.i("Event locA", "1");
-        String disdur="";
+        String disdur = "";
 
         next.moveToFirst();
         nextName = next.getString(next.getColumnIndex("event_name"));
@@ -1097,8 +1094,8 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
             Log.i("EVENT B STRING", "" + llB);
 
             Log.i("Event laaa", "im in thoB4");
-            disdur=  getjjson(llB);
-            Log.i("json method: ",disdur);
+            disdur = getjjson(llB);
+            Log.i("json method: ", disdur);
 
 
         } catch (ParseException ex) {
@@ -1113,6 +1110,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         return disdur;
 
     }
+
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;
@@ -1132,18 +1130,17 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         String regAPIURL = "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=" + latlng + "&destinations=" + latitude + "," + longtiude +
                 "&mode=driving&key=AIzaSyDWjoAbJf9uDrLCFAM_fCSWxP0muVEGbOA";
 
-        JSONObject js =readJsonFromUrl(regAPIURL);
-        text=js.toString();
-        Log.i("getjjson: text",text);
+        JSONObject js = readJsonFromUrl(regAPIURL);
+        text = js.toString();
+        Log.i("getjjson: text", text);
         String s = jason(text);
-        Log.i("getjjson: s",s);
+        Log.i("getjjson: s", s);
         return s;
 
     }
 
 
-    public static JSONObject readJsonFromUrl(String regAPIURL) throws IOException, JSONException
-    {
+    public static JSONObject readJsonFromUrl(String regAPIURL) throws IOException, JSONException {
 
         InputStream is = new URL(regAPIURL).openStream();
         try {
@@ -1157,8 +1154,8 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    public String jason(String s){
-        String durationplusdistance="";
+    public String jason(String s) {
+        String durationplusdistance = "";
         if (s != null) {
 
 
@@ -1188,10 +1185,9 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 Log.i("ResurltLOGDUR: ", duration);
 
 
-                durationplusdistance = distance+"^"+duration+"^"+durationinmin;
+                durationplusdistance = distance + "^" + duration + "^" + durationinmin;
 
                 Log.i("ResurltLOGDUR: ", duration);
-
 
 
 //
@@ -1202,63 +1198,62 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         return durationplusdistance;
     }
 
-    public void locationConflict(String ra,String rb, final String name,final String
-            eventDescription,final String eventLocation,final String startDate,final String startTime,final String
-                                         endDate,final String endTime,final String eventAllDay, final String
-                                         userEmail,final String lat,final String lng ){
+    public void locationConflict(String ra, String rb, final String name, final String
+            eventDescription, final String eventLocation, final String startDate, final String startTime, final String
+                                         endDate, final String endTime, final String eventAllDay, final String
+                                         userEmail, final String lat, final String lng) {
         final Cursor con = db.conflictCheckerDaily(startDate, startTime, endDate, endTime, eventAllDay);
         Log.i("Event loc", "check");
 
-        if(!ra.isEmpty()&&!rb.isEmpty()){
+        if (!ra.isEmpty() && !rb.isEmpty()) {
 
-            StringTokenizer a =new StringTokenizer(ra,"^");
-            String distancea=a.nextToken();
-            String durationa=a.nextToken();
-            String durationinmina=a.nextToken();
+            StringTokenizer a = new StringTokenizer(ra, "^");
+            String distancea = a.nextToken();
+            String durationa = a.nextToken();
+            String durationinmina = a.nextToken();
 
-            Log.i("locationCon duration: ",durationa);
+            Log.i("locationCon duration: ", durationa);
 
-            StringTokenizer b =new StringTokenizer(rb,"^");
-            String distanceb=b.nextToken();
-            String durationb=b.nextToken();
-            String durationinminb=b.nextToken();
+            StringTokenizer b = new StringTokenizer(rb, "^");
+            String distanceb = b.nextToken();
+            String durationb = b.nextToken();
+            String durationinminb = b.nextToken();
 
-            Log.i("locationCon duration: ",durationb);
+            Log.i("locationCon duration: ", durationb);
 //            Array[] hours =new Array[50];
 
 
-            int mm = Integer.parseInt(durationinmina)/60;
+            int mm = Integer.parseInt(durationinmina) / 60;
 
-            long timeInHours = diffInMinutesPrev/60;
-            long timeInMinutes = diffInMinutesPrev%60;
+            long timeInHours = diffInMinutesPrev / 60;
+            long timeInMinutes = diffInMinutesPrev % 60;
             String time;
-            if(timeInHours==0&&timeInMinutes!=0){
-                time=timeInMinutes+" minutes";
-            }else if(timeInHours!=0&&timeInMinutes==0){
-                time=timeInHours+" hour(s)";
-            }else if(timeInHours!=0&&timeInMinutes!=0){
-                time=timeInHours+" hour(s) and "+timeInMinutes+" minutes";
-            }else{
-                time=timeInMinutes+" minutes";
+            if (timeInHours == 0 && timeInMinutes != 0) {
+                time = timeInMinutes + " minutes";
+            } else if (timeInHours != 0 && timeInMinutes == 0) {
+                time = timeInHours + " hour(s)";
+            } else if (timeInHours != 0 && timeInMinutes != 0) {
+                time = timeInHours + " hour(s) and " + timeInMinutes + " minutes";
+            } else {
+                time = timeInMinutes + " minutes";
             }
 
-            int mmb = Integer.parseInt(durationinminb)/60;
+            int mmb = Integer.parseInt(durationinminb) / 60;
 
-            long timeInHoursb = diffInMinutesNext/60;
-            long timeInMinutesb = diffInMinutesNext%60;
+            long timeInHoursb = diffInMinutesNext / 60;
+            long timeInMinutesb = diffInMinutesNext % 60;
             String timeb;
-            if(timeInHoursb==0&&timeInMinutesb!=0){
-                timeb=timeInMinutesb+" minutes";
-            }else if(timeInHoursb!=0&&timeInMinutesb==0){
-                timeb=timeInHoursb+" hour(s)";
-            }else if(timeInHoursb!=0&&timeInMinutesb!=0){
-                timeb=timeInHoursb+" hour(s) and "+timeInMinutesb+" minutes";
-            }else{
-                timeb=timeInMinutesb+" minutes";
+            if (timeInHoursb == 0 && timeInMinutesb != 0) {
+                timeb = timeInMinutesb + " minutes";
+            } else if (timeInHoursb != 0 && timeInMinutesb == 0) {
+                timeb = timeInHoursb + " hour(s)";
+            } else if (timeInHoursb != 0 && timeInMinutesb != 0) {
+                timeb = timeInHoursb + " hour(s) and " + timeInMinutesb + " minutes";
+            } else {
+                timeb = timeInMinutesb + " minutes";
             }
-            if (((diffInMinutesPrev != 0) && (mm >= diffInMinutesPrev))&&((diffInMinutesNext != 0) && (mmb
+            if (((diffInMinutesPrev != 0) && (mm >= diffInMinutesPrev)) && ((diffInMinutesNext != 0) && (mmb
                     >= diffInMinutesNext))) {
-
 
 
 //
@@ -1272,11 +1267,11 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 new AlertDialog.Builder(mcontext)
                         .setTitle("Event Location Conflict")
                         .setIcon(R.drawable.location)
-                        .setMessage("Previous event: " +prevName+ " @ " + prevLoc + "\n"+ "Next event: "
-                                +nextName+ " @ "
-                                +nextLoc+ "\n" + "Needed Travel: "+durationa+ " and " + durationb+ " for " +
-                                distancea +" and "
-                                + distanceb+ "\n"+ "You only have: " + time + " and "+  timeb+ ". \n \n Do you want to add anyway?")
+                        .setMessage("Previous event: " + prevName + " @ " + prevLoc + "\n" + "Next event: "
+                                + nextName + " @ "
+                                + nextLoc + "\n" + "Needed Travel: " + durationa + " and " + durationb + " for " +
+                                distancea + " and "
+                                + distanceb + "\n" + "You only have: " + time + " and " + timeb + ". \n \n Do you want to add anyway?")
 ////
                         .setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -1295,7 +1290,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                                 } else {
 
                                     saveEventFunction(user_id, name, eventDescription, eventLocation, startDate, startTime,
-                                            endDate,  endTime,  lat, lng, allDay, recipients);
+                                            endDate, endTime, lat, lng, allDay, recipients);
                                 }
                             }
                         })
@@ -1303,8 +1298,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                         .show();
 
 
-            }
-            else if ((diffInMinutesPrev != 0) && (mm >= diffInMinutesPrev)) {
+            } else if ((diffInMinutesPrev != 0) && (mm >= diffInMinutesPrev)) {
 
                 Log.i("Event loc", "check");
 //
@@ -1313,8 +1307,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 //
 //                StringTokenizer x = new StringTokenizer(L, ",");
 //                String add_a = x.nextToken();
-
-
 
 
                 new AlertDialog.Builder(mcontext)
@@ -1339,7 +1331,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                                 } else {
 
                                     saveEventFunction(user_id, name, eventDescription, eventLocation, startDate, startTime,
-                                            endDate,  endTime,  lat, lng, allDay, recipients);
+                                            endDate, endTime, lat, lng, allDay, recipients);
                                 }
                             }
                         })
@@ -1347,8 +1339,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                         .show();
 
 
-            }
-            else if ((diffInMinutesNext != 0) && (mmb >= diffInMinutesNext)) {
+            } else if ((diffInMinutesNext != 0) && (mmb >= diffInMinutesNext)) {
 
                 Log.i("Event loc", "check");
 
@@ -1381,7 +1372,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                                 } else {
 
                                     saveEventFunction(user_id, name, eventDescription, eventLocation, startDate, startTime,
-                                            endDate,  endTime,  lat, lng, allDay, recipients);
+                                            endDate, endTime, lat, lng, allDay, recipients);
                                 }
                             }
                         })
@@ -1389,37 +1380,35 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                         .show();
 
 
-            }else if (con != null && con.getCount() > 0) {
+            } else if (con != null && con.getCount() > 0) {
 
                 timeconflict(con, name, eventDescription, eventLocation, startDate,
                         startTime, endDate, endTime, useremail, lat, lng);
-            }
-            else {
+            } else {
 
                 saveEventFunction(user_id, name, eventDescription, eventLocation, startDate, startTime,
-                        endDate,  endTime,  lat, lng, allDay, recipients);
+                        endDate, endTime, lat, lng, allDay, recipients);
             }
-        }
-        else if(!ra.isEmpty()){
-            StringTokenizer s =new StringTokenizer(ra,"^");
-            String distance=s.nextToken();
-            String durationa=s.nextToken();
-            String durationinmina=s.nextToken();
-            Log.i("locationCon duration: ",durationa);
+        } else if (!ra.isEmpty()) {
+            StringTokenizer s = new StringTokenizer(ra, "^");
+            String distance = s.nextToken();
+            String durationa = s.nextToken();
+            String durationinmina = s.nextToken();
+            Log.i("locationCon duration: ", durationa);
 
-            int mm = Integer.parseInt(durationinmina)/60;
+            int mm = Integer.parseInt(durationinmina) / 60;
 
-            long timeInHours = diffInMinutesPrev/60;
-            long timeInMinutes = diffInMinutesPrev%60;
+            long timeInHours = diffInMinutesPrev / 60;
+            long timeInMinutes = diffInMinutesPrev % 60;
             String time;
-            if(timeInHours==0&&timeInMinutes!=0){
-                time=timeInMinutes+" minutes";
-            }else if(timeInHours!=0&&timeInMinutes==0){
-                time=timeInHours+" hour(s)";
-            }else if(timeInHours!=0&&timeInMinutes!=0){
-                time=timeInHours+" hour(s) and "+timeInMinutes+" minutes";
-            }else{
-                time=timeInMinutes+" minutes";
+            if (timeInHours == 0 && timeInMinutes != 0) {
+                time = timeInMinutes + " minutes";
+            } else if (timeInHours != 0 && timeInMinutes == 0) {
+                time = timeInHours + " hour(s)";
+            } else if (timeInHours != 0 && timeInMinutes != 0) {
+                time = timeInHours + " hour(s) and " + timeInMinutes + " minutes";
+            } else {
+                time = timeInMinutes + " minutes";
             }
             if ((diffInMinutesPrev != 0) && (mm >= diffInMinutesPrev)) {
 
@@ -1451,7 +1440,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                                 } else {
 
                                     saveEventFunction(user_id, name, eventDescription, eventLocation, startDate, startTime,
-                                            endDate,  endTime,  lat, lng, allDay, recipients);
+                                            endDate, endTime, lat, lng, allDay, recipients);
                                 }
                             }
                         })
@@ -1459,37 +1448,36 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                         .show();
 
 
-            }else if (con != null && con.getCount() > 0) {
+            } else if (con != null && con.getCount() > 0) {
 
                 timeconflict(con, name, eventDescription, eventLocation, startDate,
                         startTime, endDate, endTime, useremail, lat, lng);
 
-            }else {
+            } else {
 
                 saveEventFunction(user_id, name, eventDescription, eventLocation, startDate, startTime,
-                        endDate,  endTime,  lat, lng, allDay, recipients);
+                        endDate, endTime, lat, lng, allDay, recipients);
             }
 
-        }
-        else if(!rb.isEmpty()){
-            StringTokenizer s =new StringTokenizer(rb,"^");
-            String distanceb=s.nextToken();
-            String durationb=s.nextToken();
-            String durationinminb=s.nextToken();
-            Log.i("locationCon duration: ",durationb);
-            StringTokenizer st =new StringTokenizer(durationb," ");
-            int mm = Integer.parseInt(durationinminb)/60;
-            long timeInHours = diffInMinutesNext/60;
-            long timeInMinutes = diffInMinutesNext%60;
+        } else if (!rb.isEmpty()) {
+            StringTokenizer s = new StringTokenizer(rb, "^");
+            String distanceb = s.nextToken();
+            String durationb = s.nextToken();
+            String durationinminb = s.nextToken();
+            Log.i("locationCon duration: ", durationb);
+            StringTokenizer st = new StringTokenizer(durationb, " ");
+            int mm = Integer.parseInt(durationinminb) / 60;
+            long timeInHours = diffInMinutesNext / 60;
+            long timeInMinutes = diffInMinutesNext % 60;
             String time;
-            if(timeInHours==0&&timeInMinutes!=0){
-                time=timeInMinutes+" minutes";
-            }else if(timeInHours!=0&&timeInMinutes==0){
-                time=timeInHours+" hours";
-            }else if(timeInHours!=0&&timeInMinutes!=0){
-                time=timeInHours+" hours and "+timeInMinutes+" minutes";
-            }else{
-                time=timeInMinutes+" minutes";
+            if (timeInHours == 0 && timeInMinutes != 0) {
+                time = timeInMinutes + " minutes";
+            } else if (timeInHours != 0 && timeInMinutes == 0) {
+                time = timeInHours + " hours";
+            } else if (timeInHours != 0 && timeInMinutes != 0) {
+                time = timeInHours + " hours and " + timeInMinutes + " minutes";
+            } else {
+                time = timeInMinutes + " minutes";
             }
             if ((diffInMinutesNext != 0) && (mm >= diffInMinutesNext)) {
 
@@ -1523,7 +1511,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                                 } else {
 
                                     saveEventFunction(user_id, name, eventDescription, eventLocation, startDate, startTime,
-                                            endDate,  endTime,  lat, lng, allDay, recipients);
+                                            endDate, endTime, lat, lng, allDay, recipients);
                                 }
                             }
                         })
@@ -1531,14 +1519,14 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                         .show();
 
 
-            }else if (con != null && con.getCount() > 0) {
+            } else if (con != null && con.getCount() > 0) {
 
                 timeconflict(con, name, eventDescription, eventLocation, startDate,
                         startTime, endDate, endTime, useremail, lat, lng);
-            }else {
+            } else {
 
                 saveEventFunction(user_id, name, eventDescription, eventLocation, startDate, startTime,
-                        endDate,  endTime,  lat, lng, allDay, recipients);
+                        endDate, endTime, lat, lng, allDay, recipients);
             }
         }
     }

@@ -96,7 +96,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
                 builder = new NotificationCompat.Builder(this)
                         .addAction(R.drawable.ic_check_circle_blue_500_18dp, "View", PendingIntent.getActivity(this, dummyuniqueInt, detailsIntent1, PendingIntent.FLAG_UPDATE_CURRENT)) // #0
-                        .addAction(R.drawable.ic_cancel_blue_500_18dp, "Decline", PendingIntent.getActivity(this, dummyuniqueInt, detailsIntent2, PendingIntent.FLAG_UPDATE_CURRENT))  // #1
+//                        .addAction(R.drawable.ic_cancel_blue_500_18dp, "Decline", PendingIntent.getActivity(this, dummyuniqueInt, detailsIntent2, PendingIntent.FLAG_UPDATE_CURRENT))  // #1
                         .setAutoCancel(true)
                         .setContentTitle(remoteMessage.getData().get("eventname"))
                         .setContentText(remoteMessage.getData().get("text"))

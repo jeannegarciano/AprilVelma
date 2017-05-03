@@ -177,7 +177,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return c;
     }
 
-    public void deleteEvent(int event_id) {
+    public void deleteEvent(String event_id) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         try {
@@ -314,7 +314,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return c;
     }
 
-    public void updateEvent(int event_id, String event_name, String event_description, String event_location, String longitude,
+    public void updateEvent(String event_id, String event_name, String event_description, String event_location, String longitude,
                             String latitude, String start_date, String start_time, String end_date, String end_time, String is_whole_day, String recipients) {
 
         SQLiteDatabase sql = this.getWritableDatabase();

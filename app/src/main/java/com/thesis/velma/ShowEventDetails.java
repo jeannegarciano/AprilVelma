@@ -1,5 +1,7 @@
 package com.thesis.velma;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +10,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -38,9 +41,9 @@ public class ShowEventDetails extends AppCompatActivity {
     String eventName, eventDesc, sdate, edate, stime, etime, location, friends, lng, lat, role;
     Long unixtime = null;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         mcontext=this;
         db = new DataBaseHandler(mcontext);
@@ -81,14 +84,15 @@ public class ShowEventDetails extends AppCompatActivity {
             eventDesc = c.getString(c.getColumnIndex(DBInfo.DataInfo.EVENT_DESCRIPTION));
             sdate = c.getString(c.getColumnIndex(DBInfo.DataInfo.START_DATE));
             edate = c.getString(c.getColumnIndex(DBInfo.DataInfo.END_DATE));
-            stime = c.getString(c.getColumnIndex("start_time"));
-            etime = c.getString(c.getColumnIndex("end_time"));
+            stime = c.getString(c.getColumnIndex(DBInfo.DataInfo.START_TIME));
+            etime = c.getString(c.getColumnIndex(DBInfo.DataInfo.END_TIME));
             location = c.getString(c.getColumnIndex(DBInfo.DataInfo.EVENT_LOCATION));
             friends = c.getString(c.getColumnIndex(DBInfo.DataInfo.RECIPIENTS));
             role = c.getString(c.getColumnIndex(DBInfo.DataInfo.ROLE));
         }
 
         Log.d("StartTimeeeee: ", stime);
+
 
         collapsingToolbarLayout.setTitle(eventName);
         mdesc.setText(eventDesc);
@@ -144,10 +148,9 @@ public class ShowEventDetails extends AppCompatActivity {
         metime.setText(newEtime);
         mlocation.setText(location);
 
-        String[] separated = friends.split(",");
-        for (int i=0; i<separated.length; i++)
-        {
-        }
+//        String[] separated = friends.split(",");
+//        for (int i=0; i<separated.length; i++){
+//        }
         mfriends.setText(friends);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -202,7 +205,7 @@ public class ShowEventDetails extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
 
-                                        db.deleteEvent(Integer.valueOf(id));
+                                        db.deleteEvent(id);
 
                                         OkHttp.getInstance(mcontext).deleteEvent(id);
                                         Intent i = new Intent(ShowEventDetails.this, LandingActivity.class);
@@ -214,6 +217,7 @@ public class ShowEventDetails extends AppCompatActivity {
                                 .setPositiveButton("No", null)
                                 .show();
                     }
+
                 }
 
                 return true;

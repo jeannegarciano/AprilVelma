@@ -16,6 +16,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -562,11 +563,11 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
             String sharedPrefUserId = sharedPreferences.getString("user_id", null);
 
             if (locationIsClick==true){
-                OkHttp.getInstance(getBaseContext()).updateEvent(Integer.valueOf(id), name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
-                LandingActivity.db.updateEvent(Integer.valueOf(id), name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listinvitesid);
+                OkHttp.getInstance(getBaseContext()).updateEvent(id, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
+                LandingActivity.db.updateEvent(id, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listinvitesid);
             } else {
-                OkHttp.getInstance(getBaseContext()).updateEvent(Integer.valueOf(id), name, eventDescription, eventLocation, longi,  lati, startDate, startTime, endDate, endTime, eventAllDay, listid);
-                LandingActivity.db.updateEvent(Integer.valueOf(id), name, eventDescription, eventLocation, longi,  lati, startDate, startTime, endDate, endTime, eventAllDay, listinvitesid);
+                OkHttp.getInstance(getBaseContext()).updateEvent(id, name, eventDescription, eventLocation, longi,  lati, startDate, startTime, endDate, endTime, eventAllDay, listid);
+                LandingActivity.db.updateEvent(id, name, eventDescription, eventLocation, longi,  lati, startDate, startTime, endDate, endTime, eventAllDay, listinvitesid);
             }
 
 

@@ -996,7 +996,7 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
         Log.i("Event ID: ", eventID);
 
 //
-        LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), Integer.parseInt(eventID), name, eventDescription,
+        LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), eventID, name, eventDescription,
                 eventLocation, lng, lat, startDate, startTime, endDate, endTime, null, "Creator", null);
 
         Intent i = new Intent(ConflictActivity.this, LandingActivity.class);
