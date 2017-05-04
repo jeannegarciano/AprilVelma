@@ -148,15 +148,15 @@ public class UpdateOnboardingActivity extends AppCompatActivity {
 
         String nameTitle="", description="", location="";
 
-        Cursor c = db.getEventDetails(Long.valueOf(id));
-        while (c.moveToNext()){
-            nameTitle = c.getString(c.getColumnIndex("EventName"));
-            description = c.getString(c.getColumnIndex("EventDescription"));
-            location = c.getString(c.getColumnIndex("EventLocation"));
-            eventID = c.getLong(c.getColumnIndex("EventID"));
-            latPass = c.getString(c.getColumnIndex("Extra3"));
-            lngPass = c.getString(c.getColumnIndex("Extra4"));
-        }
+//        Cursor c = db.getEventDetails(id);
+//        while (c.moveToNext()){
+//            nameTitle = c.getString(c.getColumnIndex("EventName"));
+//            description = c.getString(c.getColumnIndex("EventDescription"));
+//            location = c.getString(c.getColumnIndex("EventLocation"));
+//            eventID = c.getLong(c.getColumnIndex("EventID"));
+//            latPass = c.getString(c.getColumnIndex("Extra3"));
+//            lngPass = c.getString(c.getColumnIndex("Extra4"));
+//        }
 
         latitude = Double.valueOf(latPass.trim()).doubleValue();
         longtiude = Double.valueOf(lngPass.trim()).doubleValue();

@@ -989,7 +989,8 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
 
 
 
-        OkHttp.getInstance(getBaseContext()).saveEvent(sharedPrefUserId, name, eventDescription, eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
+       // OkHttp.getInstance(getBaseContext()).saveEvent(sharedPrefUserId, name, eventDescription, eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
+//        OkHttp.getInstance(getBaseContext()).saveEvent(unique_id, sharedPrefUserId, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
         eventID = prefs.getString("eventID", null);

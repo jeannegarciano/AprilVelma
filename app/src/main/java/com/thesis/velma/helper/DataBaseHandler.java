@@ -57,7 +57,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     //region METHODS
 
-    public void updateEventStatus(Long eventid, String status) {
+    public void updateEventStatus(String eventid, String status) {
 
         SQLiteDatabase sql = this.getWritableDatabase();
 
@@ -91,7 +91,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         cv.put(DataInfo.IS_WHOLE_DAY, is_whole_day);
         cv.put(DataInfo.ROLE, role);
         cv.put(DataInfo.RECIPIENTS, recipients);
-        cv.put(DataInfo.EventStatus, "ACCEPTED");
 
         sql.insert(DataInfo.TABLE_EVENTS, null, cv);
     }
@@ -149,11 +148,22 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     }
 
+//    public Cursor getEvents() {
+//
+//        SQLiteDatabase sql = db.getReadableDatabase();
+//
+//        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS + " Where EventStatus ='ACCEPTED'", null);
+//
+//        return c;
+//
+//    }
+
+
     public Cursor getEvents() {
 
         SQLiteDatabase sql = db.getReadableDatabase();
 
-        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS + " Where EventStatus ='ACCEPTED'", null);
+        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS, null);
 
         return c;
 
@@ -169,7 +179,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     }
 
-    public Cursor getEventDetails(long event_id) {
+    public Cursor getEventDetails(String event_id) {
 
         SQLiteDatabase sql = db.getReadableDatabase();
 

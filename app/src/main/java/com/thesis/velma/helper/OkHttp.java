@@ -182,11 +182,12 @@ public class OkHttp {
 //
 //    }
 
-    public void saveEvent(String user_id, String event_name, String event_description, String event_location,
+    public void saveEvent(String unique_event_id, String user_id, String event_name, String event_description, String event_location,
                           String longitude, String latitude, String start_date, String start_time,
                           String end_date, String end_time, String is_whole_day, String[] recipients) {
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/add_event.php").newBuilder();
+        urlBuilder.addQueryParameter("unique_event_id",unique_event_id);
         urlBuilder.addQueryParameter("user_id", user_id);
         urlBuilder.addQueryParameter("event_name", event_name);
         urlBuilder.addQueryParameter("event_description", event_description);
@@ -198,7 +199,10 @@ public class OkHttp {
         urlBuilder.addQueryParameter("end_date", end_date);
         urlBuilder.addQueryParameter("end_time", end_time);
         urlBuilder.addQueryParameter("is_whole_day", is_whole_day);
-        urlBuilder.addQueryParameter("recipients", String.valueOf(recipients));
+        for (int k=0; k<recipients.length; k++){
+            urlBuilder.addQueryParameter("recipients[]", recipients[k]);
+        }
+
         String Url = urlBuilder.build().toString();
 
         Log.d("URL", Url);
@@ -217,13 +221,17 @@ public class OkHttp {
                 // ... check for failure using `isSuccessful` before proceeding
                 // Read data on the worker thread
                 final String responseData = response.body().string();
+
                 Log.d("Data", responseData);
+
                 if (response.code() == 200) {
 
-                    String readEventID = responseData.replaceAll("[^0-9]", "");
-                    Log.d("Data 200: ", readEventID);
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
-                    prefs.edit().putString("eventID", readEventID).commit();
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+
+                        }
+                    });
 
                 } else {
                     mainHandler.post(new Runnable() {
@@ -461,11 +469,12 @@ public class OkHttp {
 
     }
 
-    public void updateStatus(String userid, Long eventid)
+    public void updateStatus(String userid, String unique_event_id, String status)
     {
-        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/sendNotification.php").newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/update_status.php").newBuilder();
         urlBuilder.addQueryParameter("userid", "" + userid);
-        urlBuilder.addQueryParameter("eventid", String.valueOf(eventid));
+        urlBuilder.addQueryParameter("unique_event_id", "" +unique_event_id);
+        urlBuilder.addQueryParameter("status", "" +status);
 
         String UpdateUrl = urlBuilder.build().toString();
 

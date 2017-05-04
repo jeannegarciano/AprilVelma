@@ -296,7 +296,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 
                 int flag = 0;
                 for (int i = 0; i < invitedContacts.size(); i++) {
-                    if (invitedContacts.get(i).equals(((TextView) view).getText().toString()))
+                    if (invitedContacts.get(i).equals(((TextView) view).getText().toString()))//checking if naay duplicate.
                         flag = 1;
                 }
                 if (flag == 0) {
@@ -305,24 +305,24 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
             }
         });
 
-
-        modeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                // When clicked, show a toast with the TextView text
-                //Toast.makeText(getContext(), ((TextView) view).getText(),
-                //        Toast.LENGTH_SHORT).show();
-
-                int flag = 0;
-                for (int i = 0; i < invitedContacts.size(); i++) {
-                    if (invitedContacts.get(i).equals(((TextView) view).getText().toString()))
-                        flag = 1;
-                }
-                if (flag == 0) {
-                    invitedContacts.add(((TextView) view).getText().toString());
-                }
-            }
-        });
+//
+//        modeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            public void onItemClick(AdapterView<?> parent, View view,
+//                                    int position, long id) {
+//                // When clicked, show a toast with the TextView text
+//                //Toast.makeText(getContext(), ((TextView) view).getText(),
+//                //        Toast.LENGTH_SHORT).show();
+//
+//                int flag = 0;
+//                for (int i = 0; i < invitedContacts.size(); i++) {
+//                    if (invitedContacts.get(i).equals(((TextView) view).getText().toString()))
+//                        flag = 1;
+//                }
+//                if (flag == 0) {
+//                    invitedContacts.add(((TextView) view).getText().toString());
+//                }
+//            }
+//        });
 
 
     }
@@ -856,7 +856,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         long unixtime = (long) (1293861599 + r.nextDouble() * 60 * 60 * 24 * 365);
         Long tsLong = System.currentTimeMillis() / 1000;
 
-        String unique_id = tsLong.toString() + String.valueOf(unixtime);
+        String unique_id = String.valueOf(unixtime);
 
         String[] mydates = startDate.split("-");
         String[] mytimes = startTime.split(":");
@@ -954,7 +954,10 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mcontext);
         String sharedPrefUserId = sharedPreferences.getString("user_id", null);
 
-        OkHttp.getInstance(getBaseContext()).saveEvent(sharedPrefUserId, name, eventDescription, eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
+       // OkHttp.getInstance(getBaseContext()).saveEvent(sharedPrefUserId, name, eventDescription, eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
+        OkHttp.getInstance(getBaseContext()).saveEvent(unique_id, sharedPrefUserId, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
+
+
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
         eventID = prefs.getString("eventID", null);
@@ -971,7 +974,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 
         for (int i = 0; i <= invitedContacts.size() - 1; i++) {
             String[] target = invitedContacts.get(i).split("@");
-            OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, eventID, name,
+            OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, unique_id, name,
                     eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[0] + "Velma",
                     lat, lng, LandingActivity.useremail);//target[0]
         }

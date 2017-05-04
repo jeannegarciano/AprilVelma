@@ -71,9 +71,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             public void onClick(View v) {
                 //Load the details
 
-
-
-
                 LandingActivity.getLandingActivity().displayDetails(mDataset.get(position).getEventId());
             }
         });

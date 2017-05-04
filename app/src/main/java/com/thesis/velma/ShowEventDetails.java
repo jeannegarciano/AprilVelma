@@ -77,7 +77,7 @@ public class ShowEventDetails extends AppCompatActivity {
         id = bundle.getString("key");
         Log.d("cathlyn: ", id);
 
-        Cursor c = db.getEventDetails(Long.valueOf(id));
+        Cursor c = db.getEventDetails(id);
 
         while (c.moveToNext()){
             eventName = c.getString(c.getColumnIndex(DBInfo.DataInfo.EVENT_NAME));

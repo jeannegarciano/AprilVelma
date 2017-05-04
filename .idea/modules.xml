@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AprilVelma.iml" filepath="$PROJECT_DIR$/AprilVelma.iml" />
+      <module fileurl="file://$PROJECT_DIR$/VelmaMarchSix-myBranch.iml" filepath="$PROJECT_DIR$/VelmaMarchSix-myBranch.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/velmawear/velmawear.iml" filepath="$PROJECT_DIR$/velmawear/velmawear.iml" />
     </modules>

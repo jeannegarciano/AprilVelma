@@ -15,7 +15,11 @@ public class EventsEntity {
 
     @SerializedName("event_id")
     @Expose
-    private String event_id;
+    private int event_id;
+
+    @SerializedName("unique_event_id")
+    @Expose
+    private String unique_event_id;
 
     @SerializedName("event_name")
     @Expose
@@ -73,7 +77,7 @@ public class EventsEntity {
     @Expose
     private String email;
 
-    public EventsEntity(int user_id, String event_id, String event_name, String event_description, String event_location, String longitude, String latitude, String start_date, String start_time, String end_date, String end_time, String is_whole_day, String role, String status, String name, String email) {
+    public EventsEntity(int user_id, int event_id, String event_name, String event_description, String event_location, String longitude, String latitude, String start_date, String start_time, String end_date, String end_time, String is_whole_day, String role, String status, String name, String email) {
         this.setUser_id(user_id);
         this.setEvent_id(event_id);
         this.setEvent_name(event_name);
@@ -101,12 +105,20 @@ public class EventsEntity {
         this.user_id = user_id;
     }
 
-    public String getEvent_id() {
+    public int getEvent_id() {
         return event_id;
     }
 
-    public void setEvent_id(String event_id) {
+    public void setEvent_id(int event_id) {
         this.event_id = event_id;
+    }
+
+    public String getUnique_event_id() {
+        return unique_event_id;
+    }
+
+    public void setUnique_event_id(String unique_event_id) {
+        this.unique_event_id = unique_event_id;
     }
 
     public String getEvent_name() {
@@ -124,6 +136,7 @@ public class EventsEntity {
     public void setEvent_description(String event_description) {
         this.event_description = event_description;
     }
+
 
     public String getEvent_location() {
         return event_location;

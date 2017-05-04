@@ -55,7 +55,7 @@ public class acceptEvent extends AppCompatActivity {
     TextView userT, userId, eventT, eventId;
     Button accept;
     String en, des, sDate, endDate, sTime, eTime, iFriends, locat, idUser, lat, lng, eventID, creator;
-    Long idEvent;
+    String idEvent;
     String modetravel = "driving";
     Bundle b;
     private PendingIntent pendingIntent;
@@ -130,7 +130,7 @@ public class acceptEvent extends AppCompatActivity {
             iFriends = b.getString("invitedfirends");
             locat = b.getString("eventLocation");
             idUser = b.getString("userid");
-            idEvent = b.getLong("eventid");
+            idEvent = b.getString("eventid");
             lat = b.getString("lat");
             lng = b.getString("lng");
             creator = b.getString("creatorEmail");
@@ -155,16 +155,17 @@ public class acceptEvent extends AppCompatActivity {
                 String target[] = creator.split("@");
 
                 OkHttp.getInstance(mcontext).sendNotificationReply("confirmEvent", en, des, target[0] + "Velma");
-                OkHttp.getInstance(mcontext).updateStatus(idUser,idEvent);
+                OkHttp.getInstance(mcontext).updateStatus(idUser,idEvent, "Accepted");
                 Toast.makeText(getApplicationContext(), "Accept event invitation", Toast.LENGTH_SHORT).show();
 
-
+                LandingActivity.db.updateEventStatus(idEvent,"Accepted");
 
                 Intent i = new Intent(acceptEvent.this, LandingActivity.class);
                 finish();
                 startActivity(i);
 
-                LandingActivity.db.updateEventStatus(b.getLong("eventid"),"ACCEPTED");
+//                LandingActivity.db.updateEventStatus(b.getLong("eventid"),"ACCEPTED");
+                //LandingActivity.db.updateEventStatus(idEvent,"ACCEPTED");
 
 
                 //          saveEventFunction(idEvent,  en,  des, locat,sDate, sTime,  endDate, eTime, b.getString("notify"), iFriends,  lat,lng);
@@ -179,7 +180,7 @@ public class acceptEvent extends AppCompatActivity {
                 String target[] = creator.split("@");
 
                 OkHttp.getInstance(mcontext).sendNotificationReply("declineEvent", en, des, target[0] + "Velma");
-
+                OkHttp.getInstance(mcontext).updateStatus(idUser,idEvent, "Declined");
                 Toast.makeText(getApplicationContext(), "Declined event invitation", Toast.LENGTH_SHORT).show();
 
                 Intent i = new Intent(acceptEvent.this, LandingActivity.class);

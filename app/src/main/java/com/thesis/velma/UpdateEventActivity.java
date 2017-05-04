@@ -122,7 +122,7 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
         Bundle bundle = getIntent().getExtras();
         id = bundle.getString("key");
 
-        Cursor a = LandingActivity.db.getEventDetails(Long.valueOf(id));
+        Cursor a = LandingActivity.db.getEventDetails(id);
 
 
         while (a.moveToNext()){

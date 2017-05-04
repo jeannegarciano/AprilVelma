@@ -67,7 +67,7 @@ public class UpdateOnboardingFragment2 extends Fragment implements View.OnClickL
 
         Log.d("success:", id);
 
-        Cursor c = db.getEventDetails(Long.valueOf(id));
+        Cursor c = db.getEventDetails(id);
 
         String startDate="", endDate="", startTime="", endTime="";
 

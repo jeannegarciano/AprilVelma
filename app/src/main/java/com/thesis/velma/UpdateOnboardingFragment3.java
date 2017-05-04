@@ -86,21 +86,21 @@ public class UpdateOnboardingFragment3 extends Fragment implements GoogleApiClie
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String id = preferences.getString("key", "value");
 
-        Cursor cursor = db.getEventDetails(Long.valueOf(id));
-
-        String friends="";
-
-        while (cursor.moveToNext()){
-            friends = cursor.getString(cursor.getColumnIndex("Extra1"));
-        }
+//        Cursor cursor = db.getEventDetails(Long.valueOf(id));
+//
+//        String friends="";
+//
+//        while (cursor.moveToNext()){
+//            friends = cursor.getString(cursor.getColumnIndex("Extra1"));
+//        }
 
         //buidNewGoogleApiClient();
 
         text = (TextView) rootView.findViewById(R.id.inviteTitle);
         text.setTypeface(custom_font);
-        mtxtinvited = (EditText) rootView.findViewById(R.id.invitedlist);
-        mtxtinvited.setTypeface(custom_font);
-        mtxtinvited.setText(friends);
+//        mtxtinvited = (EditText) rootView.findViewById(R.id.invitedlist);
+//        mtxtinvited.setTypeface(custom_font);
+//        mtxtinvited.setText(friends);
         inviteFriends = (Button) rootView.findViewById(R.id.invitepeople);
         inviteFriends.setTypeface(custom_font);
         inviteFriends.setOnClickListener(this);
