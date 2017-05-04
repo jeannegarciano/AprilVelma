@@ -222,8 +222,10 @@ public class acceptEvent extends AppCompatActivity {
                 String target[] = creator.split("@");
 
                 OkHttp.getInstance(mcontext).sendNotificationReply("confirmEvent", en, des, target[0] + "Velma");
-
+                OkHttp.getInstance(mcontext).updateStatus(idUser,idEvent);
                 Toast.makeText(getApplicationContext(), "Accept event invitation", Toast.LENGTH_SHORT).show();
+
+
 
                 Intent i = new Intent(acceptEvent.this, LandingActivity.class);
                 finish();

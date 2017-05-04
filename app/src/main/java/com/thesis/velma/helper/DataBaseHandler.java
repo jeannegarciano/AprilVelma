@@ -54,9 +54,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     //region METHODS
 
-    public void saveEvent(int user_id, int event_id, String event_name, String event_description, String event_location,
+    public void saveEvent(int user_id, String event_id, String event_name, String event_description, String event_location,
                           String longitude, String latitude, String start_date, String start_time, String end_date, String end_time,
-                           String is_whole_day, String role, String recipients) {
+                          String is_whole_day, String role, String recipients) {
 
         SQLiteDatabase sql = this.getWritableDatabase();
 
@@ -78,6 +78,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         sql.insert(DataInfo.TABLE_EVENTS, null, cv);
     }
+
 
     public void saveContact(int user_id, String name, String email) {
 
@@ -122,7 +123,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return c;
     }
 
-    public void deleteEvent(int event_id) {
+    public void deleteEvent(String event_id) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         try {
@@ -257,7 +258,7 @@ public Cursor getid(String eId){
         return c;
     }
 
-    public void updateEvent(int event_id, String event_name, String event_description, String event_location, String longitude,
+    public void updateEvent(String event_id, String event_name, String event_description, String event_location, String longitude,
                             String latitude, String start_date, String start_time, String end_date, String end_time, String is_whole_day, String recipients) {
 
         SQLiteDatabase sql = this.getWritableDatabase();

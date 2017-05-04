@@ -25,8 +25,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.tibolte.agendacalendarview.AgendaCalendarView;
 import com.github.tibolte.agendacalendarview.CalendarPickerController;
@@ -241,7 +239,7 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
 
 
         } else {
-     //       Toast.makeText(getBaseContext(), "Location Failed", Toast.LENGTH_SHORT).show();
+            //       Toast.makeText(getBaseContext(), "Location Failed", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -357,10 +355,6 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
                 final String sharedPrefUserId = prefs.getString("user_id", null);
 
-
-
-
-
                 int status = NetworkUtil.getConnectivityStatusString(mcontext);
 
                 if (status == 0) {
@@ -394,7 +388,7 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
                                     recipients.clear();
 
                                     int user_id = eventsEntityList.get(i).getUser_id();
-                                    int event_id = eventsEntityList.get(i).getEvent_id();
+                                    String event_id = eventsEntityList.get(i).getEvent_id();
                                     String event_name = eventsEntityList.get(i).getEvent_name();
                                     String event_description = eventsEntityList.get(i).getEvent_description();
                                     String event_location = eventsEntityList.get(i).getEvent_location();
@@ -413,7 +407,7 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
                                     for (j=0; j<eventsEntityList.size(); j++) {
 
                                         int userID = eventsEntityList.get(j).getUser_id();
-                                        int eventID = eventsEntityList.get(j).getEvent_id();
+                                        String eventID = eventsEntityList.get(j).getEvent_id();
                                         String rec_name = eventsEntityList.get(j).getName();
                                         String rec_status = eventsEntityList.get(j).getStatus();
 
@@ -422,7 +416,7 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
                                         }
                                     }
 
-                                    if (sharedPrefUserId.equals(String.valueOf(user_id))) {
+                                    if (sharedPrefUserId.equals(String.valueOf(user_id)) && status.equals("Accepted")) {
 
                                         String friends = String.valueOf(recipients)
                                                 .replace(",", " ")
@@ -455,11 +449,6 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
                 }
 
                 return true;
-
-            case R.id.action_notification:
-
-                Toast.makeText(getApplicationContext(), "You clicked the notification icon", Toast.LENGTH_LONG).show();
-
             default:
                 return super.onOptionsItemSelected(item);
         }

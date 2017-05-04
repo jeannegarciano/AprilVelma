@@ -68,6 +68,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
@@ -495,7 +496,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                         }
                     }, eHour, eMinute, false);
 
-
             timePickerDialog.show();
         }
 
@@ -919,6 +919,12 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
     public void saveEventFunction(String user_id, String name, String eventDescription, String eventLocation, String startDate, String startTime,
                                   String endDate, String endTime, String lat, String lng, String eventAllDay, ArrayList<String> recipients) {
 
+        Random r = new Random();
+        long unixtime = (long) (1293861599 + r.nextDouble() * 60 * 60 * 24 * 365);
+        Long tsLong = System.currentTimeMillis()/1000;
+
+        String unique_id = tsLong.toString() + String.valueOf(unixtime);
+
         String[] mydates = startDate.split("-");
         String[] mytimes = startTime.split(":");
 
@@ -1047,21 +1053,15 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 //        Log.i("User ID: ", sharedPrefUserId);
 
 //
-        LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), Integer.parseInt(eventID), name, eventDescription,
-                eventLocation, lng, lat, startDate, startTime, endDate, endTime, null, "Creator", null);
+//        LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), Integer.parseInt(eventID), name, eventDescription,
+//                eventLocation, lng, lat, startDate, startTime, endDate, endTime, null, "Creator", null);
+
+        LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), unique_id, name, eventDescription,
+                eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, "Creator", listinvitesid);
 
 
-//        String myEmail = "gjeannevie";
-//        OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, eventID, name,
-//                eventDescription, eventLocation, startDate, startTime, endDate, endTime, myEmail + "Velma",
-//                lat, lng, LandingActivity.useremail);
 
-        for (int i = 0; i <= invitedContacts.size() - 1; i++) {
-            String[] target = invitedContacts.get(i).split("@");
-            OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, eventID, name,
-                    eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[0] + "Velma",
-                    lat, lng, LandingActivity.useremail);//target[0]
-        }
+
 
 
         Intent i = new Intent(createEvent.this, LandingActivity.class);

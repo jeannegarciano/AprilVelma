@@ -305,8 +305,6 @@ public class OkHttp {
                             Toast.makeText(mcontext, "Failed to register", Toast.LENGTH_SHORT).show();
                         }
                     });
-
-
                 }
             }
         });
@@ -461,6 +459,48 @@ public class OkHttp {
             }
         });
 
+    }
+
+    public void updateStatus(String userid, Long eventid)
+    {
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/sendNotification.php").newBuilder();
+        urlBuilder.addQueryParameter("userid", "" + userid);
+        urlBuilder.addQueryParameter("eventid", String.valueOf(eventid));
+
+        String UpdateUrl = urlBuilder.build().toString();
+
+        Log.d("URL", UpdateUrl);
+
+        Request request = new Request.Builder()
+                .url(UpdateUrl)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                // ... check for failure using `isSuccessful` before proceeding
+                // Read data on the worker thread
+                final String responseData = response.body().string();
+                Log.d("Data", responseData);
+                if (response.code() == 200) {
+                    // Run view-related code back on the main thread
+
+                } else {
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(mcontext, "Failed to register", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+
+                }
+            }
+        });
 
     }
 
@@ -704,12 +744,12 @@ public class OkHttp {
 //    }
 
 
-    public void updateEvent(int event_id, String event_name, String event_description, String event_location,
+    public void updateEvent(String unique_event_id, String event_name, String event_description, String event_location,
                             String longitude, String latitude, String start_date, String start_time, String end_date,
                             String end_time, String is_whole_day, String[] recipients ) {
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/update_event.php").newBuilder();
-        urlBuilder.addQueryParameter("event_id", "" + event_id);
+        urlBuilder.addQueryParameter("unique_event_id", unique_event_id);
         urlBuilder.addQueryParameter("event_name", event_name);
         urlBuilder.addQueryParameter("event_description", event_description);
         urlBuilder.addQueryParameter("event_location", event_location);
