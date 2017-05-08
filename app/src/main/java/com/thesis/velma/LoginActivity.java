@@ -131,6 +131,8 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_main);
+        db = new DataBaseHandler(this);
+        db.getWritableDatabase();
 
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -202,7 +204,6 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
 
         mcontext = this;
 
-        db = new DataBaseHandler(mcontext);
         checkPermissions();
     }
 

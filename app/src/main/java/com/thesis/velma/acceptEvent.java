@@ -1,27 +1,19 @@
 package com.thesis.velma;
 
-import android.app.AlarmManager;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,20 +23,9 @@ import com.thesis.velma.helper.OkHttp;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.StringTokenizer;
-import java.util.concurrent.TimeUnit;
+
+import okhttp3.HttpUrl;
 
 public class acceptEvent extends AppCompatActivity {
 
@@ -55,7 +36,7 @@ public class acceptEvent extends AppCompatActivity {
     TextView userT, userId, eventT, eventId;
     Button accept;
     String en, des, sDate, endDate, sTime, eTime, iFriends, locat, idUser, lat, lng, eventID, creator;
-    String idEvent;
+    Long idEvent;
     String modetravel = "driving";
     Bundle b;
     private PendingIntent pendingIntent;
@@ -66,7 +47,7 @@ public class acceptEvent extends AppCompatActivity {
     long diffInMinutesA, diffInMinutesB;
     String diffA, diffB;
     double latA, lngA, latB, lngB;
-    int eventid;
+    String eventid;
 
     ArrayList<String> myConflictEvents = new ArrayList<String>();
     ArrayList<String> myCurrentEvent = new ArrayList<>();
@@ -93,7 +74,7 @@ public class acceptEvent extends AppCompatActivity {
         userEmail = prefs.getString("Email", null);
 
         Bundle bundle = getIntent().getExtras();
-        eventid = bundle.getInt("eventid");
+        idEvent = bundle.getLong("eventid");
         Log.d("ID CANCELED", String.valueOf(eventid));
 
 
@@ -130,7 +111,7 @@ public class acceptEvent extends AppCompatActivity {
             iFriends = b.getString("invitedfirends");
             locat = b.getString("eventLocation");
             idUser = b.getString("userid");
-            idEvent = b.getString("eventid");
+            idEvent = b.getLong("eventid");
             lat = b.getString("lat");
             lng = b.getString("lng");
             creator = b.getString("creatorEmail");
@@ -153,22 +134,15 @@ public class acceptEvent extends AppCompatActivity {
             public void onClick(View view) {
 
                 String target[] = creator.split("@");
-
-                OkHttp.getInstance(mcontext).sendNotificationReply("confirmEvent", en, des, target[0] + "Velma");
-                OkHttp.getInstance(mcontext).updateStatus(idUser,idEvent, "Accepted");
+                OkHttp.getInstance(mcontext).sendNotificationReply("confirmEvent", en, des, target[0] + "Velma", idEvent);
+                OkHttp.getInstance(mcontext).updateStatus(idUser, String.valueOf(idEvent), "Accepted");
                 Toast.makeText(getApplicationContext(), "Accept event invitation", Toast.LENGTH_SHORT).show();
-
-                LandingActivity.db.updateEventStatus(idEvent,"Accepted");
+                LandingActivity.db.updateEventStatus(String.valueOf(idEvent), "Accepted");
 
                 Intent i = new Intent(acceptEvent.this, LandingActivity.class);
                 finish();
                 startActivity(i);
 
-//                LandingActivity.db.updateEventStatus(b.getLong("eventid"),"ACCEPTED");
-                //LandingActivity.db.updateEventStatus(idEvent,"ACCEPTED");
-
-
-                //          saveEventFunction(idEvent,  en,  des, locat,sDate, sTime,  endDate, eTime, b.getString("notify"), iFriends,  lat,lng);
             }
         });
 
@@ -179,15 +153,13 @@ public class acceptEvent extends AppCompatActivity {
 
                 String target[] = creator.split("@");
 
-                OkHttp.getInstance(mcontext).sendNotificationReply("declineEvent", en, des, target[0] + "Velma");
-                OkHttp.getInstance(mcontext).updateStatus(idUser,idEvent, "Declined");
+                OkHttp.getInstance(mcontext).sendNotificationReply("declineEvent", en, des, target[0] + "Velma", idEvent);
+                OkHttp.getInstance(mcontext).updateStatus(idUser, String.valueOf(idEvent), "Declined");
                 Toast.makeText(getApplicationContext(), "Declined event invitation", Toast.LENGTH_SHORT).show();
 
                 Intent i = new Intent(acceptEvent.this, LandingActivity.class);
                 finish();
                 startActivity(i);
-
-                //          saveEventFunction(idEvent,  en,  des, locat,sDate, sTime,  endDate, eTime, b.getString("notify"), iFriends,  lat,lng);
             }
         });
     }

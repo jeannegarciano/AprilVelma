@@ -17,6 +17,7 @@ public class DBInfo {
         //TableNames
         public static final String TABLE_EVENTS = "events";
         public static final String TABLE_CONTACTS = "contacts";
+        public static final String TABLE_EVENT_USERS = "events_users";
 
 
         //FieldName
@@ -45,6 +46,11 @@ public class DBInfo {
         public static final String Extra2 = "Extra2";
         public static final String Extra3 = "Extra3";
         public static final String Extra4 = "Extra4";
+
+        public static final String Status = "Status";
+
+
+
 
     }
 }

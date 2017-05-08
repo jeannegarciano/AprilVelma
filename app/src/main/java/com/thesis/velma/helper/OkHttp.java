@@ -15,9 +15,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Array;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 import okhttp3.Cache;
 import okhttp3.Call;
@@ -26,6 +24,7 @@ import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
@@ -59,7 +58,7 @@ public class OkHttp {
         return parser;
     }
 
-    public void saveProfile( String useremail, final String name) {
+    public void saveProfile(String useremail, final String name) {
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/add_user.php").newBuilder();
         urlBuilder.addQueryParameter("email", useremail);
@@ -187,7 +186,7 @@ public class OkHttp {
                           String end_date, String end_time, String is_whole_day, String[] recipients) {
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/add_event.php").newBuilder();
-        urlBuilder.addQueryParameter("unique_event_id",unique_event_id);
+        urlBuilder.addQueryParameter("unique_event_id", unique_event_id);
         urlBuilder.addQueryParameter("user_id", user_id);
         urlBuilder.addQueryParameter("event_name", event_name);
         urlBuilder.addQueryParameter("event_description", event_description);
@@ -199,7 +198,7 @@ public class OkHttp {
         urlBuilder.addQueryParameter("end_date", end_date);
         urlBuilder.addQueryParameter("end_time", end_time);
         urlBuilder.addQueryParameter("is_whole_day", is_whole_day);
-        for (int k=0; k<recipients.length; k++){
+        for (int k = 0; k < recipients.length; k++) {
             urlBuilder.addQueryParameter("recipients[]", recipients[k]);
         }
 
@@ -410,7 +409,7 @@ public class OkHttp {
 
     public void sendNotification(String invitationTitle, String userid, String eventid, String eventname, String eventDescription, String eventLocation,
                                  String eventStartDate, String eventStartTime, String eventEndDate,
-                                 String eventEndTime, String target,String lat, String lng, String creatorEmail) {
+                                 String eventEndTime, String target, String lat, String lng, String creatorEmail) {
 
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/sendNotification.php").newBuilder();
@@ -469,12 +468,11 @@ public class OkHttp {
 
     }
 
-    public void updateStatus(String userid, String unique_event_id, String status)
-    {
+    public void updateStatus(String userid, String unique_event_id, String status) {
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/update_status.php").newBuilder();
         urlBuilder.addQueryParameter("userid", "" + userid);
-        urlBuilder.addQueryParameter("unique_event_id", "" +unique_event_id);
-        urlBuilder.addQueryParameter("status", "" +status);
+        urlBuilder.addQueryParameter("unique_event_id", "" + unique_event_id);
+        urlBuilder.addQueryParameter("status", "" + status);
 
         String UpdateUrl = urlBuilder.build().toString();
 
@@ -513,7 +511,8 @@ public class OkHttp {
 
     }
 
-    public void sendNotificationReply(String invitationTitle, String eventname, String eventDescription, String target) {
+
+    public void sendNotificationReply(String invitationTitle, String eventname, String eventDescription, String target, Long eventid) {
 
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/sendNotificationReply.php").newBuilder();
@@ -522,6 +521,8 @@ public class OkHttp {
         urlBuilder.addQueryParameter("eventDescription", eventDescription);
         urlBuilder.addQueryParameter("target", target);
         urlBuilder.addQueryParameter("name", LandingActivity.profilename);
+        urlBuilder.addQueryParameter("sender", LandingActivity.useremail);
+        urlBuilder.addQueryParameter("eventid", "" + eventid);
 
 
         String Url = urlBuilder.build().toString();
@@ -564,7 +565,7 @@ public class OkHttp {
 
     public void sendNotificationUpdate(String invitationTitle, Long eventid, String eventname, String eventDescription, String eventLocation,
                                        String eventStartDate, String eventStartTime, String eventEndDate,
-                                       String eventEndTime,  String invitedfirends, String notify, String target,String lat, String lng) {
+                                       String eventEndTime, String invitedfirends, String notify, String target, String lat, String lng) {
 
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/sendNotification_update.php").newBuilder();
@@ -669,38 +670,38 @@ public class OkHttp {
         });
     }
 
-//    public void sendMessage(JSONObject robject) {
-//
-//
-//        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://fcm.googleapis.com/fcm/send").newBuilder();
-//        urlBuilder.addQueryParameter("Authorization", "AIzaSyDKV5ZLw_4bT2CUit-J567KbZhzIql7h-I");
-//        urlBuilder.addQueryParameter("data", robject.toString());
-//        String url = urlBuilder.build().toString();
-//
-//        Request request = new Request.Builder()
-//                .url(url)
-//                .method("POST", RequestBody.create(null, new byte[0]))
-//                .build();
-//
-//        Log.d("URL", request.toString());
-//
-//        client.newCall(request).enqueue(new Callback() {
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                e.printStackTrace();
-//                Log.d("URL", "Fail");
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, final Response response) throws IOException {
-//                if (!response.isSuccessful()) {
-//                    throw new IOException("Unexpected code " + response);
-//                }
-//            }
-//        });
-//
-//
-//    }
+    public void sendMessage(JSONObject robject) {
+
+
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://fcm.googleapis.com/fcm/send").newBuilder();
+        urlBuilder.addQueryParameter("Authorization", "AIzaSyCcgtyWxrwo6_oFFQwdpLOlxW_aCO24G9o");
+        urlBuilder.addQueryParameter("data", robject.toString());
+        String url = urlBuilder.build().toString();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .method("POST", RequestBody.create(null, new byte[0]))
+                .build();
+
+        Log.d("URL", request.toString());
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                Log.d("URL", "Fail");
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                }
+            }
+        });
+
+
+    }
 
 //    public void updateEvent(Long eventid, String eventname, String eventDescription, String eventLocation,
 //                            String eventStartDate, String eventStartTime, String eventEndDate,
@@ -755,7 +756,7 @@ public class OkHttp {
 
     public void updateEvent(String unique_event_id, String event_name, String event_description, String event_location,
                             String longitude, String latitude, String start_date, String start_time, String end_date,
-                            String end_time, String is_whole_day, String[] recipients ) {
+                            String end_time, String is_whole_day, String[] recipients) {
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/update_event.php").newBuilder();
         urlBuilder.addQueryParameter("unique_event_id", unique_event_id);
@@ -769,7 +770,7 @@ public class OkHttp {
         urlBuilder.addQueryParameter("end_date", end_date);
         urlBuilder.addQueryParameter("end_time", end_time);
         urlBuilder.addQueryParameter("is_whole_day", is_whole_day);
-        for (int i=0; i<recipients.length; i++){
+        for (int i = 0; i < recipients.length; i++) {
             urlBuilder.addQueryParameter("recipients[]", recipients[i]);
         }
 
@@ -806,6 +807,7 @@ public class OkHttp {
             }
         });
     }
+
     public void cancelNotification(String invitationTitle, Long eventid, String eventname, String eventDescription, String eventLocation,
                                    String eventStartTime, String eventEndTime, String eventStartDate, String eventEndDate, String invitedfirends, String target) {
 

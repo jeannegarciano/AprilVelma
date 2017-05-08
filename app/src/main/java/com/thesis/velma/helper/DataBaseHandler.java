@@ -29,7 +29,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             DataInfo.CONTACT_EMAIL + " TEXT, " +
             DataInfo.EventStatus + " TEXT," + DataInfo.Extra1 + " TEXT, " + DataInfo.Extra2 + " TEXT)";
 
-    public String CREATE_CONTACTS = "CREATE TABLE " + DataInfo.TABLE_CONTACTS + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    public String CREATE_EVENT_USERS = "CREATE TABLE " + DataInfo.TABLE_CONTACTS + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            DataInfo.EVENT_ID + " TEXT," + DataInfo.EVENT_NAME + " TEXT," +
+            DataInfo.CONTACT_EMAIL + " TEXT, " +
+            DataInfo.Status + " TEXT, " +
+            DataInfo.Extra1 + " TEXT, " +
+            DataInfo.Extra2 + " TEXT)";
+
+    public String CREATE_CONTACTS = "CREATE TABLE " + DataInfo.TABLE_EVENT_USERS + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             DataInfo.CONTACT_ID + " TEXT," + DataInfo.CONTACT_NAME + " TEXT," + DataInfo.CONTACT_EMAIL + " TEXT)";
 
 
@@ -37,6 +44,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_EVENTS);
         db.execSQL(CREATE_CONTACTS);
+        db.execSQL(CREATE_EVENT_USERS);
     }
 
     @Override
@@ -141,7 +149,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
 
         cv.put(DataInfo.CONTACT_ID, user_id);
-        cv.put(DataInfo.CONTACT_NAME, name);
+        cv.put("contact_name", name);
         cv.put(DataInfo.CONTACT_EMAIL, email);
 
         sql.insert(DataInfo.TABLE_CONTACTS, null, cv);
