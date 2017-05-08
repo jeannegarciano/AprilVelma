@@ -131,7 +131,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         return c;
 
-
     }
 
     public void saveContact(int user_id, String name, String email) {
@@ -167,6 +166,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         return c;
 
+    }
+
+    public Cursor getUserId()
+    {
+        SQLiteDatabase sql = db.getReadableDatabase();
+
+        Cursor c = sql.rawQuery("SELECT FROM "+DataInfo.TABLE_CONTACTS, null);
+
+        return c;
     }
 
     public Cursor getContacts() {
