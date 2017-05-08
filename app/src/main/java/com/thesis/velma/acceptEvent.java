@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -20,12 +21,7 @@ import android.widget.Toast;
 import com.thesis.velma.helper.DataBaseHandler;
 import com.thesis.velma.helper.OkHttp;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-
-import okhttp3.HttpUrl;
 
 public class acceptEvent extends AppCompatActivity {
 
@@ -33,7 +29,7 @@ public class acceptEvent extends AppCompatActivity {
     public static DataBaseHandler db;
     int i;
     TextView title, ename, n, edescription, description, sdText, sd, edText, ed, stText, st, et, etText, fText, f, lText, l;
-    TextView userT, userId, eventT, eventId;
+//    TextView userT, userId, eventT, eventId;
     Button accept;
     String en, des, sDate, endDate, sTime, eTime, iFriends, locat, idUser, lat, lng, eventID, creator;
     Long idEvent;
@@ -42,17 +38,19 @@ public class acceptEvent extends AppCompatActivity {
     private PendingIntent pendingIntent;
 
 
-    String locNameA = "", locLatA = "", locLngA = "", locLocationA = "", locSDA = "", locEDA = "", locSTA = "", locETA = "";
-    String locNameB = "", locLatB = "", locLngB = "", locLocationB = "", locSDB = "", locEDB = "", locSTB = "", locETB = "";
-    long diffInMinutesA, diffInMinutesB;
-    String diffA, diffB;
-    double latA, lngA, latB, lngB;
+//    String locNameA = "", locLatA = "", locLngA = "", locLocationA = "", locSDA = "", locEDA = "", locSTA = "", locETA = "";
+//    String locNameB = "", locLatB = "", locLngB = "", locLocationB = "", locSDB = "", locEDB = "", locSTB = "", locETB = "";
+//    long diffInMinutesA, diffInMinutesB;
+//    String diffA, diffB;
+//    double latA, lngA, latB, lngB;
     String eventid;
 
     ArrayList<String> myConflictEvents = new ArrayList<String>();
     ArrayList<String> myCurrentEvent = new ArrayList<>();
 
     String userEmail;
+    String eventAllDay = "allDay";
+    String friends;
 
 
     @Override
@@ -68,6 +66,9 @@ public class acceptEvent extends AppCompatActivity {
         mcontext = this;
 
         db = new DataBaseHandler(mcontext);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mcontext);
+        final String sharedPrefUserId = sharedPreferences.getString("user_id", null);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
         //then you use
@@ -115,6 +116,7 @@ public class acceptEvent extends AppCompatActivity {
             lat = b.getString("lat");
             lng = b.getString("lng");
             creator = b.getString("creatorEmail");
+            friends = b.getString("listinvitesid");
         }
 
         Log.i("Event Accept", lat + "," + lng);
@@ -128,6 +130,10 @@ public class acceptEvent extends AppCompatActivity {
         mlocation.setText(locat);
 
 
+        Cursor c = db.getUserId();
+        c.moveToFirst();
+        final String userI = c.getString(0);
+
         Button acceptInvite = (Button) findViewById(R.id.accept);
         acceptInvite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,7 +143,19 @@ public class acceptEvent extends AppCompatActivity {
                 OkHttp.getInstance(mcontext).sendNotificationReply("confirmEvent", en, des, target[0] + "Velma", idEvent);
                 OkHttp.getInstance(mcontext).updateStatus(idUser, String.valueOf(idEvent), "Accepted");
                 Toast.makeText(getApplicationContext(), "Accept event invitation", Toast.LENGTH_SHORT).show();
+
                 LandingActivity.db.updateEventStatus(String.valueOf(idEvent), "Accepted");
+
+
+                Log.d("MyData1UserId: ", String.valueOf(eventid));
+                Log.d("MyData2EvntId: ", ""+idEvent);
+                Log.d("MyData3EventName: ", en);
+                Log.d("MyData4EventDes: ", des);
+                Log.d("MyData5Friends: ", ""+friends);
+
+                LandingActivity.db.saveEvent(Integer.parseInt(userI), String.valueOf(idEvent), en, des,
+                        locat, lng, lat, sDate, sTime, endDate, eTime, eventAllDay, "Participant", friends);
+
 
                 Intent i = new Intent(acceptEvent.this, LandingActivity.class);
                 finish();

@@ -467,6 +467,7 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
                                     String name = eventsEntityList.get(i).getName();
                                     String email = eventsEntityList.get(i).getEmail();
 
+                                    Log.d("Talk:", unique_event_id + event_name);
                                     for (j=0; j<eventsEntityList.size(); j++) {
 
                                         int userID = eventsEntityList.get(j).getUser_id();

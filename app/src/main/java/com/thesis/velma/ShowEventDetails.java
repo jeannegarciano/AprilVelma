@@ -93,7 +93,6 @@ public class ShowEventDetails extends AppCompatActivity {
 
         Log.d("StartTimeeeee: ", stime);
 
-
         collapsingToolbarLayout.setTitle(eventName);
         mdesc.setText(eventDesc);
 
@@ -121,7 +120,7 @@ public class ShowEventDetails extends AppCompatActivity {
         }
         medate.setText(newEdate);
 
-        DateFormat formatstart = new SimpleDateFormat("HH:mm:ss");
+        DateFormat formatstart = new SimpleDateFormat("HH:mm");
         Date formatStime = null;
         String newStime=null;
         try {
@@ -134,7 +133,7 @@ public class ShowEventDetails extends AppCompatActivity {
 
         mstime.setText(newStime);
 
-        DateFormat formatend = new SimpleDateFormat("HH:mm:ss");
+        DateFormat formatend = new SimpleDateFormat("HH:mm");
         Date formatEtime = null;
         String newEtime = null;
         try {
@@ -205,9 +204,8 @@ public class ShowEventDetails extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
 
-                                        db.deleteEvent(id);
-
                                         OkHttp.getInstance(mcontext).deleteEvent(id);
+                                        db.deleteEvent(id);
                                         Intent i = new Intent(ShowEventDetails.this, LandingActivity.class);
                                         startActivity(i);
                                         setResult(RESULT_OK, i);

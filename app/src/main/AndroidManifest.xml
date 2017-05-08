@@ -150,7 +150,11 @@
             android:label="@string/title_activity_accept_event"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".UpdateEvent"
+        android:name=".UpdateEvent"
+        android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".UpdateEventActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".declineEvent"

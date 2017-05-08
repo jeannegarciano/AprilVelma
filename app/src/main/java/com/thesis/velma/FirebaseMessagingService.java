@@ -73,12 +73,14 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 b.putString("lat", remoteMessage.getData().get("lat"));
                 b.putString("lng", remoteMessage.getData().get("lng"));
                 b.putString("creatorEmail", remoteMessage.getData().get("creatorEmail"));
+                b.putString("listinvitesid", remoteMessage.getData().get("listinvitesid"));
 
 
                 Log.d("DataBundle1", remoteMessage.getData().get("eventname"));
                 Log.d("DataBundle2", remoteMessage.getData().get("eventid"));
 //                Log.d("DataBundle2", remoteMessage.getData().get("invitedfirends"));
                 Log.d("DataBundle1", remoteMessage.getData().get("creatorEmail"));
+                Log.d("DataBundle3", remoteMessage.getData().get("listinvitesid"));
 
                 detailsIntent1.putExtras(b);
                 detailsIntent2.putExtras(b);
@@ -201,6 +203,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                         .setSmallIcon(R.drawable.velmalogo);
 
                 manager.notify(0, builder.build());
+
+                Log.d("Event", "Confirm");
 
                 break;
 

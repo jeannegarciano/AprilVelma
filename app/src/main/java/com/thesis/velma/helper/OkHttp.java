@@ -409,7 +409,7 @@ public class OkHttp {
 
     public void sendNotification(String invitationTitle, String userid, String eventid, String eventname, String eventDescription, String eventLocation,
                                  String eventStartDate, String eventStartTime, String eventEndDate,
-                                 String eventEndTime, String target, String lat, String lng, String creatorEmail) {
+                                 String eventEndTime, String target, String lat, String lng, String creatorEmail, String listinvitesid) {
 
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/sendNotification.php").newBuilder();
@@ -430,6 +430,7 @@ public class OkHttp {
         urlBuilder.addQueryParameter("lat", lat);
         urlBuilder.addQueryParameter("lng", lng);
         urlBuilder.addQueryParameter("creatorEmail", creatorEmail);
+        urlBuilder.addQueryParameter("listinvitesid", listinvitesid);
 
         String Url = urlBuilder.build().toString();
 
@@ -515,13 +516,15 @@ public class OkHttp {
     public void sendNotificationReply(String invitationTitle, String eventname, String eventDescription, String target, Long eventid) {
 
 
+        String[] sender = LandingActivity.useremail.split("@");
+
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/sendNotificationReply.php").newBuilder();
         urlBuilder.addQueryParameter("invitationTitle", invitationTitle);
         urlBuilder.addQueryParameter("eventname", eventname);
         urlBuilder.addQueryParameter("eventDescription", eventDescription);
         urlBuilder.addQueryParameter("target", target);
         urlBuilder.addQueryParameter("name", LandingActivity.profilename);
-        urlBuilder.addQueryParameter("sender", LandingActivity.useremail);
+        urlBuilder.addQueryParameter("sender", sender[0] + "Velma");
         urlBuilder.addQueryParameter("eventid", "" + eventid);
 
 

@@ -29,14 +29,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             DataInfo.CONTACT_EMAIL + " TEXT, " +
             DataInfo.EventStatus + " TEXT," + DataInfo.Extra1 + " TEXT, " + DataInfo.Extra2 + " TEXT)";
 
-    public String CREATE_EVENT_USERS = "CREATE TABLE " + DataInfo.TABLE_CONTACTS + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    public String CREATE_EVENT_USERS = "CREATE TABLE " + DataInfo.TABLE_EVENT_USERS + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             DataInfo.EVENT_ID + " TEXT," + DataInfo.EVENT_NAME + " TEXT," +
             DataInfo.CONTACT_EMAIL + " TEXT, " +
             DataInfo.Status + " TEXT, " +
             DataInfo.Extra1 + " TEXT, " +
             DataInfo.Extra2 + " TEXT)";
 
-    public String CREATE_CONTACTS = "CREATE TABLE " + DataInfo.TABLE_EVENT_USERS + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    public String CREATE_CONTACTS = "CREATE TABLE " + DataInfo.TABLE_CONTACTS + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             DataInfo.CONTACT_ID + " TEXT," + DataInfo.CONTACT_NAME + " TEXT," + DataInfo.CONTACT_EMAIL + " TEXT)";
 
 
@@ -139,7 +139,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         return c;
 
-
     }
 
     public void saveContact(int user_id, String name, String email) {
@@ -175,6 +174,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         return c;
 
+    }
+
+
+    public Cursor getUserId() {
+        SQLiteDatabase sql = db.getReadableDatabase();
+
+        Cursor c = sql.rawQuery("SELECT DISTINCT * FROM " + DataInfo.TABLE_CONTACTS, null);
+
+        return c;
     }
 
     public Cursor getContacts() {

@@ -97,6 +97,7 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
     String user_id, allDay;
     FloatingActionButton save;
 
+    boolean isInviteButtonClicked = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -124,7 +125,6 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
 
         Cursor a = LandingActivity.db.getEventDetails(id);
 
-
         while (a.moveToNext()){
             name = a.getString(a.getColumnIndex(DBInfo.DataInfo.EVENT_NAME));
             desc = a.getString(a.getColumnIndex(DBInfo.DataInfo.EVENT_DESCRIPTION));
@@ -133,11 +133,7 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
             stime = a.getString(a.getColumnIndex(DBInfo.DataInfo.START_TIME));
             etime = a.getString(a.getColumnIndex(DBInfo.DataInfo.END_TIME));
             loc = a.getString(a.getColumnIndex(DBInfo.DataInfo.EVENT_LOCATION));
-            friends = a.getString(a.getColumnIndex(DBInfo.DataInfo.RECIPIENTS))
-                    .replace("(Pending)", " ")
-                    .replace("(Accepted)", " ")
-                    .replace("(Declined)", " ")
-                    .trim();
+            friends = a.getString(a.getColumnIndex(DBInfo.DataInfo.RECIPIENTS));
             longi = a.getString(a.getColumnIndex(DBInfo.DataInfo.LONGITUDE));
             lati = a.getString(a.getColumnIndex(DBInfo.DataInfo.LATITUDE));
 
@@ -268,7 +264,7 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-
+                        editFriends.setText(null);
                         for (int i = 0; i < invitedContacts.size(); i++) {
 
                             list = list + invitedContacts.get(i) + "\n";
@@ -315,6 +311,8 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
                 // When clicked, show a toast with the TextView text
                 //Toast.makeText(getContext(), ((TextView) view).getText(),
                 //        Toast.LENGTH_SHORT).show();
+
+                isInviteButtonClicked = true;
 
                 int flag=0;
                 for(int i=0 ; i<invitedContacts.size() ; i++){
@@ -530,11 +528,12 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
 
             String[] separated = invitedlist.split("\n");
             Cursor b = LandingActivity.db.getContacts();
-            ArrayList<String> invitesemail = new ArrayList<String>();
+            ArrayList<String> invitesid = new ArrayList<String>();
 
+            String invitesemail = "";
             String[] listid = new String[separated.length];
-
             String listinvitesid="";
+            String emailinvites = "";
 
             while (b.moveToNext()){
                 String contactsname = b.getString(b.getColumnIndex("contact_name"));
@@ -545,19 +544,51 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
 
                 for (i=0; i<separated.length; i++){
 
-                    if (contactsname.equals(separated[i])){
+                    if (contactsname.equals(separated[i].replace(" (Pending)","").replace(" (Accepted)","").replace(" (Declined)","").trim())){
 
-                        listid[i] = contactsid;
-                        listinvitesid = listinvitesid + contactsname + " (Pending)\n";
-                        invitesemail.add(contactsemail);
+                        boolean declined = separated[i].matches(".*\\b(Declined)\\b.*");
+
+                        if (!declined){
+
+                            listid[i] = contactsid;
+                            listinvitesid = listinvitesid + contactsname + " (Pending)\n";
+                            invitesid.add(contactsid);
+                            emailinvites +=  contactsemail + "\n";
+
+                            boolean contains = separated[i].matches(".*\\b(Accepted)\\b.*");
+                            Log.d("contains", String.valueOf(contains));
+
+                            if (contains){
+                                invitesemail += contactsemail + "\n";
+                            }
+                        }
                     }
-
                 }
-
             }
 
+            if (isInviteButtonClicked){
+                String[] eachemail = emailinvites.split("\n");
+                String countemail = String.valueOf(eachemail.length);
+                Log.d("countemail", countemail);
 
-            String invitedemails = invitesemail.toString();
+                for (int i=0; i<eachemail.length; i++){
+                    //codes for sending notif
+                    Log.d("Eachemail", eachemail[i]);
+                }
+                Log.d("Amodia:", emailinvites);
+
+            } else {
+                String[] eachemail = invitesemail.split("\n");
+                String countemail = String.valueOf(eachemail.length);
+                Log.d("countemail", countemail);
+
+                for (int i=0; i<eachemail.length; i++){
+                    //codes for sending notif
+                    Log.d("Eachemail", eachemail[i]);
+                }
+                Log.d("Jane:", invitesemail);
+            }
+
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mcontext);
             String sharedPrefUserId = sharedPreferences.getString("user_id", null);
