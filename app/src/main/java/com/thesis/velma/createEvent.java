@@ -295,9 +295,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
         modeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // When clicked, show a toast with the TextView text
-                //Toast.makeText(getContext(), ((TextView) view).getText(),
-                //        Toast.LENGTH_SHORT).show();
+
 
                 int flag = 0;
                 for (int i = 0; i < invitedContacts.size(); i++) {
@@ -310,24 +308,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
             }
         });
 
-//
-//        modeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            public void onItemClick(AdapterView<?> parent, View view,
-//                                    int position, long id) {
-//                // When clicked, show a toast with the TextView text
-//                //Toast.makeText(getContext(), ((TextView) view).getText(),
-//                //        Toast.LENGTH_SHORT).show();
-//
-//                int flag = 0;
-//                for (int i = 0; i < invitedContacts.size(); i++) {
-//                    if (invitedContacts.get(i).equals(((TextView) view).getText().toString()))
-//                        flag = 1;
-//                }
-//                if (flag == 0) {
-//                    invitedContacts.add(((TextView) view).getText().toString());
-//                }
-//            }
-//        });
+
 
 
     }
@@ -473,15 +454,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                         public void onTimeSet(TimePicker view, int hourOfDay,
                                               int minute) {
 
-//
-//                            if(cal.getTimeInMillis() > c.getTimeInMillis()) {
-//
-//                                Toast.makeText(getContext(), "Can't add time", Toast.LENGTH_SHORT).show();
-//                            }else {
-//                                timeEnd.setText(hourOfDay + ":" + minute);
-//                            }
-
-                            //  timeEnd.setText(hourOfDay + ":" + minute);
 
                             String st = hourOfDay + ":" + minute;
 
@@ -541,25 +513,25 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 
             String[] listid = new String[separated.length];
 
-            String listinvitesid="";
+            String listinvitesid = "";
 
-            while (b.moveToNext()){
+            while (b.moveToNext()) {
                 String contactsname = b.getString(b.getColumnIndex("contact_name"));
                 String contactsid = b.getString(b.getColumnIndex("contact_user_id"));
                 String contactsemail = b.getString(b.getColumnIndex("contact_email"));
 
                 int i;
 
-                for (i=0; i<separated.length; i++){
+                for (i = 0; i < separated.length; i++) {
 
-                    if (contactsname.equals(separated[i])){
+                    if (contactsname.equals(separated[i])) {
 
                         listid[i] = contactsid;
                         listinvitesid = listinvitesid + contactsname + " (Pending)\n";
                         invitesid.add(contactsid);
 //                        invitesemail.add(contactsemail);
 
-                        invitesemail = invitesemail + contactsemail.replace("@gmail.com","").trim() + "\n";
+                        invitesemail = invitesemail + contactsemail.replace("@gmail.com", "").trim() + "\n";
                     }
 
                 }
@@ -571,7 +543,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mcontext);
             String sharedPrefUserId = sharedPreferences.getString("user_id", null);
-
 
 
             if (name.isEmpty() || eventLocation.isEmpty() || eventDescription.isEmpty() ||
@@ -631,33 +602,33 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 //Code for alarm
 
                 int count;
-        DataBaseHandler db  = new DataBaseHandler(this);
-        Cursor c = db.getMaxId();
-        c.moveToFirst();
-        if (c.getCount() == 0) {
-            count = 1;
-        } else {
-            count = Integer.parseInt(c.getString(0));
-            count += 1;
-        }
+                DataBaseHandler db = new DataBaseHandler(this);
+                Cursor c = db.getMaxId();
+                c.moveToFirst();
+                if (c.getCount() == 0) {
+                    count = 1;
+                } else {
+                    count = Integer.parseInt(c.getString(0));
+                    count += 1;
+                }
 
-        Log.d("Count", "" + count);
+                Log.d("Count", "" + count);
 
-        AlarmManager alarmManager = (AlarmManager) mcontext.getSystemService
-                (Context.ALARM_SERVICE);
-        Intent myIntent = new Intent(mcontext, AlarmReceiver.class);
-        myIntent.putExtra("userID", user_id);
-        myIntent.putExtra("name", name);
-        myIntent.putExtra("description", eventDescription);
-        myIntent.putExtra("location", eventLocation);
-        myIntent.putExtra("start", startTime);
-        myIntent.putExtra("end", endTime);
-        myIntent.putExtra("dateS", startDate);
-        myIntent.putExtra("dateE", endDate);
-        myIntent.putExtra("people", recipients);
-        Log.d("MyData", name);
-        pendingIntent = PendingIntent.getBroadcast(mcontext, count + 1, myIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                AlarmManager alarmManager = (AlarmManager) mcontext.getSystemService
+                        (Context.ALARM_SERVICE);
+                Intent myIntent = new Intent(mcontext, AlarmReceiver.class);
+                myIntent.putExtra("userID", user_id);
+                myIntent.putExtra("name", name);
+                myIntent.putExtra("description", eventDescription);
+                myIntent.putExtra("location", eventLocation);
+                myIntent.putExtra("start", startTime);
+                myIntent.putExtra("end", endTime);
+                myIntent.putExtra("dateS", startDate);
+                myIntent.putExtra("dateE", endDate);
+                myIntent.putExtra("people", recipients);
+                Log.d("MyData", name);
+                pendingIntent = PendingIntent.getBroadcast(mcontext, count + 1, myIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
 
                 Calendar calNow = Calendar.getInstance();
                 Calendar calSet = (Calendar) calNow.clone();
@@ -683,7 +654,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, calSet.getTimeInMillis(),
                         pendingIntent);
-             //Code for the alarm ends here....
+                //Code for the alarm ends here....
 
                 eventAllDay = allDay;
                 Log.i("Event allDay", eventAllDay);
@@ -700,7 +671,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 Cursor all = LandingActivity.db.getids();
                 Log.i("Event all count", "" + all.getCount());
 
-                OkHttp.getInstance(getBaseContext()).saveEvent(unique_id, sharedPrefUserId, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
+                OkHttp.getInstance(getBaseContext()).saveEvent(unique_id, sharedPrefUserId, name, eventDescription, eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
 
                 LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), unique_id, name, eventDescription,
                         eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, "Creator", listinvitesid);
@@ -721,7 +692,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 //                }
                 //Code for sending notification ends here......
 
-               String[] target = invitesemail.split("\n");
+                String[] target = invitesemail.split("\n");
 //                String[] target = new String[1000];
 //                String[] target = new String[1000];
 //                for(int j = 0; j < eachemail.length;j++)
@@ -729,19 +700,23 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
 //                     target[j] = eachemail[j];
 //                }
 
-                for (int i=0; i<target.length; i++){
+                for (int i = 0; i < target.length; i++) {
                     //codes for sending notif
                     OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, unique_id, name,
-                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[i]+ "Velma",
+                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[i] + "Velma",
                             lat, lng, LandingActivity.useremail, listinvitesid);//eachemail[0]
                     Log.d("Emails:", target[i]);
-                    Log.d("Emails without @: ",  target[0]);
+                    Log.d("Emails without @: ", target[0]);
                 }
 
-               // Intent i = new Intent(createEvent.this, LandingActivity.class);
-                this.finish();
-               // startActivity(i);
+                // Intent i = new Intent(createEvent.this, LandingActivity.class);
 
+                Intent returnIntent = new Intent();
+                setResult(0, returnIntent);
+                this.finish();
+
+
+                // startActivity(i);
 
 
             }
@@ -829,8 +804,6 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
             }
         }
     }
-
-
 
 
     public String getPreviousLocation(final Cursor prev, final String name, final String eventLocation, final

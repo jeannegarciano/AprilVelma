@@ -98,7 +98,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         cv.put(DataInfo.END_TIME, end_time);
         cv.put(DataInfo.IS_WHOLE_DAY, is_whole_day);
         cv.put(DataInfo.ROLE, role);
+        cv.put(DataInfo.EventStatus, "ACCEPTED");
         cv.put(DataInfo.RECIPIENTS, recipients);
+
+        Log.d("Data", "" + cv);
 
         sql.insert(DataInfo.TABLE_EVENTS, null, cv);
     }
@@ -126,6 +129,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         cv.put(DataInfo.RECIPIENTS, recipients);
         cv.put(DataInfo.EventStatus, status);
         cv.put(DataInfo.CONTACT_EMAIL, creator_email);
+
+        Log.d("Data", "" + cv);
 
         sql.insert(DataInfo.TABLE_EVENTS, null, cv);
     }
@@ -155,26 +160,26 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     }
 
-//    public Cursor getEvents() {
-//
-//        SQLiteDatabase sql = db.getReadableDatabase();
-//
-//        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS + " Where EventStatus ='ACCEPTED'", null);
-//
-//        return c;
-//
-//    }
-
-
     public Cursor getEvents() {
 
         SQLiteDatabase sql = db.getReadableDatabase();
 
-        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS, null);
+        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS + " Where EventStatus ='ACCEPTED'", null);
 
         return c;
 
     }
+
+
+//    public Cursor getEvents() {
+//
+//        SQLiteDatabase sql = db.getReadableDatabase();
+//
+//        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS, null);
+//
+//        return c;
+//
+//    }
 
 
     public Cursor getUserId() {

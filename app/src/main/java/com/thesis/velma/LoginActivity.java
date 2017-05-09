@@ -30,6 +30,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -134,15 +135,14 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         db.getWritableDatabase();
 
 
-
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean isFirstRun = prefs.getBoolean("isFirstRun", false);
         Boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
         Boolean isLoggedOut = prefs.getBoolean("isLoggedOut", true);
 
-        ImageView logo = (ImageView)findViewById(R.id.velmaLogo);
-        Typeface custom_font = Typeface.createFromAsset(getAssets(),  "fonts/avenir-next-regular.ttf");
-        tagline = (TextView)findViewById(R.id.header);
+        ImageView logo = (ImageView) findViewById(R.id.velmaLogo);
+        Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/avenir-next-regular.ttf");
+        tagline = (TextView) findViewById(R.id.header);
         tagline.setTypeface(custom_font);
         signIn_btn = (SignInButton) findViewById(sign_in_button);
         signIn_btn.setSize(SignInButton.SIZE_STANDARD);
@@ -286,12 +286,9 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
 //            pass.putString("useremail", mEmail);
 //            p.putExtras(pass);
             OkHttp.getInstance(mcontext).saveProfile(mEmail, mFullName);
-           // OkHttp.getInstance(mcontext).getUserEvent();
+            // OkHttp.getInstance(mcontext).getUserEvent();
 
-        }
-
-        else
-        {
+        } else {
             progressDialog.hideDialog();
             changeUI(false);
         }
@@ -322,8 +319,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                 if (status == 0) {
                     CheckInternet.showConnectionDialog(mcontext);
 
-                }
-                else{
+                } else {
                     buidNewGoogleApiClient();
                 }
 
@@ -479,44 +475,45 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                         if (emailAddresses != null)
                             for (final EmailAddress emailAddress : emailAddresses) {
 
-                                for (final Name ename : names){
-                                    Log.d(TAG, "email: " + emailAddress.getValue());
+///                                for (final Name ename : names){
+                                Log.d(TAG, "email: " + emailAddress.getValue());
 
-                                    RestAdapter adapter = new RestAdapter.Builder()
-                                            .setEndpoint(ROOT_URL)
-                                            .build();
+                                RestAdapter adapter = new RestAdapter.Builder()
+                                        .setEndpoint(ROOT_URL)
+                                        .build();
 
-                                    ApiServiceUser apiService = adapter.create(ApiServiceUser.class);
-                                    apiService.getMyJSON(new Callback<List<UsersEntity>>() {
-                                        @Override
-                                        public void success(List<UsersEntity> usersEntities, Response response) {
+                                ApiServiceUser apiService = adapter.create(ApiServiceUser.class);
+                                apiService.getMyJSON(new Callback<List<UsersEntity>>() {
+                                    @Override
+                                    public void success(List<UsersEntity> usersEntities, Response response) {
 
-                                            usersEntityList = usersEntities;
+                                        usersEntityList = usersEntities;
 
-                                            for (int i=0; i<usersEntityList.size(); i++){
-                                                int user_id = usersEntityList.get(i).getUser_id();
-                                                String email = usersEntityList.get(i).getEmail();
+                                        for (int i = 0; i < usersEntityList.size(); i++) {
+                                            int user_id = usersEntityList.get(i).getUser_id();
+                                            String email = usersEntityList.get(i).getEmail();
 
-                                                if(emailAddress.getValue().equals(email)){
-                                                    db.saveContact(user_id, ename.getDisplayName(), emailAddress.getValue());
-                                                }
-
-                                                if(mEmail.equals(email)){
-                                                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
-                                                    prefs.edit().putString("user_id", String.valueOf(user_id)).commit();
-                                                }
+                                            if (emailAddress.getValue().equals(email)) {
+                                                //db.saveContact(user_id, ename.getDisplayName(), emailAddress.getValue());
+                                                db.saveContact(user_id, emailAddress.getValue(), emailAddress.getValue());
                                             }
 
+                                            if (mEmail.equals(email)) {
+                                                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
+                                                prefs.edit().putString("user_id", String.valueOf(user_id)).commit();
+                                            }
                                         }
 
-                                        @Override
-                                        public void failure(RetrofitError error) {
+                                    }
 
-                                        }
-                                    });
-                                }
+                                    @Override
+                                    public void failure(RetrofitError error) {
 
+                                    }
+                                });
                             }
+
+                        // }
 
                         if (names != null)
                             for (Name name : names)
