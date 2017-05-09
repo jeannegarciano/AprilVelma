@@ -712,22 +712,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 Log.d("MyData4: ", eventDescription);
                 Log.d("MyData5: ", listinvitesid);
 
-                //Code for sending notification
-//                for (int i = 0; i <= invitedContacts.size() - 1; i++) {
-//            String[] eachemail = invitedContacts.get(i).split("@");
-//            OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, unique_id, name,
-//                    eventDescription, eventLocation, startDate, startTime, endDate, endTime, eachemail[0] + "Velma",
-//                    lat, lng, LandingActivity.useremail);//eachemail[0]
-//                }
-                //Code for sending notification ends here......
-
                String[] target = invitesemail.split("\n");
-//                String[] target = new String[1000];
-//                String[] target = new String[1000];
-//                for(int j = 0; j < eachemail.length;j++)
-//                {
-//                     target[j] = eachemail[j];
-//                }
 
                 for (int i=0; i<target.length; i++){
                     //codes for sending notif
@@ -738,10 +723,9 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                     Log.d("Emails without @: ",  target[0]);
                 }
 
-               // Intent i = new Intent(createEvent.this, LandingActivity.class);
-                this.finish();
-               // startActivity(i);
-
+                Intent i = new Intent(createEvent.this, LandingActivity.class);
+                finish();
+                startActivity(i);
 
 
             }

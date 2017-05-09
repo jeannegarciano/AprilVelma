@@ -559,7 +559,7 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
                             Log.d("contains", String.valueOf(contains));
 
                             if (contains){
-                                invitesemail += contactsemail + "\n";
+                                invitesemail += contactsemail.replace("@gmail.com","").trim() + "\n";
                             }
                         }
                     }
@@ -596,6 +596,24 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
             if (locationIsClick==true){
                 OkHttp.getInstance(getBaseContext()).updateEvent(id, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
                 LandingActivity.db.updateEvent(id, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listinvitesid);
+
+
+                String[] target = invitesemail.split("\n");
+
+                for (int i=0; i<target.length; i++){
+                    //codes for sending notif
+                    OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
+                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[i]+ "Velma",
+                            lat, lng, LandingActivity.useremail, listid, listinvitesid);//eachemail[0]
+                    Log.d("Emails who accepted:", target[i]);
+
+                }
+
+//                    OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
+//                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[i]+ "Velma",
+//                            lat, lng, LandingActivity.useremail, listid, listinvitesid);//eachemail[0]
+
+
             } else {
                 OkHttp.getInstance(getBaseContext()).updateEvent(id, name, eventDescription, eventLocation, longi,  lati, startDate, startTime, endDate, endTime, eventAllDay, listid);
                 LandingActivity.db.updateEvent(id, name, eventDescription, eventLocation, longi,  lati, startDate, startTime, endDate, endTime, eventAllDay, listinvitesid);
@@ -606,7 +624,7 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
             Log.i("Event name", name);
             Log.i("Event SD", startDate);
             Log.i("Event coord", lat +","+lng);
-            Toast.makeText(mcontext, "Event is added successfully.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mcontext, "Event is updated successfully.", Toast.LENGTH_SHORT).show();
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
             eventID = prefs.getString("sharedEventID", eventID);

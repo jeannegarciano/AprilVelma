@@ -469,6 +469,72 @@ public class OkHttp {
 
     }
 
+
+    public void sendNotificationUpdate(String invitationTitle, String eventid, String eventname, String eventDescription, String eventLocation,
+                                 String eventStartDate, String eventStartTime, String eventEndDate,
+                                 String eventEndTime, String target, String lat, String lng, String creatorEmail, String[] listid, String listinvitesid) {
+
+
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/sendNotification.php").newBuilder();
+        urlBuilder.addQueryParameter("invitationTitle", invitationTitle);
+        urlBuilder.addQueryParameter("eventid", String.valueOf(eventid));
+        urlBuilder.addQueryParameter("eventname", eventname);
+        urlBuilder.addQueryParameter("eventDescription", eventDescription);
+        urlBuilder.addQueryParameter("eventLocation", eventLocation);
+        urlBuilder.addQueryParameter("eventStartDate", eventStartDate);
+        urlBuilder.addQueryParameter("eventStartTime", eventStartTime);
+        urlBuilder.addQueryParameter("eventEndDate", eventEndDate);
+        urlBuilder.addQueryParameter("eventEndTime", eventEndTime);
+//        urlBuilder.addQueryParameter("notify", notify);
+//        urlBuilder.addQueryParameter("invitedfirends", invitedfirends);
+        urlBuilder.addQueryParameter("target", target);
+        urlBuilder.addQueryParameter("name", LandingActivity.profilename);
+        urlBuilder.addQueryParameter("lat", lat);
+        urlBuilder.addQueryParameter("lng", lng);
+        urlBuilder.addQueryParameter("creatorEmail", creatorEmail);
+        for (int i = 0; i < listid.length; i++) {
+            urlBuilder.addQueryParameter("listid[]", listid[i]);
+        }
+        urlBuilder.addQueryParameter("listinvitesid", listinvitesid);
+
+        String Url = urlBuilder.build().toString();
+
+        Log.d("URL", Url);
+
+        Request request = new Request.Builder()
+                .url(Url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                // ... check for failure using `isSuccessful` before proceeding
+                // Read data on the worker thread
+                final String responseData = response.body().string();
+                Log.d("Data", responseData);
+                if (response.code() == 200) {
+                    // Run view-related code back on the main thread
+
+                } else {
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(mcontext, "Failed to register", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+
+                }
+            }
+        });
+
+    }
+
+
     public void updateStatus(String userid, String unique_event_id, String status) {
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/update_status.php").newBuilder();
         urlBuilder.addQueryParameter("userid", "" + userid);
