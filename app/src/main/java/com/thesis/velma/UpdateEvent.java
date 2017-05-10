@@ -31,8 +31,7 @@ public class updateEvent extends AppCompatActivity {
     TextView title, ename, n, edescription, description, sdText, sd, edText, ed, stText, st, et, etText, fText, f, lText, l;
 //    TextView userT, userId, eventT, eventId;
     Button accept;
-    String en, des, sDate, endDate, sTime, eTime, iFriends, locat, idUser, lat, lng, eventID, creator;
-    Long idEvent;
+    String en, des, sDate, endDate, sTime, eTime, iFriends, locat, idUser, lat, lng, eventID, creator, idEvent;
     String modetravel = "driving";
     Bundle b;
     private PendingIntent pendingIntent;
@@ -75,9 +74,9 @@ public class updateEvent extends AppCompatActivity {
         //then you use
         userEmail = prefs.getString("Email", null);
 
-        Bundle bundle = getIntent().getExtras();
-        idEvent = bundle.getLong("eventid");
-        Log.d("ID CANCELED", String.valueOf(eventid));
+//        Bundle bundle = getIntent().getExtras();
+//        idEvent = bundle.getLong("eventid");
+//        Log.d("ID CANCELED", String.valueOf(eventid));
 
 
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
@@ -113,7 +112,7 @@ public class updateEvent extends AppCompatActivity {
             iFriends = b.getString("invitedfirends");
             locat = b.getString("eventLocation");
             idUser = b.getString("userid");
-            idEvent = b.getLong("eventid");
+            idEvent = b.getString("eventid");
             lat = b.getString("lat");
             lng = b.getString("lng");
             creator = b.getString("creatorEmail");
@@ -130,7 +129,6 @@ public class updateEvent extends AppCompatActivity {
         metime.setText(eTime);
         mfriends.setText(iFriends);
         mlocation.setText(locat);
-
 
         Cursor c = db.getUserId();
         c.moveToFirst();
@@ -156,7 +154,7 @@ public class updateEvent extends AppCompatActivity {
 
 
                 Log.d("MyData1UserId: ", String.valueOf(eventid));
-                Log.d("MyData2EvntId: ", ""+idEvent);
+                Log.d("MyData2EvntId: ", idEvent);
                 Log.d("MyData3EventName: ", en);
                 Log.d("MyData4EventDes: ", des);
                 Log.d("MyData5Friends: ", ""+friends);

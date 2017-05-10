@@ -573,7 +573,12 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
 
                 for (int i=0; i<eachemail.length; i++){
                     //codes for sending notif
-                    Log.d("Eachemail", eachemail[i]);
+                        //codes for sending notif
+                        OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
+                                eventDescription, eventLocation, startDate, startTime, endDate, endTime, eachemail[i]+ "Velma",
+                                lat, lng, LandingActivity.useremail, listinvitesid);//eachemail[0]
+
+                    Log.d("EachemailFirst", eachemail[i]);
                 }
                 Log.d("Amodia:", emailinvites);
 
@@ -584,7 +589,11 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
 
                 for (int i=0; i<eachemail.length; i++){
                     //codes for sending notif
-                    Log.d("Eachemail", eachemail[i]);
+
+                    OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
+                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, eachemail[i]+ "Velma",
+                            lat, lng, LandingActivity.useremail, listinvitesid);//eachemail[0]
+                    Log.d("EachemailSecond", eachemail[i]);
                 }
                 Log.d("Jane:", invitesemail);
             }
@@ -597,17 +606,17 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
                 OkHttp.getInstance(getBaseContext()).updateEvent(id, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
                 LandingActivity.db.updateEvent(id, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listinvitesid);
 
-
-                String[] target = invitesemail.split("\n");
-
-                for (int i=0; i<target.length; i++){
-                    //codes for sending notif
-                    OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
-                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[i]+ "Velma",
-                            lat, lng, LandingActivity.useremail, listid, listinvitesid);//eachemail[0]
-                    Log.d("Emails who accepted:", target[i]);
-
-                }
+//
+//                String[] target = invitesemail.split("\n");
+//
+//                for (int i=0; i<target.length; i++){
+//                    //codes for sending notif
+//                    OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
+//                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[i]+ "Velma",
+//                            lat, lng, LandingActivity.useremail, listid, listinvitesid);//eachemail[0]
+//                    Log.d("Emails who accepted:", target[i]);
+//
+//                }
 
 //                    OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
 //                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[i]+ "Velma",

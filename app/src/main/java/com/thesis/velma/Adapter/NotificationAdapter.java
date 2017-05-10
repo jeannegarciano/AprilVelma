@@ -24,7 +24,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     public NotificationAdapter(ArrayList<NotificationModel> mDataset) {
         this.mDataset = mDataset;
-        Log.d("Count",""+mDataset.size());
+        Log.d("Count", "" + mDataset.size());
 
     }
 
@@ -35,6 +35,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         public TextView mLocation;
         public TextView mTime;
         public TextView mEventID;
+        public TextView mStatus;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -43,6 +44,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             mLocation = (TextView) itemView.findViewById(R.id.txtLocation);
             mTime = (TextView) itemView.findViewById(R.id.txtTime);
             mEventID = (TextView) itemView.findViewById(R.id.txtEventID);
+            mStatus = (TextView) itemView.findViewById(R.id.txtStatus);
 
         }
     }
@@ -63,6 +65,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         holder.mEventName.setText(mDataset.get(position).getEventName());
         holder.mLocation.setText(mDataset.get(position).getEventLocation());
+        holder.mStatus.setText(mDataset.get(position).getStatus());
         holder.mTime.setText(mDataset.get(position).getEventTime());
         holder.mEventID.setText(mDataset.get(position).getEventId());
 
