@@ -24,7 +24,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -280,11 +279,6 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
             prefs.edit().putString("Email", mEmail).commit();
             prefs.edit().putString("imei", imei).commit();
 
-//            Intent p = new Intent(LoginActivity.this, LandingActivity.class);
-//            Bundle pass = new Bundle();
-//            pass.putString("userid", imei);
-//            pass.putString("useremail", mEmail);
-//            p.putExtras(pass);
             OkHttp.getInstance(mcontext).saveProfile(mEmail, mFullName);
             // OkHttp.getInstance(mcontext).getUserEvent();
 
@@ -475,45 +469,51 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                         if (emailAddresses != null)
                             for (final EmailAddress emailAddress : emailAddresses) {
 
-///                                for (final Name ename : names){
-                                Log.d(TAG, "email: " + emailAddress.getValue());
+                                for (final Name ename : names) {
+                                    Log.d(TAG, "email: " + emailAddress.getValue());
 
-                                RestAdapter adapter = new RestAdapter.Builder()
-                                        .setEndpoint(ROOT_URL)
-                                        .build();
+                                    RestAdapter adapter = new RestAdapter.Builder()
+                                            .setEndpoint(ROOT_URL)
+                                            .build();
 
-                                ApiServiceUser apiService = adapter.create(ApiServiceUser.class);
-                                apiService.getMyJSON(new Callback<List<UsersEntity>>() {
-                                    @Override
-                                    public void success(List<UsersEntity> usersEntities, Response response) {
+                                    ApiServiceUser apiService = adapter.create(ApiServiceUser.class);
+                                    apiService.getMyJSON(new Callback<List<UsersEntity>>() {
+                                        @Override
+                                        public void success(List<UsersEntity> usersEntities, Response response) {
 
-                                        usersEntityList = usersEntities;
+                                            usersEntityList = usersEntities;
 
-                                        for (int i = 0; i < usersEntityList.size(); i++) {
-                                            int user_id = usersEntityList.get(i).getUser_id();
-                                            String email = usersEntityList.get(i).getEmail();
+                                            for (int i = 0; i < usersEntityList.size(); i++) {
+                                                int user_id = usersEntityList.get(i).getUser_id();
+                                                String email = usersEntityList.get(i).getEmail();
 
-                                            if (emailAddress.getValue().equals(email)) {
-                                                //db.saveContact(user_id, ename.getDisplayName(), emailAddress.getValue());
-                                                db.saveContact(user_id, emailAddress.getValue(), emailAddress.getValue());
+                                                if (emailAddress.getValue().equals(email)) {
+
+
+                                                    if (ename.getDisplayName() != null) {
+
+                                                        db.saveContact(user_id, ename.getDisplayName(), emailAddress.getValue());
+                                                    } else {
+                                                        db.saveContact(user_id, emailAddress.getValue(), emailAddress.getValue());
+                                                    }
+                                                }
+
+                                                if (mEmail.equals(email)) {
+                                                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
+                                                    prefs.edit().putString("user_id", String.valueOf(user_id)).commit();
+                                                }
                                             }
 
-                                            if (mEmail.equals(email)) {
-                                                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
-                                                prefs.edit().putString("user_id", String.valueOf(user_id)).commit();
-                                            }
                                         }
 
-                                    }
+                                        @Override
+                                        public void failure(RetrofitError error) {
 
-                                    @Override
-                                    public void failure(RetrofitError error) {
+                                        }
+                                    });
+                                }
 
-                                    }
-                                });
                             }
-
-                        // }
 
                         if (names != null)
                             for (Name name : names)

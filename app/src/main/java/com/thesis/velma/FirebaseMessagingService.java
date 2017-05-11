@@ -48,8 +48,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        Intent i = new Intent(this, LandingActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //Intent i = new Intent(this, LandingActivity.class);
+        //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         switch (remoteMessage.getData().get("title")) {
 

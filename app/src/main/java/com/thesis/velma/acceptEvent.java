@@ -154,18 +154,11 @@ public class acceptEvent extends AppCompatActivity {
                 Log.d("MyData4EventDes: ", des);
                 Log.d("MyData5Friends: ", "" + friends);
 
-//                LandingActivity.db.saveEvent(Integer.parseInt(userI), String.valueOf(idEvent), en, des,
-//                        locat, lng, lat, sDate, sTime, endDate, eTime, eventAllDay, "Participant", friends);
-
-
-                //Intent i = new Intent(acceptEvent.this, LandingActivity.class);
-
 
                 Intent returnIntent = new Intent();
                 setResult(0, returnIntent);
                 finish();
 
-                //startActivity(i);
 
             }
         });
