@@ -65,10 +65,13 @@ import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
@@ -673,6 +676,8 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 Cursor all = LandingActivity.db.getids();
                 Log.i("Event all count", "" + all.getCount());
 
+//                Set<String> listPeople = new HashSet<String>(Arrays.asList(target));
+
                 OkHttp.getInstance(getBaseContext()).saveEvent(unique_id, sharedPrefUserId, name, eventDescription, eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
 
                 LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), unique_id, name, eventDescription,
@@ -696,23 +701,26 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 //Code for sending notification ends here......
 
                 String[] target = invitesemail.split("\n");
-//                String[] target = new String[1000];
-//                String[] target = new String[1000];
-//                for(int j = 0; j < eachemail.length;j++)
-//                {
-//                     target[j] = eachemail[j];
-//                }
+                //Removing duplicate email addresses
+                Set<String> emails = new HashSet<String>(Arrays.asList(target));
+                 Log.d("Noduplicate: ", emails.toString());
 
-                 Log.d("invitesemailloop: ", invitesemail);
-
-                for (int i = 0; i < target.length; i++) {
-                    //codes for sending notif
+                for (String emai : emails) {
+                    Log.d("Hashset1: ", emai.replace("(Pending)", ""));
                     OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, unique_id, name,
-                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[i] + "Velma",
-                            lat, lng, LandingActivity.useremail, listinvitesid);//eachemail[0]
-                    Log.d("Emails:", target[i]);
-                    Log.d("Emails without @: ", target[0]);
+                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, emai.replace("@gmail", "") + "Velma",
+                           lat, lng, LandingActivity.useremail, listinvitesid);//eachemail[0]
+                    Log.d("Emails:", emai.replace("@gmail", ""));
                 }
+
+//                for (int i = 0; i < target.length; i++) {
+//                    //codes for sending notif
+//                    OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, unique_id, name,
+//                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[i] + "Velma",
+//                            lat, lng, LandingActivity.useremail, listinvitesid);//eachemail[0]
+//                    Log.d("Emails:", target[i]);
+//                    Log.d("Emails without @: ", target[0]);
+//                }
 
     // Intent i = new Intent(createEvent.this, LandingActivity.class);
 

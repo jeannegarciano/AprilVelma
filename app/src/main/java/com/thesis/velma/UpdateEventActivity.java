@@ -61,6 +61,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import static android.content.ContentValues.TAG;
 
@@ -535,6 +537,7 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
             String listinvitesid="";
             String emailinvites = "";
 
+
             while (b.moveToNext()){
                 String contactsname = b.getString(b.getColumnIndex("contact_name"));
                 String contactsid = b.getString(b.getColumnIndex("contact_user_id"));
@@ -560,13 +563,14 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
 
                             if (contains){
                                 invitesemail += contactsemail.replace("@gmail.com","").trim() + "\n";
+                                Log.d("InvitesEmail", invitesemail);
                             }
                         }
                     }
                 }
             }
 
-            if (isInviteButtonClicked){
+            if (isInviteButtonClicked==true){
                 String[] eachemail = emailinvites.split("\n");
                 String countemail = String.valueOf(eachemail.length);
                 Log.d("countemail", countemail);
