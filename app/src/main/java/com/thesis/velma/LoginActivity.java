@@ -496,12 +496,14 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
 
                                             if (emailAddress.getValue().equals(email)) {
                                                 db.saveContact(user_id, ename.getDisplayName(), emailAddress.getValue());
+                                                Log.d("SaveContact: ", user_id + ename.getDisplayName() + emailAddress.getValue());
                                                 //db.saveContact(user_id, emailAddress.getValue(), emailAddress.getValue());
                                             }
 
                                             if (mEmail.equals(email)) {
                                                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
                                                 prefs.edit().putString("user_id", String.valueOf(user_id)).commit();
+                                                Log.d("UserId: ", String.valueOf(user_id));
                                             }
                                         }
 

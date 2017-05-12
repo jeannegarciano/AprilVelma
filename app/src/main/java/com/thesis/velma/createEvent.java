@@ -511,14 +511,25 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
             Cursor b = LandingActivity.db.getContacts();
             ArrayList<String> invitesid = new ArrayList<String>();
 
-            Log.d("Invitedlist names:", invitedlist);
+            //Removing duplicate names
+            Set<String> names = new HashSet<String>(Arrays.asList(separated));
+            Log.d("NoduplicateNames: ", names.toString());
+            //Convert Hash set to string array
+            String[] array = names.toArray(new String[0]);
+            String arrayname = "";
+            for (int a = 0; a < array.length; a++)
+            {
+
+                arrayname = arrayname + array[a].concat(" (Pending)") + "\n";
+                Log.d("NameArrays: ", array[a]);
+                Log.d("NameStatus: ", arrayname);
+            }
+
 //            ArrayList<String> invitesemail = new ArrayList<String>();
-
             String invitesemail = "";
-
             String[] listid = new String[separated.length];
-
             String listinvitesid = "";
+
 
             while (b.moveToNext()) {
                 String contactsname = b.getString(b.getColumnIndex("contact_name"));
@@ -530,6 +541,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 for (i = 0; i < separated.length; i++) {
 
                     if (contactsname.equals(separated[i])) {
+                        Log.d("Contactsname: ", contactsname);
 
                         listid[i] = contactsid;
                         listinvitesid = listinvitesid + contactsname + " (Pending)\n";
@@ -681,7 +693,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 OkHttp.getInstance(getBaseContext()).saveEvent(unique_id, sharedPrefUserId, name, eventDescription, eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
 
                 LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), unique_id, name, eventDescription,
-                        eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, "Creator", listinvitesid);
+                        eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, "Creator", arrayname);
 
 
                 Log.d("MyData1: ", sharedPrefUserId);
@@ -709,7 +721,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                     Log.d("Hashset1: ", emai.replace("(Pending)", ""));
                     OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, unique_id, name,
                             eventDescription, eventLocation, startDate, startTime, endDate, endTime, emai.replace("@gmail", "") + "Velma",
-                           lat, lng, LandingActivity.useremail, listinvitesid);//eachemail[0]
+                           lat, lng, LandingActivity.useremail, arrayname);//eachemail[0]
                     Log.d("Emails:", emai.replace("@gmail", ""));
                 }
 
@@ -727,9 +739,7 @@ public class createEvent extends AppCompatActivity implements View.OnClickListen
                 Intent returnIntent = new Intent();
                 setResult(0, returnIntent);
                 this.finish();
-
                 // startActivity(i)
-
             }
         }
 
