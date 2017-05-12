@@ -122,6 +122,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
     public static final String ROOT_URL = "http://velma.000webhostapp.com";
     private List<UsersEntity> usersEntityList;
     String mEmail;
+    public static int user_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -472,6 +473,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                                 for (final Name ename : names) {
                                     Log.d(TAG, "email: " + emailAddress.getValue());
 
+
                                     RestAdapter adapter = new RestAdapter.Builder()
                                             .setEndpoint(ROOT_URL)
                                             .build();
@@ -498,6 +500,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                                                     }
                                                 }
 
+
                                                 if (mEmail.equals(email)) {
                                                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
                                                     prefs.edit().putString("user_id", String.valueOf(user_id)).commit();
@@ -514,6 +517,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                                 }
 
                             }
+
 
                         if (names != null)
                             for (Name name : names)

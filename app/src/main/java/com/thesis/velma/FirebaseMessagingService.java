@@ -48,8 +48,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        //Intent i = new Intent(this, LandingActivity.class);
-        //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         switch (remoteMessage.getData().get("title")) {
 
@@ -60,7 +58,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 Intent detailsIntent2 = new Intent(this, declineEvent.class);
                 Bundle b = new Bundle();
                 b.putString("userid", remoteMessage.getData().get("userid"));
-                b.putLong("eventid", Long.parseLong(remoteMessage.getData().get("eventid")));
+                b.putString("eventid", remoteMessage.getData().get("eventid"));
                 b.putString("eventname", remoteMessage.getData().get("eventname"));
                 b.putString("eventDescription", remoteMessage.getData().get("eventDescription"));
                 b.putString("eventLocation", remoteMessage.getData().get("eventLocation"));
@@ -112,9 +110,9 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             case "Update":
 
 
-                Intent detailsIntent3 = new Intent(this, UpdateEvent.class);
+                Intent detailsIntent3 = new Intent(this, updateEvent.class);
                 Bundle c = new Bundle();
-                c.putString("userid", remoteMessage.getData().get("userid"));
+
                 c.putLong("eventid", Long.parseLong(remoteMessage.getData().get("eventid")));
                 c.putString("eventname", remoteMessage.getData().get("eventname"));
                 c.putString("eventDescription", remoteMessage.getData().get("eventDescription"));
@@ -124,9 +122,11 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 c.putString("eventEndDate", remoteMessage.getData().get("eventEndDate"));
                 c.putString("eventEndTime", remoteMessage.getData().get("eventEndTime"));
                 c.putString("notify", remoteMessage.getData().get("notify"));
-                c.putString("invitedfirends", remoteMessage.getData().get("invitedfirends"));
                 c.putString("lat", remoteMessage.getData().get("lat"));
                 c.putString("lng", remoteMessage.getData().get("lng"));
+                c.putString("listid", remoteMessage.getData().get("listid"));
+                c.putString("listinvitesid", remoteMessage.getData().get("listinvitesid"));
+
 
                 Intent detailsIntent4 = new Intent(this, declineEvent.class);
                 detailsIntent3.putExtras(c);
@@ -134,13 +134,9 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
                 Log.d("Update1", remoteMessage.getData().get("eventname"));
                 Log.d("Update2", remoteMessage.getData().get("eventid"));
-                Log.d("Update3", remoteMessage.getData().get("invitedfirends"));
+                Log.d("Update3", remoteMessage.getData().get("listid"));
+                Log.d("Update4", remoteMessage.getData().get("listinvitesid"));
 
-//        LandingActivity.db.saveEvent(remoteMessage.getData().get("userid"), Long.parseLong(remoteMessage.getData().get("eventid")),
-//                remoteMessage.getData().get("eventname"), remoteMessage.getData().get("eventDescription"), remoteMessage.getData().get("eventLocation")
-//                , remoteMessage.getData().get("eventStartDate"), remoteMessage.getData().get("eventStartTime"),
-//                remoteMessage.getData().get("eventEndDate"), remoteMessage.getData().get("eventEndTime"), remoteMessage.getData().get("notify"),
-//                remoteMessage.getData().get("invitedfirends"));
 
                 String[] mydates1 = remoteMessage.getData().get("eventStartDate").split("-");
                 String[] mytimes1 = remoteMessage.getData().get("eventStartTime").split(":");
@@ -155,11 +151,10 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
 
                 manager.notify(0, builder.build());
-
-
                 break;
 
             case "DeleteEvent":
+
                 String deleteMessage = LandingActivity.profilename + " deleted this event from his/her calendar.";
 
                 builder = new NotificationCompat.Builder(this)
@@ -167,9 +162,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                         .setContentTitle("Event title: " + remoteMessage.getData().get("eventname"))
                         .setContentText(deleteMessage)
                         .setSmallIcon(R.drawable.velmalogo);
-
-
-//                LandingActivity.db.deleteEvent(Long.parseLong(remoteMessage.getData().get("eventid")));
 
                 manager.notify(0, builder.build());
 
@@ -248,7 +240,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 break;
 
         }
-
 
     }
 

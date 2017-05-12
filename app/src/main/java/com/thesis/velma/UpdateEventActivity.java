@@ -61,6 +61,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import static android.content.ContentValues.TAG;
 
@@ -535,6 +537,7 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
             String listinvitesid="";
             String emailinvites = "";
 
+
             while (b.moveToNext()){
                 String contactsname = b.getString(b.getColumnIndex("contact_name"));
                 String contactsid = b.getString(b.getColumnIndex("contact_user_id"));
@@ -559,21 +562,27 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
                             Log.d("contains", String.valueOf(contains));
 
                             if (contains){
-                                invitesemail += contactsemail + "\n";
+                                invitesemail += contactsemail.replace("@gmail.com","").trim() + "\n";
+                                Log.d("InvitesEmail", invitesemail);
                             }
                         }
                     }
                 }
             }
 
-            if (isInviteButtonClicked){
+            if (isInviteButtonClicked==true){
                 String[] eachemail = emailinvites.split("\n");
                 String countemail = String.valueOf(eachemail.length);
                 Log.d("countemail", countemail);
 
                 for (int i=0; i<eachemail.length; i++){
                     //codes for sending notif
-                    Log.d("Eachemail", eachemail[i]);
+                        //codes for sending notif
+                        OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
+                                eventDescription, eventLocation, startDate, startTime, endDate, endTime, eachemail[i]+ "Velma",
+                                lat, lng, LandingActivity.useremail, listinvitesid);//eachemail[0]
+
+                    Log.d("EachemailFirst", eachemail[i]);
                 }
                 Log.d("Amodia:", emailinvites);
 
@@ -584,7 +593,11 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
 
                 for (int i=0; i<eachemail.length; i++){
                     //codes for sending notif
-                    Log.d("Eachemail", eachemail[i]);
+
+                    OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
+                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, eachemail[i]+ "Velma",
+                            lat, lng, LandingActivity.useremail, listinvitesid);//eachemail[0]
+                    Log.d("EachemailSecond", eachemail[i]);
                 }
                 Log.d("Jane:", invitesemail);
             }
@@ -596,6 +609,24 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
             if (locationIsClick==true){
                 OkHttp.getInstance(getBaseContext()).updateEvent(id, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
                 LandingActivity.db.updateEvent(id, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listinvitesid);
+
+//
+//                String[] target = invitesemail.split("\n");
+//
+//                for (int i=0; i<target.length; i++){
+//                    //codes for sending notif
+//                    OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
+//                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[i]+ "Velma",
+//                            lat, lng, LandingActivity.useremail, listid, listinvitesid);//eachemail[0]
+//                    Log.d("Emails who accepted:", target[i]);
+//
+//                }
+
+//                    OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
+//                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[i]+ "Velma",
+//                            lat, lng, LandingActivity.useremail, listid, listinvitesid);//eachemail[0]
+
+
             } else {
                 OkHttp.getInstance(getBaseContext()).updateEvent(id, name, eventDescription, eventLocation, longi,  lati, startDate, startTime, endDate, endTime, eventAllDay, listid);
                 LandingActivity.db.updateEvent(id, name, eventDescription, eventLocation, longi,  lati, startDate, startTime, endDate, endTime, eventAllDay, listinvitesid);
@@ -606,7 +637,7 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
             Log.i("Event name", name);
             Log.i("Event SD", startDate);
             Log.i("Event coord", lat +","+lng);
-            Toast.makeText(mcontext, "Event is added successfully.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mcontext, "Event is updated successfully.", Toast.LENGTH_SHORT).show();
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
             eventID = prefs.getString("sharedEventID", eventID);

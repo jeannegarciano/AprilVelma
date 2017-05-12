@@ -32,8 +32,7 @@ public class acceptEvent extends AppCompatActivity {
     TextView title, ename, n, edescription, description, sdText, sd, edText, ed, stText, st, et, etText, fText, f, lText, l;
     //    TextView userT, userId, eventT, eventId;
     Button accept;
-    String en, des, sDate, endDate, sTime, eTime, iFriends, locat, idUser, lat, lng, eventID, creator;
-    Long idEvent;
+    String en, des, sDate, endDate, sTime, eTime, iFriends, locat, idUser, lat, lng, eventID, creator, idEvent;
     String modetravel = "driving";
     Bundle b;
     private PendingIntent pendingIntent;
@@ -75,9 +74,9 @@ public class acceptEvent extends AppCompatActivity {
         //then you use
         userEmail = prefs.getString("Email", null);
 
-        Bundle bundle = getIntent().getExtras();
-        idEvent = bundle.getLong("eventid");
-        Log.d("ID CANCELED", String.valueOf(eventid));
+//        Bundle bundle = getIntent().getExtras();
+//        idEvent = bundle.getLong("eventid");
+//        Log.d("ID CANCELED", String.valueOf(eventid));
 
 
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
@@ -113,7 +112,7 @@ public class acceptEvent extends AppCompatActivity {
             iFriends = b.getString("invitedfirends");
             locat = b.getString("eventLocation");
             idUser = b.getString("userid");
-            idEvent = b.getLong("eventid");
+            idEvent = b.getString("eventid");
             lat = b.getString("lat");
             lng = b.getString("lng");
             creator = b.getString("creatorEmail");
@@ -142,18 +141,22 @@ public class acceptEvent extends AppCompatActivity {
 
                 String target[] = creator.split("@");
                 OkHttp.getInstance(mcontext).sendNotificationReply("confirmEvent", en, des, target[0] + "Velma", idEvent);
-                OkHttp.getInstance(mcontext).updateStatus(idUser, String.valueOf(idEvent), "Accepted");
+                OkHttp.getInstance(mcontext).updateStatus(sharedPrefUserId, String.valueOf(idEvent), "Accepted");
                 Toast.makeText(getApplicationContext(), "Accept event invitation", Toast.LENGTH_SHORT).show();
 
-                LandingActivity.db.updateEventStatus(String.valueOf(idEvent), "ACCEPTED");
+                LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId),String.valueOf(idEvent), en, des,
+                        locat, lng, lat, sDate, sTime, endDate, eTime, eventAllDay, "Participant", iFriends);
+                LandingActivity.db.updateEventStatus(idEvent, "ACCEPTED");
 
 
-                Log.d("MyData1UserId: ", String.valueOf(eventid));
-                Log.d("MyData2EvntId: ", "" + idEvent);
+
+//                Log.d("MyData1UserId: ", String.valueOf(LoginActivity.user_id));
+                Log.d("MyData2EvntId: ", idEvent);
                 Log.d("MyData3EventName: ", en);
                 Log.d("MyData4EventDes: ", des);
                 Log.d("MyData5Friends: ", "" + friends);
 
+                Log.d("MyData5Sharedpref: ", "" + sharedPrefUserId);//this is the userid
 
                 Intent returnIntent = new Intent();
                 setResult(0, returnIntent);
@@ -170,10 +173,10 @@ public class acceptEvent extends AppCompatActivity {
 
                 String target[] = creator.split("@");
 
-                LandingActivity.db.updateEventStatus(String.valueOf(idEvent), "Declined");
+                LandingActivity.db.updateEventStatus(idEvent, "Declined");
 
                 OkHttp.getInstance(mcontext).sendNotificationReply("declineEvent", en, des, target[0] + "Velma", idEvent);
-                OkHttp.getInstance(mcontext).updateStatus(idUser, String.valueOf(idEvent), "Declined");
+                OkHttp.getInstance(mcontext).updateStatus(sharedPrefUserId, String.valueOf(idEvent), "Declined");
                 Toast.makeText(getApplicationContext(), "Declined event invitation", Toast.LENGTH_SHORT).show();
 
                 Intent returnIntent = new Intent();

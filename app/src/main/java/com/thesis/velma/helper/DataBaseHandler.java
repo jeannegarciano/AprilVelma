@@ -200,6 +200,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     }
 
+//    public Cursor getEmail(String name) {
+//
+//        SQLiteDatabase sql = db.getReadableDatabase();
+//
+//        Cursor c = sql.rawQuery("SELECT DataInfo.CONTACT_EMAIL * FROM " + DataInfo.TABLE_CONTACTS + " Where " + DataInfo.CONTACT_NAME + " = " + name, null);
+//
+//        return c;
+//    }
+
     public Cursor getEventDetails(String event_id) {
 
         SQLiteDatabase sql = db.getReadableDatabase();

@@ -26,10 +26,15 @@ import com.thesis.velma.helper.DataBaseHandler;
 import com.thesis.velma.helper.NetworkUtil;
 import com.thesis.velma.helper.OkHttp;
 
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ShowEventDetails extends AppCompatActivity {
 
@@ -152,6 +157,8 @@ public class ShowEventDetails extends AppCompatActivity {
 //        }
         mfriends.setText(friends);
 
+        Log.d("HFRIENDS: ", friends);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,8 +211,59 @@ public class ShowEventDetails extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
 
+
+
+                                        String[] separated = friends.split("\n");
+                                      //Removing names duplicates for people invited
+                                        Set<String> names = new HashSet<String>(Arrays.asList(separated));
+                                        Set<String> namess = new HashSet<String>(Arrays.asList(separated));
+
+                                        for (String namee : namess) {
+                                            Log.d("Hashset1: ", namee.replace("(Pending)", ""));
+                                        }
+                                        Log.d("Hashset2: ", namess.toString());
+                                        //Ends here
+
+
+//                                        Cursor b = db.getContacts();
+//                                        b.moveToFirst();
+//                                        for(String name : names)
+//                                            {
+//                                                    String email;
+////                                                    Cursor e = db.getEmail(name.replace(" (Pending)","").replace(" (Accepted)","").replace(" (Declined)","").trim());
+////                                                    e.moveToFirst();
+////                                                    email = e.getString(0);
+//                                                    Log.d("Email: ", email);
+//
+//                                            }
+
+
+//                                        while (b.moveToNext()) {
+//                                            String contactsname = b.getString(b.getColumnIndex("contact_name"));
+//                                            String contactsemail = b.getString(b.getColumnIndex("contact_email"));
+//                                            Log.d("Email: ", "whileeeeee");
+//                                            for(String name : names)
+//                                            {
+//                                                if(contactsname.equals(name.matches(".*\b(Pending)\b.*")))
+//                                                {
+//                                                    String email;
+//                                                    Cursor e = db.getEmail(name.replace(" (Pending)","").replace(" (Accepted)","").replace(" (Declined)","").trim());
+//                                                    e.moveToFirst();
+//                                                    email = e.getString(0);
+//                                                    Log.d("Email: ", email);
+//                                                }
+//                                            }
+//
+//                                            Log.d("Contactname: ", contactsname);
+//                                            Log.d("Contactemail: ", contactsemail);
+//
+//                                        }
+
+
                                         OkHttp.getInstance(mcontext).deleteEvent(id);
                                         db.deleteEvent(id);
+
+
                                         Intent i = new Intent(ShowEventDetails.this, LandingActivity.class);
                                         startActivity(i);
                                         setResult(RESULT_OK, i);
@@ -219,6 +277,7 @@ public class ShowEventDetails extends AppCompatActivity {
                 }
 
                 return true;
+
 
             default:
                 return super.onOptionsItemSelected(item);
