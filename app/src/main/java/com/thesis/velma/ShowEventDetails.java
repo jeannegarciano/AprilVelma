@@ -1,7 +1,5 @@
 package com.thesis.velma;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,7 +8,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -26,11 +23,9 @@ import com.thesis.velma.helper.DataBaseHandler;
 import com.thesis.velma.helper.NetworkUtil;
 import com.thesis.velma.helper.OkHttp;
 
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -50,7 +45,7 @@ public class ShowEventDetails extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mcontext=this;
+        mcontext = this;
         db = new DataBaseHandler(mcontext);
 
         setContentView(R.layout.activity_show_event_details);
@@ -62,7 +57,7 @@ public class ShowEventDetails extends AppCompatActivity {
         getSupportActionBar().setElevation(0);
 
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        Typeface custom_font = Typeface.createFromAsset(getAssets(),  "fonts/avenir-next-regular.ttf");
+        Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/avenir-next-regular.ttf");
         TextView mdesc = (TextView) findViewById(R.id.desc);
         mdesc.setTypeface(custom_font);
         TextView msdate = (TextView) findViewById(R.id.sDate);
@@ -84,7 +79,7 @@ public class ShowEventDetails extends AppCompatActivity {
 
         Cursor c = db.getEventDetails(id);
 
-        while (c.moveToNext()){
+        while (c.moveToNext()) {
             eventName = c.getString(c.getColumnIndex(DBInfo.DataInfo.EVENT_NAME));
             eventDesc = c.getString(c.getColumnIndex(DBInfo.DataInfo.EVENT_DESCRIPTION));
             sdate = c.getString(c.getColumnIndex(DBInfo.DataInfo.START_DATE));
@@ -127,7 +122,7 @@ public class ShowEventDetails extends AppCompatActivity {
 
         DateFormat formatstart = new SimpleDateFormat("HH:mm");
         Date formatStime = null;
-        String newStime=null;
+        String newStime = null;
         try {
             formatStime = formatstart.parse(stime);
             DateFormat newformatstart = new SimpleDateFormat("h:mma");
@@ -164,13 +159,13 @@ public class ShowEventDetails extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if (role.equals("Creator")){
+                if (role.equals("Creator")) {
 
                     int status = NetworkUtil.getConnectivityStatusString(mcontext);
 
                     if (status == 0) {
                         CheckInternet.showConnectionDialog(mcontext);
-                    }else {
+                    } else {
 
                         Intent intent = new Intent(getBaseContext(), UpdateEventActivity.class);
                         intent.putExtra("key", id);
@@ -192,18 +187,18 @@ public class ShowEventDetails extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
 
             case R.id.action_delete:
 
-                if (role.equals("Creator")){
+                if (role.equals("Creator")) {
 
                     int status = NetworkUtil.getConnectivityStatusString(mcontext);
 
                     if (status == 0) {
                         CheckInternet.showConnectionDialog(mcontext);
-                    }else {
+                    } else {
 
                         new AlertDialog.Builder(this)
                                 .setMessage("Are you sure you want to delete event?")
@@ -212,9 +207,8 @@ public class ShowEventDetails extends AppCompatActivity {
                                     public void onClick(DialogInterface dialog, int which) {
 
 
-
                                         String[] separated = friends.split("\n");
-                                      //Removing names duplicates for people invited
+                                        //Removing names duplicates for people invited
                                         Set<String> names = new HashSet<String>(Arrays.asList(separated));
                                         Set<String> namess = new HashSet<String>(Arrays.asList(separated));
 
@@ -225,48 +219,10 @@ public class ShowEventDetails extends AppCompatActivity {
                                         //Ends here
 
 
-//                                        Cursor b = db.getContacts();
-//                                        b.moveToFirst();
-//                                        for(String name : names)
-//                                            {
-//                                                    String email;
-////                                                    Cursor e = db.getEmail(name.replace(" (Pending)","").replace(" (Accepted)","").replace(" (Declined)","").trim());
-////                                                    e.moveToFirst();
-////                                                    email = e.getString(0);
-//                                                    Log.d("Email: ", email);
-//
-//                                            }
-
-
-//                                        while (b.moveToNext()) {
-//                                            String contactsname = b.getString(b.getColumnIndex("contact_name"));
-//                                            String contactsemail = b.getString(b.getColumnIndex("contact_email"));
-//                                            Log.d("Email: ", "whileeeeee");
-//                                            for(String name : names)
-//                                            {
-//                                                if(contactsname.equals(name.matches(".*\b(Pending)\b.*")))
-//                                                {
-//                                                    String email;
-//                                                    Cursor e = db.getEmail(name.replace(" (Pending)","").replace(" (Accepted)","").replace(" (Declined)","").trim());
-//                                                    e.moveToFirst();
-//                                                    email = e.getString(0);
-//                                                    Log.d("Email: ", email);
-//                                                }
-//                                            }
-//
-//                                            Log.d("Contactname: ", contactsname);
-//                                            Log.d("Contactemail: ", contactsemail);
-//
-//                                        }
-
-
                                         OkHttp.getInstance(mcontext).deleteEvent(id);
                                         db.deleteEvent(id);
 
 
-                                        Intent i = new Intent(ShowEventDetails.this, LandingActivity.class);
-                                        startActivity(i);
-                                        setResult(RESULT_OK, i);
                                         finish();
                                     }
                                 })

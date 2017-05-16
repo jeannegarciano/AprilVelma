@@ -49,7 +49,8 @@ public class NotificationList extends AppCompatActivity {
                         cursor.getString(cursor.getColumnIndex("event_location")),
                         cursor.getString(cursor.getColumnIndex("start_time")),
                         cursor.getString(cursor.getColumnIndex("event_id")),
-                        cursor.getString(cursor.getColumnIndex("EventStatus")));
+                        cursor.getString(cursor.getColumnIndex("EventStatus")),
+                        cursor.getString(cursor.getColumnIndex("Extra1")));
                 List.add(notificationModel);
             }
         }

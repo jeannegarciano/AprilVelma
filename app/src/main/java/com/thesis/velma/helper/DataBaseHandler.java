@@ -71,9 +71,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         ContentValues cv = new ContentValues();
 
-        cv.put(DataInfo.EventStatus, status);
 
+        if (status.equalsIgnoreCase("update")) {
+            cv.put(DataInfo.Extra1, "Creator update this Event.");
+        }
+
+
+        cv.put(DataInfo.EventStatus, status);
         sql.update(DataInfo.TABLE_EVENTS, cv, DataInfo.EVENT_ID + " = " + eventid, null);
+
         sql.close();
 
     }
@@ -108,10 +114,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     public void saveEventPending(int user_id, Long event_id, String event_name, String event_description, String event_location,
                                  String longitude, String latitude, String start_date, String start_time, String end_date, String end_time,
-                                 String is_whole_day, String role, String recipients, String status, String creator_email) {
+                                 String is_whole_day, String role, String recipients, String status, String creator_email, String message) {
 
         SQLiteDatabase sql = this.getWritableDatabase();
-
         ContentValues cv = new ContentValues();
         cv.put(DataInfo.USER_ID, user_id);
         cv.put(DataInfo.EVENT_ID, event_id);
@@ -129,7 +134,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         cv.put(DataInfo.RECIPIENTS, recipients);
         cv.put(DataInfo.EventStatus, status);
         cv.put(DataInfo.CONTACT_EMAIL, creator_email);
-
+        cv.put(DataInfo.Extra1, message);
         Log.d("Data", "" + cv);
 
         sql.insert(DataInfo.TABLE_EVENTS, null, cv);
@@ -140,7 +145,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase sql = this.getWritableDatabase();
 
 
-        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS + " Where EventStatus='Pending'", null);
+        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS + " Where (EventStatus !='ACCEPTED' OR EventStatus != 'Declined')", null);
 
         return c;
 
@@ -194,7 +199,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         SQLiteDatabase sql = db.getReadableDatabase();
 
-        Cursor c = sql.rawQuery("SELECT DISTINCT * FROM " + DataInfo.TABLE_CONTACTS, null);
+        Cursor c = sql.rawQuery("SELECT  * FROM " + DataInfo.TABLE_CONTACTS, null);
 
         return c;
 

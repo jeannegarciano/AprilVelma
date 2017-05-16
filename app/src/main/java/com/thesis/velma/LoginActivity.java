@@ -484,20 +484,18 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                                         public void success(List<UsersEntity> usersEntities, Response response) {
 
                                             usersEntityList = usersEntities;
-
                                             for (int i = 0; i < usersEntityList.size(); i++) {
                                                 int user_id = usersEntityList.get(i).getUser_id();
                                                 String email = usersEntityList.get(i).getEmail();
 
                                                 if (emailAddress.getValue().equals(email)) {
 
+                                                    //  if (ename.getDisplayName() != null) {
 
-                                                    if (ename.getDisplayName() != null) {
-
-                                                        db.saveContact(user_id, ename.getDisplayName(), emailAddress.getValue());
-                                                    } else {
-                                                        db.saveContact(user_id, emailAddress.getValue(), emailAddress.getValue());
-                                                    }
+                                                    //      db.saveContact(user_id, ename.getDisplayName(), emailAddress.getValue());
+                                                    //   } else {
+                                                    db.saveContact(user_id, emailAddress.getValue(), emailAddress.getValue());
+                                                    //   }
                                                 }
 
 
@@ -506,7 +504,6 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                                                     prefs.edit().putString("user_id", String.valueOf(user_id)).commit();
                                                 }
                                             }
-
                                         }
 
                                         @Override

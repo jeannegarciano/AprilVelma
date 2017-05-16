@@ -98,55 +98,9 @@ public class DeleteEvent  extends AppCompatActivity {
         TextView mfriends = (TextView) findViewById(R.id.friends);
         mfriends.setTypeface(custom_font);
 
-//        title = (TextView) findViewById(R.id.textView);
-//        ename = (TextView) findViewById(R.id.eventName);
-//        n = (TextView) findViewById(R.id.name);
-//        edescription = (TextView) findViewById(R.id.eventDescription);
-//        description = (TextView) findViewById(R.id.eventDescription1);
-//        sdText = (TextView) findViewById(R.id.sdate);
-//        sd = (TextView) findViewById(R.id.sdate1);
-//        edText = (TextView) findViewById(R.id.edate);
-//        ed = (TextView) findViewById(R.id.edate1);
-//        stText = (TextView) findViewById(R.id.stime);
-//        st = (TextView) findViewById(R.id.stime1);
-//        etText = (TextView) findViewById(R.id.etime);
-//        et = (TextView) findViewById(R.id.etime1);
-//        fText = (TextView) findViewById(R.id.friends);
-//        f = (TextView) findViewById(R.id.friends1);
-//        accept = (Button) findViewById(R.id.acceptEvent);
-//        accept.setOnClickListener(this);
-//        lText = (TextView) findViewById(R.id.location);
-//        l = (TextView) findViewById(R.id.location1);
-//        userT = (TextView) findViewById(R.id.userIdText);
-//        userId = (TextView) findViewById(R.id.userIdText1);
-//        eventT = (TextView) findViewById(R.id.eventId);
-//        eventId = (TextView) findViewById(R.id.eventId1);
-
 
         b = this.getIntent().getExtras();
 //        i = b.getInt("ID");
-
-
-
-        //Okay button from alarm notif
-
-//        en = b.getString("name");
-//        des = b.getString("description");
-//        sDate =  b.getString("dateS");
-//        endDate = b.getString("dateE");
-//        sTime = b.getString("start");
-//        eTime = b.getString("end");
-//        iFriends = b.getString("people");
-//        locat = b.getString("location");
-
-//        n.setText(en);
-//        description.setText(des);
-//        sd.setText(sDate);
-//        ed.setText(endDate);
-//        st.setText(sTime);
-//        et.setText(eTime);
-//        f.setText(iFriends);
-//        l.setText(locat);
 
 
         if (b!= null) {// to avoid the NullPointerException
@@ -186,11 +140,7 @@ public class DeleteEvent  extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-//                LandingActivity.db.deleteEvent(idEvent);
-//                OkHttp.getInstance(mcontext).deleteEvent(eventID);
-
-         finish();
+                    finish();
                 NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 notificationManager.cancel(eventid);
             }

@@ -11,13 +11,15 @@ public class NotificationModel {
     private String EventTime;
     private String EventId;
     private String status;
+    private String description;
 
-    public NotificationModel(String eventname, String eventlocation, String time, String eventid,String status) {
+    public NotificationModel(String eventname, String eventlocation, String time, String eventid, String status, String description) {
         this.EventName = eventname;
         this.EventLocation = eventlocation;
         this.EventTime = time;
         this.EventId = eventid;
         this.status = status;
+        this.description = description;
     }
 
 
@@ -40,6 +42,10 @@ public class NotificationModel {
 
     public String getStatus() {
         return this.status;
+    }
+
+    public String getDescription() {
+        return this.description;
     }
 }
 

@@ -36,6 +36,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         public TextView mTime;
         public TextView mEventID;
         public TextView mStatus;
+        public TextView mDescription;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -45,6 +46,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             mTime = (TextView) itemView.findViewById(R.id.txtTime);
             mEventID = (TextView) itemView.findViewById(R.id.txtEventID);
             mStatus = (TextView) itemView.findViewById(R.id.txtStatus);
+            mDescription = (TextView) itemView.findViewById(R.id.txtDescription);
 
         }
     }
@@ -68,6 +70,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.mStatus.setText(mDataset.get(position).getStatus());
         holder.mTime.setText(mDataset.get(position).getEventTime());
         holder.mEventID.setText(mDataset.get(position).getEventId());
+        holder.mDescription.setText(mDataset.get(position).getDescription());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -318,16 +318,13 @@ public class LandingActivity extends AppCompatActivity implements CalendarPicker
             Log.d("Tikyo:", String.valueOf(event.getId()));
 
             while (c.moveToNext()) {
-
                 id = c.getString(c.getColumnIndex(DBInfo.DataInfo.EVENT_ID));
 
                 Intent intent = new Intent(getBaseContext(), ShowEventDetails.class);
                 intent.putExtra("key", id);
                 Log.d("cathlyn: ", id);
-                startActivity(intent);
-
+                startActivityForResult(intent,CREATE_EVENT);
             }
-
         }
     }
 

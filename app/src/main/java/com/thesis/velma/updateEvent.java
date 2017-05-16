@@ -29,7 +29,7 @@ public class updateEvent extends AppCompatActivity {
     public static DataBaseHandler db;
     int i;
     TextView title, ename, n, edescription, description, sdText, sd, edText, ed, stText, st, et, etText, fText, f, lText, l;
-//    TextView userT, userId, eventT, eventId;
+    //    TextView userT, userId, eventT, eventId;
     Button accept;
     String en, des, sDate, endDate, sTime, eTime, iFriends, locat, idUser, lat, lng, eventID, creator, idEvent;
     String modetravel = "driving";
@@ -37,7 +37,7 @@ public class updateEvent extends AppCompatActivity {
     private PendingIntent pendingIntent;
 
 
-//    String locNameA = "", locLatA = "", locLngA = "", locLocationA = "", locSDA = "", locEDA = "", locSTA = "", locETA = "";
+    //    String locNameA = "", locLatA = "", locLngA = "", locLocationA = "", locSDA = "", locEDA = "", locSTA = "", locETA = "";
 //    String locNameB = "", locLatB = "", locLngB = "", locLocationB = "", locSDB = "", locEDB = "", locSTB = "", locETB = "";
 //    long diffInMinutesA, diffInMinutesB;
 //    String diffA, diffB;
@@ -141,23 +141,19 @@ public class updateEvent extends AppCompatActivity {
 
                 String target[] = creator.split("@");
 
-             //   OkHttp.getInstance(getBaseContext()).updateEvent(String.valueOf(idEvent), en, des, locat, lng,  lat, sDate, sTime, endDate, eTime, eventAllDay, listid);
-                LandingActivity.db.updateEvent(String.valueOf(idEvent), en, des, locat, lng,  lat, sDate, sTime, endDate, eTime, eventAllDay, friends);
-
+                //   OkHttp.getInstance(getBaseContext()).updateEvent(String.valueOf(idEvent), en, des, locat, lng,  lat, sDate, sTime, endDate, eTime, eventAllDay, listid);
+                LandingActivity.db.updateEvent(String.valueOf(idEvent), en, des, locat, lng, lat, sDate, sTime, endDate, eTime, eventAllDay, friends);
 
                 /////
                 OkHttp.getInstance(mcontext).sendNotificationReply("confirmEvent", en, des, target[0] + "Velma", idEvent);
                 OkHttp.getInstance(mcontext).updateStatus(idUser, String.valueOf(idEvent), "Accepted");
                 Toast.makeText(getApplicationContext(), "Accept event invitation", Toast.LENGTH_SHORT).show();
-
-                LandingActivity.db.updateEventStatus(String.valueOf(idEvent), "Accepted");
-
-
+                LandingActivity.db.updateEventStatus(String.valueOf(idEvent), "ACCEPTED");
                 Log.d("MyData1UserId: ", String.valueOf(eventid));
                 Log.d("MyData2EvntId: ", idEvent);
                 Log.d("MyData3EventName: ", en);
                 Log.d("MyData4EventDes: ", des);
-                Log.d("MyData5Friends: ", ""+friends);
+                Log.d("MyData5Friends: ", "" + friends);
 
 
                 Intent i = new Intent(updateEvent.this, LandingActivity.class);

@@ -88,7 +88,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                         remoteMessage.getData().get("eventname"), remoteMessage.getData().get("eventDescription"), remoteMessage.getData().get("eventLocation")
                         , remoteMessage.getData().get("lng"), remoteMessage.getData().get("lang"), remoteMessage.getData().get("eventStartDate")
                         , remoteMessage.getData().get("eventStartTime"), remoteMessage.getData().get("eventEndDate"), remoteMessage.getData().get("eventEndTime")
-                        , "", "", "", "Pending", remoteMessage.getData().get("creatorEmail"));
+                        , "", "", "", "Pending", remoteMessage.getData().get("creatorEmail"), remoteMessage.getData().get("text"));
 
 
                 String[] mydates = remoteMessage.getData().get("eventStartDate").split("-");
@@ -126,6 +126,12 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 c.putString("lng", remoteMessage.getData().get("lng"));
                 c.putString("listid", remoteMessage.getData().get("listid"));
                 c.putString("listinvitesid", remoteMessage.getData().get("listinvitesid"));
+                LandingActivity.db.updateEventStatus(remoteMessage.getData().get("eventid"), "Update");
+//                LandingActivity.db.saveEventUpdate(Integer.parseInt(remoteMessage.getData().get("userid")), Long.parseLong(remoteMessage.getData().get("eventid")),
+//                        remoteMessage.getData().get("eventname"), remoteMessage.getData().get("eventDescription"), remoteMessage.getData().get("eventLocation")
+//                        , remoteMessage.getData().get("lng"), remoteMessage.getData().get("lang"), remoteMessage.getData().get("eventStartDate")
+//                        , remoteMessage.getData().get("eventStartTime"), remoteMessage.getData().get("eventEndDate"), remoteMessage.getData().get("eventEndTime")
+//                        , "", "", "", "Pending", remoteMessage.getData().get("creatorEmail"),remoteMessage.getData().get("text"));
 
 
                 Intent detailsIntent4 = new Intent(this, declineEvent.class);
