@@ -409,7 +409,7 @@ public class OkHttp {
 
     public void sendNotification(String invitationTitle, String userid, String eventid, String eventname, String eventDescription, String eventLocation,
                                  String eventStartDate, String eventStartTime, String eventEndDate,
-                                 String eventEndTime, String target, String lat, String lng, String creatorEmail, String listinvitesid) {
+                                 String eventEndTime, String target, String lat, String lng, String creatorEmail, String listinvitesid, String eventAllDay, String status) {
 
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://velma.000webhostapp.com/sendNotification.php").newBuilder();
@@ -431,6 +431,8 @@ public class OkHttp {
         urlBuilder.addQueryParameter("lng", lng);
         urlBuilder.addQueryParameter("creatorEmail", creatorEmail);
         urlBuilder.addQueryParameter("listinvitesid", listinvitesid);
+        urlBuilder.addQueryParameter("eventAllDay", eventAllDay);
+        urlBuilder.addQueryParameter("status", status);
 
         String Url = urlBuilder.build().toString();
 

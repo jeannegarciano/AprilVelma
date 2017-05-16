@@ -70,15 +70,18 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 //b.putString("invitedfirends", remoteMessage.getData().get("invitedfirends"));
                 b.putString("lat", remoteMessage.getData().get("lat"));
                 b.putString("lng", remoteMessage.getData().get("lng"));
+                b.putString("eventAllDay", remoteMessage.getData().get("eventAllDay"));
                 b.putString("creatorEmail", remoteMessage.getData().get("creatorEmail"));
                 b.putString("listinvitesid", remoteMessage.getData().get("listinvitesid"));
-
+                b.putString("status", remoteMessage.getData().get("status"));
 
                 Log.d("DataBundle1", remoteMessage.getData().get("eventname"));
                 Log.d("DataBundle2", remoteMessage.getData().get("eventid"));
 //                Log.d("DataBundle2", remoteMessage.getData().get("invitedfirends"));
                 Log.d("DataBundle1", remoteMessage.getData().get("creatorEmail"));
                 Log.d("DataBundle3", remoteMessage.getData().get("listinvitesid"));
+                Log.d("DataBundle4", remoteMessage.getData().get("eventAllDay"));
+
 
                 detailsIntent1.putExtras(b);
                 detailsIntent2.putExtras(b);
@@ -96,13 +99,13 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
                 builder = new NotificationCompat.Builder(this)
                         .addAction(R.drawable.ic_check_circle_blue_500_18dp, "View", PendingIntent.getActivity(this, dummyuniqueInt, detailsIntent1, PendingIntent.FLAG_UPDATE_CURRENT)) // #0
-//                        .addAction(R.drawable.ic_cancel_blue_500_18dp, "Decline", PendingIntent.getActivity(this, dummyuniqueInt, detailsIntent2, PendingIntent.FLAG_UPDATE_CURRENT))  // #1
                         .setAutoCancel(true)
                         .setContentTitle(remoteMessage.getData().get("eventname"))
                         .setContentText(remoteMessage.getData().get("text"))
                         .setSmallIcon(R.drawable.velmalogo);
 
                 manager.notify(0, builder.build());
+
 
                 break;
 
@@ -127,6 +130,9 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                 c.putString("listid", remoteMessage.getData().get("listid"));
                 c.putString("listinvitesid", remoteMessage.getData().get("listinvitesid"));
                 LandingActivity.db.updateEventStatus(remoteMessage.getData().get("eventid"), "Update");
+
+
+                //Commented by Andrew
 //                LandingActivity.db.saveEventUpdate(Integer.parseInt(remoteMessage.getData().get("userid")), Long.parseLong(remoteMessage.getData().get("eventid")),
 //                        remoteMessage.getData().get("eventname"), remoteMessage.getData().get("eventDescription"), remoteMessage.getData().get("eventLocation")
 //                        , remoteMessage.getData().get("lng"), remoteMessage.getData().get("lang"), remoteMessage.getData().get("eventStartDate")

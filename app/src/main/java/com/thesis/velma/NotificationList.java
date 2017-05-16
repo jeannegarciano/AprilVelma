@@ -56,7 +56,7 @@ public class NotificationList extends AppCompatActivity {
         }
 
 
-        Log.d("Count", "" + cursor.getCount());
+        Log.d("Notification Count", "" + cursor.getCount());
 
 
         mAdapter = new NotificationAdapter(List);

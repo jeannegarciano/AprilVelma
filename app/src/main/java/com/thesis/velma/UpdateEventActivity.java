@@ -1,7 +1,9 @@
 package com.thesis.velma;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -59,6 +61,7 @@ import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -100,6 +103,10 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
     FloatingActionButton save;
 
     boolean isInviteButtonClicked = false;
+    String oldNew = "";
+    String[] on = new String[0];
+    private PendingIntent pendingIntent;
+    int count;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -184,6 +191,8 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
         editEtime.setOnClickListener(this);
         buttonAddFriends.setOnClickListener(this);
         save.setOnClickListener(this);
+        final String oldList = editFriends.getText().toString();
+        final String[] separateOld = oldList.split("\n");
 
 
         AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
@@ -265,13 +274,30 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        String oldie = "";
+//                        editFriends.setText(null);
+                        for(int s = 0; s < separateOld.length;s++)
+                        {
+                            oldie = oldie + separateOld[s].replace(" (Pending)", "").trim() + "\n";
+                        }
 
-                        editFriends.setText(null);
                         for (int i = 0; i < invitedContacts.size(); i++) {
 
                             list = list + invitedContacts.get(i) + "\n";
                         }
-                        editFriends.setText(list);
+                        oldNew = oldie+list;
+                        String[] newOld = oldNew.split("\n");
+                        Set<String> oldN = new HashSet<String>(Arrays.asList(newOld));//removing duplicates
+                        on = oldN.toArray(new String[0]);//all contacts with no duplicate
+                        String newcontact = "";
+                        for(int o=0; o < on.length; o++)
+                        {
+                            newcontact = newcontact + on[o] + "\n";//converting array into a string
+                        }
+                        editFriends.setText(newcontact);
+                        Log.d("NEWCONTACTNODUP: ", oldN.toString());
+                        Log.d("newcontact: ", newcontact);
+                        Log.d("NEWCONTACT: ", oldNew);
 
                         Log.d("InvitedList:", list);
 
@@ -474,15 +500,6 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
                         public void onTimeSet(TimePicker view, int hourOfDay,
                                               int minute) {
 
-//
-//                            if(cal.getTimeInMillis() > c.getTimeInMillis()) {
-//
-//                                Toast.makeText(getContext(), "Can't add time", Toast.LENGTH_SHORT).show();
-//                            }else {
-//                                timeEnd.setText(hourOfDay + ":" + minute);
-//                            }
-
-                            //  timeEnd.setText(hourOfDay + ":" + minute);
 
                             String st = hourOfDay + ":" + minute;
 
@@ -529,6 +546,7 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
             String invitedlist = editFriends.getText().toString();
 
             String[] separated = invitedlist.split("\n");
+            Set<String> names = new HashSet<String>(Arrays.asList(separated));
             Cursor b = LandingActivity.db.getContacts();
             ArrayList<String> invitesid = new ArrayList<String>();
 
@@ -537,7 +555,11 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
             String listinvitesid="";
             String emailinvites = "";
 
-
+            Log.d("invitedlist:", separated.toString());
+            for(String na:names)
+            {
+                Log.d("names:", na);
+            }
             while (b.moveToNext()){
                 String contactsname = b.getString(b.getColumnIndex("contact_name"));
                 String contactsid = b.getString(b.getColumnIndex("contact_user_id"));
@@ -545,62 +567,71 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
 
                 int i;
 
-                for (i=0; i<separated.length; i++){
+                for (i = 0; i < on.length; i++) {
 
-                    if (contactsname.equals(separated[i].replace(" (Pending)","").replace(" (Accepted)","").replace(" (Declined)","").trim())){
+                    if (contactsname.equals(on[i])) {
+                        Log.d("Contactsname: ", contactsname);
 
-                        boolean declined = separated[i].matches(".*\\b(Declined)\\b.*");
+                        listid[i] = contactsid;
+                        listinvitesid = listinvitesid + contactsname + " (Pending)\n";
+                        invitesid.add(contactsid);
 
-                        if (!declined){
-
-                            listid[i] = contactsid;
-                            listinvitesid = listinvitesid + contactsname + " (Pending)\n";
-                            invitesid.add(contactsid);
-                            emailinvites +=  contactsemail + "\n";
-
-                            boolean contains = separated[i].matches(".*\\b(Accepted)\\b.*");
-                            Log.d("contains", String.valueOf(contains));
-
-                            if (contains){
-                                invitesemail += contactsemail.replace("@gmail.com","").trim() + "\n";
-                                Log.d("InvitesEmail", invitesemail);
-                            }
-                        }
+                        invitesemail = invitesemail + contactsemail.replace("@gmail.com", "").trim() + "\n";
                     }
                 }
             }
 
-            if (isInviteButtonClicked==true){
-                String[] eachemail = emailinvites.split("\n");
-                String countemail = String.valueOf(eachemail.length);
-                Log.d("countemail", countemail);
-
-                for (int i=0; i<eachemail.length; i++){
-                    //codes for sending notif
-                        //codes for sending notif
-                        OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
-                                eventDescription, eventLocation, startDate, startTime, endDate, endTime, eachemail[i]+ "Velma",
-                                lat, lng, LandingActivity.useremail, listinvitesid);//eachemail[0]
-
-                    Log.d("EachemailFirst", eachemail[i]);
-                }
-                Log.d("Amodia:", emailinvites);
-
-            } else {
-                String[] eachemail = invitesemail.split("\n");
-                String countemail = String.valueOf(eachemail.length);
-                Log.d("countemail", countemail);
-
-                for (int i=0; i<eachemail.length; i++){
-                    //codes for sending notif
-
-                    OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
-                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, eachemail[i]+ "Velma",
-                            lat, lng, LandingActivity.useremail, listinvitesid);//eachemail[0]
-                    Log.d("EachemailSecond", eachemail[i]);
-                }
-                Log.d("Jane:", invitesemail);
+            String[] separateName = listinvitesid.split("\n");
+            String[] separateEmail = invitesemail.split("\n");
+            //Removing duplicate names
+            Set<String> sname = new HashSet<String>(Arrays.asList(separateName));
+            Set<String> semail = new HashSet<String>(Arrays.asList(separateEmail));
+            String[] arrayname = sname.toArray(new String[0]);
+            String[] arrayemail = semail.toArray(new String[0]);
+            String finalName = "";
+            String finalEmail = "";
+            for(int count =0; count < arrayname.length; count++)
+            {
+                finalName = finalName + arrayname[count] + "\n";
+                finalEmail = finalEmail + arrayemail[count] + "\n";
             }
+
+
+            Log.d("listinvitesidname:", listinvitesid);
+            Log.d("invitesemail:", invitesemail);
+            Log.d("finalName:", finalName);
+            Log.d("finalEmail:", finalEmail);
+//            if (isInviteButtonClicked==true){
+//                String[] eachemail = emailinvites.split("\n");
+//                String countemail = String.valueOf(eachemail.length);
+//                Log.d("countemail", countemail);
+//
+//                for (int i=0; i<eachemail.length; i++){
+//                    //codes for sending notif
+//                        //codes for sending notif
+//                        OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
+//                                eventDescription, eventLocation, startDate, startTime, endDate, endTime, eachemail[i]+ "Velma",
+//                                lat, lng, LandingActivity.useremail, listinvitesid);//eachemail[0]
+//
+//                    Log.d("EachemailFirst", eachemail[i]);
+//                }
+//                Log.d("Amodia:", emailinvites);
+//
+//            } else {
+//                String[] eachemail = invitesemail.split("\n");
+//                String countemail = String.valueOf(eachemail.length);
+//                Log.d("countemail", countemail);
+//
+//                for (int i=0; i<eachemail.length; i++){
+//                    //codes for sending notif
+//
+//                    OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
+//                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, eachemail[i]+ "Velma",
+//                            lat, lng, LandingActivity.useremail, listinvitesid);//eachemail[0]
+//                    Log.d("EachemailSecond", eachemail[i]);
+//                }
+//                Log.d("Jane:", invitesemail);
+//            }
 
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mcontext);
@@ -608,7 +639,86 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
 
             if (locationIsClick==true){
                 OkHttp.getInstance(getBaseContext()).updateEvent(id, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
-                LandingActivity.db.updateEvent(id, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listinvitesid);
+                LandingActivity.db.updateEvent(id, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, finalName);
+
+                //Code for alarm
+
+
+                DataBaseHandler db = new DataBaseHandler(this);
+                Cursor c = db.getMaxId();
+                c.moveToFirst();
+                if (c.getCount() == 0) {
+                    count = 1;
+                } else {
+                    count = Integer.parseInt(c.getString(0));
+                    Log.d("CountNoPlus: ", "" +count);
+                    count += 1;
+                    Log.d("CountWithPlus: ", "" +count);
+                }
+
+                AlarmManager cancelAlarmManager = (AlarmManager) mcontext.getSystemService
+                        (Context.ALARM_SERVICE);
+                Intent myCancelIntent = new Intent(mcontext, AlarmReceiver.class);
+//                PendingIntent morningIntent = PendingIntent.getBroadcast(MainActivity.getContext(), Alarm_id.get(positon),
+//                        intentAlarm, PendingIntent.FLAG_CANCEL_CURRENT);
+                pendingIntent = PendingIntent.getBroadcast(mcontext, count, myCancelIntent,
+                        PendingIntent.FLAG_CANCEL_CURRENT);
+
+                cancelAlarmManager.cancel(pendingIntent);
+                pendingIntent.cancel();
+
+                Log.d("Count", "" + count);
+
+                AlarmManager alarmManager = (AlarmManager) mcontext.getSystemService
+                        (Context.ALARM_SERVICE);
+                Intent myIntent = new Intent(mcontext, AlarmReceiver.class);
+                myIntent.putExtra("userID", user_id);
+                myIntent.putExtra("name", name);
+                myIntent.putExtra("description", eventDescription);
+                myIntent.putExtra("location", eventLocation);
+                myIntent.putExtra("start", startTime);
+                myIntent.putExtra("end", endTime);
+                myIntent.putExtra("dateS", startDate);
+                myIntent.putExtra("dateE", endDate);
+                myIntent.putExtra("people", listinvitesid);
+                Log.d("MyData", name);
+                pendingIntent = PendingIntent.getBroadcast(mcontext, count + 1, myIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+                Calendar calNow = Calendar.getInstance();
+                Calendar calSet = (Calendar) calNow.clone();
+                calSet.setTimeInMillis(System.currentTimeMillis());
+
+                String[] mydates = startDate.split("-");
+                String[] mytimes = startTime.split(":");
+
+                String date = "" + mydates[0] + "-" + mydates[1] + "-" + mydates[2];
+
+                calSet.set(Calendar.YEAR, Integer.parseInt(mydates[0]));
+                calSet.set(Calendar.MONTH, Integer.parseInt(mydates[1]) - 1);
+                calSet.set(Calendar.DATE, Integer.parseInt(mydates[2]));
+                calSet.set(Calendar.HOUR_OF_DAY, Integer.parseInt(mytimes[0]));
+                calSet.set(Calendar.MINUTE, Integer.parseInt(mytimes[1]));
+                calSet.set(Calendar.SECOND, 0);
+                calSet.set(Calendar.MILLISECOND, 0);
+
+                Log.d("AlaramJeanne", "" + calSet.getTimeInMillis());
+                Log.d("AlaramJeanne1", "" + System.currentTimeMillis());
+
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calSet.getTimeInMillis(),
+                        pendingIntent);
+                //Code for the alarm ends here....
+
+                for (int i=0; i<arrayemail.length; i++){
+                    //codes for sending notif
+
+                    OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, id,
+                            name,
+                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, arrayemail[i].replace("@gmail", "")+ "Velma",
+                            lat, lng, LandingActivity.useremail, finalName, eventAllDay, "Update");//eachemail[0]
+
+                    Log.d("EachemailFirst", arrayemail[i]);
+                }
 
 //
 //                String[] target = invitesemail.split("\n");
@@ -625,13 +735,98 @@ public class UpdateEventActivity extends AppCompatActivity implements View.OnCli
 //                    OkHttp.getInstance(mcontext).sendNotificationUpdate("Update", id, name,
 //                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[i]+ "Velma",
 //                            lat, lng, LandingActivity.useremail, listid, listinvitesid);//eachemail[0]
-
-
             } else {
                 OkHttp.getInstance(getBaseContext()).updateEvent(id, name, eventDescription, eventLocation, longi,  lati, startDate, startTime, endDate, endTime, eventAllDay, listid);
-                LandingActivity.db.updateEvent(id, name, eventDescription, eventLocation, longi,  lati, startDate, startTime, endDate, endTime, eventAllDay, listinvitesid);
-            }
+                LandingActivity.db.updateEvent(id, name, eventDescription, eventLocation, longi,  lati, startDate, startTime, endDate, endTime, eventAllDay, finalName);
 
+                //Code for alarm
+
+                int count;
+                DataBaseHandler db = new DataBaseHandler(this);
+                Cursor c = db.getMaxId();
+                c.moveToFirst();
+                if (c.getCount() == 0) {
+                    count = 1;
+                } else {
+                    count = Integer.parseInt(c.getString(0));
+                    Log.d("CountNoPlus: ", "" +count);
+                    count += 1;
+                    Log.d("CountWithPlus: ", "" +count);
+                }
+
+                AlarmManager cancelAlarmManager = (AlarmManager) mcontext.getSystemService
+                        (Context.ALARM_SERVICE);
+                Intent myCancelIntent = new Intent(mcontext, AlarmReceiver.class);
+//                PendingIntent morningIntent = PendingIntent.getBroadcast(MainActivity.getContext(), Alarm_id.get(positon),
+//                        intentAlarm, PendingIntent.FLAG_CANCEL_CURRENT);
+                pendingIntent = PendingIntent.getBroadcast(mcontext, count, myCancelIntent,
+                        PendingIntent.FLAG_CANCEL_CURRENT);
+
+                cancelAlarmManager.cancel(pendingIntent);
+                pendingIntent.cancel();
+
+                Log.d("Count", "" + count);
+
+                AlarmManager alarmManager = (AlarmManager) mcontext.getSystemService
+                        (Context.ALARM_SERVICE);
+                Intent myIntent = new Intent(mcontext, AlarmReceiver.class);
+                myIntent.putExtra("userID", user_id);
+                myIntent.putExtra("name", name);
+                myIntent.putExtra("description", eventDescription);
+                myIntent.putExtra("location", eventLocation);
+                myIntent.putExtra("start", startTime);
+                myIntent.putExtra("end", endTime);
+                myIntent.putExtra("dateS", startDate);
+                myIntent.putExtra("dateE", endDate);
+                myIntent.putExtra("people", listinvitesid);
+                Log.d("MyData", name);
+                pendingIntent = PendingIntent.getBroadcast(mcontext, count + 1, myIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+                Calendar calNow = Calendar.getInstance();
+                Calendar calSet = (Calendar) calNow.clone();
+                calSet.setTimeInMillis(System.currentTimeMillis());
+
+
+                String[] mydates = startDate.split("-");
+                String[] mytimes = startTime.split(":");
+
+
+                String date = "" + mydates[0] + "-" + mydates[1] + "-" + mydates[2];
+
+                calSet.set(Calendar.YEAR, Integer.parseInt(mydates[0]));
+                calSet.set(Calendar.MONTH, Integer.parseInt(mydates[1]) - 1);
+                calSet.set(Calendar.DATE, Integer.parseInt(mydates[2]));
+                calSet.set(Calendar.HOUR_OF_DAY, Integer.parseInt(mytimes[0]));
+                calSet.set(Calendar.MINUTE, Integer.parseInt(mytimes[1]));
+                calSet.set(Calendar.SECOND, 0);
+                calSet.set(Calendar.MILLISECOND, 0);
+
+                Log.d("AlaramJeanne", "" + calSet.getTimeInMillis());
+                Log.d("AlaramJeanne1", "" + System.currentTimeMillis());
+
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calSet.getTimeInMillis(),
+                        pendingIntent);
+                //Code for the alarm ends here....
+
+                for (int i=0; i<arrayemail.length; i++){
+                    //codes for sending notif
+                    //codes for sending notif
+//                    OkHttp.getInstance(mcontext).sendNotification("Invitation", id, name,
+//                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, arrayemail[i].replace("@gmail", "")+ "Velma",
+//                            lat, lng, LandingActivity.useremail, finalName);//eachemail[0]
+                    OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, id,
+                            name,
+                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, arrayemail[i].replace("@gmail", "")+ "Velma",
+                            lat, lng, LandingActivity.useremail, finalName, eventAllDay, "Update");//eachemail[0]
+
+//                    OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, id, name,
+//                            eventDescription, eventLocation, startDate, startTime, endDate, endTime, arrayemail[i].replace("@gmail", "") + "Velma",
+//                            lat, lng, LandingActivity.useremail, finalName);
+
+                    Log.d("EachemailFirst", arrayemail[i]);
+                }
+            }
 
             Log.i("Event allDay", eventAllDay);
             Log.i("Event name", name);
