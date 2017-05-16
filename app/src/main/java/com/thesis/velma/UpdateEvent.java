@@ -130,9 +130,9 @@ public class updateEvent extends AppCompatActivity {
         mfriends.setText(iFriends);
         mlocation.setText(locat);
 
-        Cursor c = db.getUserId();
-        c.moveToFirst();
-        final String userI = c.getString(0);
+//        Cursor c = db.getUserId();
+//        c.moveToFirst();
+//        final String userI = c.getString(0);
 
         Button updateInvite = (Button) findViewById(R.id.accept);
         updateInvite.setOnClickListener(new View.OnClickListener() {

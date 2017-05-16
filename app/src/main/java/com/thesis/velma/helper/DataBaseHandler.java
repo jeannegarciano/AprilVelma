@@ -26,7 +26,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             DataInfo.LONGITUDE + " TEXT," + DataInfo.LATITUDE + " TEXT," + DataInfo.START_DATE + " TEXT," +
             DataInfo.START_TIME + " TEXT," + DataInfo.END_DATE + " TEXT," + DataInfo.END_TIME + " TEXT," +
             DataInfo.IS_WHOLE_DAY + " TEXT," + DataInfo.ROLE + " TEXT," + DataInfo.RECIPIENTS + " TEXT," +
-            DataInfo.CONTACT_EMAIL + " TEXT, " +
+           DataInfo.CONTACT_EMAIL + " TEXT, " +
             DataInfo.EventStatus + " TEXT," + DataInfo.Extra1 + " TEXT, " + DataInfo.Extra2 + " TEXT)";
 
     public String CREATE_EVENT_USERS = "CREATE TABLE " + DataInfo.TABLE_EVENT_USERS + " (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -100,6 +100,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         cv.put(DataInfo.ROLE, role);
         cv.put(DataInfo.EventStatus, "ACCEPTED");
         cv.put(DataInfo.RECIPIENTS, recipients);
+
 
         Log.d("Data", "" + cv);
 
@@ -182,13 +183,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 //    }
 
 
-    public Cursor getUserId() {
-        SQLiteDatabase sql = db.getReadableDatabase();
-
-        Cursor c = sql.rawQuery("SELECT DISTINCT * FROM " + DataInfo.TABLE_CONTACTS, null);
-
-        return c;
-    }
+//    public Cursor getUserId() {
+//        SQLiteDatabase sql = db.getReadableDatabase();
+//
+//        Cursor c = sql.rawQuery("SELECT DISTINCT * FROM " + DataInfo.TABLE_CONTACTS, null);
+//
+//        return c;
+//    }
 
     public Cursor getContacts() {
 
@@ -198,6 +199,81 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         return c;
 
+    }
+
+    public Cursor conflictCheckerDaily(String sd, String st, String ed, String et) {
+
+        SQLiteDatabase sql = db.getReadableDatabase();
+
+        String d1= "2000-12-01 ";
+        String d2= "2000-12-02 ";
+
+
+
+        Cursor c = sql.rawQuery("SELECT user_id , event_id, event_name, event_description, start_date, start_time, end_date, end_time FROM " + DataInfo.TABLE_EVENTS+
+                " WHERE ((((start_time BETWEEN '"+st+"' AND '"+et+
+                "' ) AND ((start_date BETWEEN '"+sd+"' AND '"+ed+
+                "') OR (end_date BETWEEN '"+sd+"' AND '"+ed+"') OR ('"+sd+
+                "' BETWEEN start_date AND end_date))) OR ((end_time BETWEEN '"+st+
+                "' AND '"+et+"') AND ((start_date BETWEEN '"+sd+"' AND '"+ed+
+                "') OR (end_date BETWEEN '"+sd+"' AND '"+ed+"') OR ('"+sd+
+                "' BETWEEN start_date AND end_date))) OR (('"+st+
+                "' BETWEEN start_time AND end_time) AND ((start_date BETWEEN '"+sd+"' AND '"+ed+
+                "') OR (end_date BETWEEN '"+sd+"' AND '"+ed+"') OR ('"+sd+
+                "' BETWEEN start_date AND end_date)))) AND is_whole_day = 'Daily') OR ((((('"+d1+"'|| start_time) BETWEEN ('"+d1+"'||'"+st+
+                "') AND ('"+d1+"'||'"+et+"')) AND ((start_date BETWEEN '"+sd+"' AND '"+ed+
+                "') OR (date(end_date,'+1 day') BETWEEN '"+sd+"' AND '"+ed+"') OR ('"+sd+
+                "' BETWEEN start_date AND date(end_date,'+1 day')))) OR ((('"+d1+"'||end_time) BETWEEN ('"+d1+"'||'"+st+
+                "') AND ('"+d1+"'||'"+et+"')) AND ((start_date BETWEEN '"+sd+"' AND '"+ed+
+                "') OR (date(end_date,'+1 day') BETWEEN '"+sd+"' AND '"+ed+"') OR ('"+sd+
+                "' BETWEEN start_date AND date(end_date,'+1 day')))) OR ((('"+d1+"'||'"+st+
+                "') BETWEEN ('"+d1+"'|| start_time) AND ('"+d2+"'|| end_time)) AND ((start_date BETWEEN '"+sd+"' AND '"+ed+
+                "') OR (date(end_date,'+1 day') BETWEEN '"+sd+"' AND '"+ed+"') OR ('"+sd+
+                "' BETWEEN start_date AND date(end_date,'+1 day')))) OR ((('"+d1+"'||'"+st+
+                "') BETWEEN ('"+d1+"'|| start_time) AND ('"+d2+"'|| end_time)) AND ((start_date BETWEEN '"+sd+"' AND '"+ed+
+                "')	OR (date(end_date,'+1 day') BETWEEN '"+sd+"' AND '"+ed+"') OR ('"+sd+
+                "' BETWEEN start_date AND date(end_date,'+1 day'))))) AND is_whole_day = 'Reverse Daily') OR ((((start_date ||' '||start_time) BETWEEN ('"+sd+
+                " '||'"+st+"') AND ('"+ed+" '||'"+et+"')) OR ((end_date||' '|| end_time) BETWEEN ('"+sd+
+                " '||'"+st+"') AND ('"+ed+" '||'"+et+"')) OR (('"+sd+
+                " '||'"+st+"') BETWEEN (start_date ||' '|| start_time) AND (end_date ||' '|| end_time))) AND is_whole_day = 'All Day')", null);
+
+        return c;
+    }
+
+    public Cursor conflictCheckerAllDay(String sd, String st, String ed, String et) {
+
+        SQLiteDatabase sql = db.getReadableDatabase();
+
+
+        Cursor c = sql.rawQuery("SELECT user_id , event_id, event_name, event_description, start_date, start_time, end_date, end_time FROM " + DataInfo.TABLE_EVENTS+
+                " WHERE (((start_date ||' '||start_time) BETWEEN ('"+sd+"'||'"+st+"') AND ('"+ed+" '||'"+et+"')) OR ((end_date||' '|| end_time) BETWEEN ('"+sd+
+                "'||'"+st+"') AND ('"+ed+" '||' "+et+"')) OR (('"+sd+" '||' "+st+"') BETWEEN (start_date ||' '|| start_time) AND (end_date || ' ' || end_time)))", null );
+
+
+        return c;
+    }
+
+    public Cursor conflictCheckerReverseDaily(String sd, String st, String ed, String et) {
+
+        SQLiteDatabase sql = db.getReadableDatabase();
+
+
+        String d1= "2000-12-01 ";
+        String d2= "2000-12-02 ";
+
+        Cursor c = sql.rawQuery("SELECT user_id , event_id, event_name, event_description, start_date, start_time, end_date, end_time FROM " + DataInfo.TABLE_EVENTS+
+                " WHERE (((('"+d1+"'||end_time) BETWEEN ('"+d1+"'||'"+st+"') AND ('"+d2+"'||'"+et+"') AND ((start_date BETWEEN '"+sd+"' AND date('"+ed+
+                "','+1 day')) OR (end_date BETWEEN '"+sd+"' AND date('"+ed+"','+1 day')) OR ('"+sd+"' BETWEEN start_date AND end_date))) " +
+                "OR (('"+d2+"'||start_time) BETWEEN ('"+d1+"'||'"+st+"') AND ('"+d2+"'||'"+et+"') AND ((start_date BETWEEN '"+sd+"' AND date('"+ed+
+                "','+1 day')) OR (end_date BETWEEN '"+sd+"' AND date('"+ed+"','+1 day')) OR ('"+sd+"' BETWEEN start_date AND end_date)))) AND is_whole_day = 'Daily') " +
+                "OR ((((start_date ||' '||start_time) BETWEEN ('"+sd+" '||'"+st+"') AND (date('"+ed+"','+1 day')||' '||'"+et+
+                "')) OR ((end_date||' '|| end_time) BETWEEN ('"+sd+" '||'"+st+"') AND (date('"+ed+"','+1 day')||' '||'"+et+"')) OR (('"+sd+
+                " '||'"+st+"') BETWEEN (start_date ||' '|| start_time) AND (end_date ||' '|| end_time))) AND is_whole_day = 'All Day') OR "+
+                "(((start_date BETWEEN '"+sd+"' AND '"+ed+"') OR (date(end_date,'+1 day') BETWEEN '"+sd+"' AND date('"+ed+"','+1 day')) OR ('"+sd+
+                "' BETWEEN start_date AND end_date)) AND is_whole_day = 'Reverse Daily')", null);
+
+
+        return c;
     }
 
 //    public Cursor getEmail(String name) {
@@ -298,44 +374,147 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
 
-    public Cursor conflictCheckerDaily(String sd, String st, String ed, String et, String isWholeDay) {
+
+    public Cursor PrevDaily(String sd, String st) {
 
         SQLiteDatabase sql = db.getReadableDatabase();
 
-        String d1 = "2000-12-01 ";
-        String d2 = "2000-12-02 ";
+        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS + " WHERE (((('"+st+"' >= end_time) AND ('"+sd+"' = end_date))"+
+                "AND is_whole_day = 'All Day') OR ((('"+st+"' >= end_time) AND ('"+sd+"' = end_date)) AND is_whole_day = 'Daily') "+
+                " OR ((('"+st+"' >= end_time) AND ('"+sd+"' >= date(end_date,'+1 day'))) AND is_whole_day = 'Reverse Daily')) ORDER BY start_time DESC LIMIT 1 ", null);
+        return c;
+    }
+
+    public Cursor PrevAllDay(String sd, String st) {
+        SQLiteDatabase sql = db.getReadableDatabase();
+
+        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS + " WHERE (((('"+st+"' >= end_time) AND ('"+sd+"' = end_date)) AND is_whole_day = 'Daily') OR "  +
+                "((('"+st+"' >= end_time) AND ('"+sd+"' = end_date)) AND is_whole_day = 'All Day') OR ((('"+st+"' >= end_time) AND ('"+sd+"' = date(end_date,'+1 day'))) AND is_whole_day = 'Reverse Daily')) ORDER BY start_time DESC LIMIT 1 ", null);
 
 
-        Cursor c = sql.rawQuery("SELECT user_id , event_id, event_name, event_description, start_date, start_time, end_date, end_time FROM " + DataInfo.TABLE_EVENTS +
-                " WHERE ((((start_time BETWEEN '" + st + "' AND '" + et +
-                "' ) AND ((start_date BETWEEN '" + sd + "' AND '" + ed +
-                "') OR (end_date BETWEEN '" + sd + "' AND '" + ed + "') OR ('" + sd +
-                "' BETWEEN start_date AND end_date))) OR ((end_time BETWEEN '" + st +
-                "' AND '" + et + "') AND ((start_date BETWEEN '" + sd + "' AND '" + ed +
-                "') OR (end_date BETWEEN '" + sd + "' AND '" + ed + "') OR ('" + sd +
-                "' BETWEEN start_date AND end_date))) OR (('" + st +
-                "' BETWEEN start_time AND end_time) AND ((start_date BETWEEN '" + sd + "' AND '" + ed +
-                "') OR (end_date BETWEEN '" + sd + "' AND '" + ed + "') OR ('" + sd +
-                "' BETWEEN start_date AND end_date)))) AND is_whole_day = 'Daily') OR ((((('" + d1 + "'|| start_time) BETWEEN ('" + d1 + "'||'" + st +
-                "') AND ('" + d1 + "'||'" + et + "')) AND ((start_date BETWEEN '" + sd + "' AND '" + ed +
-                "') OR (date(end_date,'+1 day') BETWEEN '" + sd + "' AND '" + ed + "') OR ('" + sd +
-                "' BETWEEN start_date AND date(end_date,'+1 day')))) OR ((('" + d1 + "'||end_time) BETWEEN ('" + d1 + "'||'" + st +
-                "') AND ('" + d1 + "'||'" + et + "')) AND ((start_date BETWEEN '" + sd + "' AND '" + ed +
-                "') OR (date(end_date,'+1 day') BETWEEN '" + sd + "' AND '" + ed + "') OR ('" + sd +
-                "' BETWEEN start_date AND date(end_date,'+1 day')))) OR ((('" + d1 + "'||'" + st +
-                "') BETWEEN ('" + d1 + "'|| start_time) AND ('" + d2 + "'|| end_time)) AND ((start_date BETWEEN '" + sd + "' AND '" + ed +
-                "') OR (date(end_date,'+1 day') BETWEEN '" + sd + "' AND '" + ed + "') OR ('" + sd +
-                "' BETWEEN start_date AND date(end_date,'+1 day')))) OR ((('" + d1 + "'||'" + st +
-                "') BETWEEN ('" + d1 + "'|| start_time) AND ('" + d2 + "'|| end_time)) AND ((start_date BETWEEN '" + sd + "' AND '" + ed +
-                "')	OR (date(end_date,'+1 day') BETWEEN '" + sd + "' AND '" + ed + "') OR ('" + sd +
-                "' BETWEEN start_date AND date(end_date,'+1 day'))))) AND is_whole_day = 'Reverse Daily') OR ((((start_date ||' '||start_time) BETWEEN ('" + sd +
-                " '||'" + st + "') AND ('" + ed + " '||'" + et + "')) OR ((end_date||' '|| end_time) BETWEEN ('" + sd +
-                " '||'" + st + "') AND ('" + ed + " '||'" + et + "')) OR (('" + sd +
-                " '||'" + st + "') BETWEEN (start_date ||' '|| start_time) AND (end_date ||' '|| end_time))) AND is_whole_day = 'All Day')", null);
+        return c;
+
+    }
+
+    public Cursor PrevRevDaily(String sd, String st) {
+        SQLiteDatabase sql = db.getReadableDatabase();
+
+        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS + " WHERE (((('"+sd+" ' || '"+st+"') >= (end_date ||' '|| end_time)) AND is_whole_day = 'Daily') OR "  +
+                "((('"+st+"' >= end_time) AND ('"+sd+"' = end_date)) AND is_whole_day = 'All Day') OR ((('"+st+"' >= end_time) AND ('"+sd+"' = date(end_date,'+1 day'))) AND is_whole_day = 'Reverse Daily')) ORDER BY start_time DESC LIMIT 1 ", null);
+
+
+        return c;
+
+    }
+    public Cursor NextDaily(String sd, String st, String ed, String et) {
+
+        SQLiteDatabase sql = db.getReadableDatabase();
+        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS + " WHERE (((('"+et+"' <= start_time) AND ('"+ed+"' <= start_date))"+
+                "AND is_whole_day = 'All Day') OR ((('"+et+"' <= start_time) AND ('"+sd+
+                "' <= start_date)) AND is_whole_day = 'Daily') OR ((('"+et+
+                "' >= start_time) AND (date('"+ed+"','+1 day') = start_date)) AND is_whole_day = 'Reverse Daily')) ORDER BY start_time ASC LIMIT 1 ", null);
+
+
+        return c;
+    }
+    public Cursor NextAllDay(String sd, String st, String ed, String et) {
+
+        SQLiteDatabase sql = db.getReadableDatabase();
+        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS +
+                " WHERE (((('"+et+"' <= start_time) AND ('"+ed+"' <= start_date)) "+
+                "AND is_whole_day = 'All Day') OR ((('"+et+"' <=  start_time) AND ('"+sd+"' <= start_date)) AND is_whole_day = 'Daily') "+
+                " OR ((('"+et+"' <= start_time ) AND (start_date = '"+sd+"')) AND is_whole_day = 'Reverse Daily'))  ORDER BY start_time ASC LIMIT 1 ", null);
+
+
+        return c;
+    }
+    public Cursor NextRevDaily(String sd, String st, String ed, String et) {
+
+        SQLiteDatabase sql = db.getReadableDatabase();
+        Cursor c = sql.rawQuery("SELECT * FROM " + DataInfo.TABLE_EVENTS + " WHERE (((('"+et+"' <= start_time) AND (date('"+ed+"','+1 day') <= start_date)) "+
+                "AND is_whole_day = 'All Day') OR ((('"+et+"' <= start_time) AND (date('"+ed+"','+1 day') = start_date)) AND is_whole_day = 'Daily') "+
+                " OR ((('"+et+"' <= start_time) AND (date('"+ed+"','+1 day') <= start_date)) AND is_whole_day = 'Reverse Daily')) ORDER BY start_time ASC LIMIT 1 ", null);
+
 
         return c;
     }
 
+    public Cursor up_conflictCheckerDaily(String sd, String st, String ed, String et, String e_id) {
+
+        SQLiteDatabase sql = db.getReadableDatabase();
+
+        String d1= "2000-12-01 ";
+        String d2= "2000-12-02 ";
+
+
+
+        Cursor c = sql.rawQuery("SELECT user_id , event_id, event_name, event_description, start_date, start_time, end_date, end_time FROM " + DataInfo.TABLE_EVENTS+
+                " WHERE (((((start_time BETWEEN '"+st+"' AND '"+et+
+                "' ) AND ((start_date BETWEEN '"+sd+"' AND '"+ed+
+                "') OR (end_date BETWEEN '"+sd+"' AND '"+ed+"') OR ('"+sd+
+                "' BETWEEN start_date AND end_date))) OR ((end_time BETWEEN '"+st+
+                "' AND '"+et+"') AND ((start_date BETWEEN '"+sd+"' AND '"+ed+
+                "') OR (end_date BETWEEN '"+sd+"' AND '"+ed+"') OR ('"+sd+
+                "' BETWEEN start_date AND end_date))) OR (('"+st+
+                "' BETWEEN start_time AND end_time) AND ((start_date BETWEEN '"+sd+"' AND '"+ed+
+                "') OR (end_date BETWEEN '"+sd+"' AND '"+ed+"') OR ('"+sd+
+                "' BETWEEN start_date AND end_date)))) AND is_whole_day = 'Daily') OR ((((('"+d1+"'|| start_time) BETWEEN ('"+d1+"'||'"+st+
+                "') AND ('"+d1+"'||'"+et+"')) AND ((start_date BETWEEN '"+sd+"' AND '"+ed+
+                "') OR (date(end_date,'+1 day') BETWEEN '"+sd+"' AND '"+ed+"') OR ('"+sd+
+                "' BETWEEN start_date AND date(end_date,'+1 day')))) OR ((('"+d1+"'||end_time) BETWEEN ('"+d1+"'||'"+st+
+                "') AND ('"+d1+"'||'"+et+"')) AND ((start_date BETWEEN '"+sd+"' AND '"+ed+
+                "') OR (date(end_date,'+1 day') BETWEEN '"+sd+"' AND '"+ed+"') OR ('"+sd+
+                "' BETWEEN start_date AND date(end_date,'+1 day')))) OR ((('"+d1+"'||'"+st+
+                "') BETWEEN ('"+d1+"'|| start_time) AND ('"+d2+"'|| end_time)) AND ((start_date BETWEEN '"+sd+"' AND '"+ed+
+                "') OR (date(end_date,'+1 day') BETWEEN '"+sd+"' AND '"+ed+"') OR ('"+sd+
+                "' BETWEEN start_date AND date(end_date,'+1 day')))) OR ((('"+d1+"'||'"+st+
+                "') BETWEEN ('"+d1+"'|| start_time) AND ('"+d2+"'|| end_time)) AND ((start_date BETWEEN '"+sd+"' AND '"+ed+
+                "')	OR (date(end_date,'+1 day') BETWEEN '"+sd+"' AND '"+ed+"') OR ('"+sd+
+                "' BETWEEN start_date AND date(end_date,'+1 day'))))) AND is_whole_day = 'Reverse Daily') OR ((((start_date ||' '||start_time) BETWEEN ('"+sd+
+                " '||'"+st+"') AND ('"+ed+" '||'"+et+"')) OR ((end_date||' '|| end_time) BETWEEN ('"+sd+
+                " '||'"+st+"') AND ('"+ed+" '||'"+et+"')) OR (('"+sd+
+                " '||'"+st+"') BETWEEN (start_date ||' '|| start_time) AND (end_date ||' '|| end_time))) AND is_whole_day = 'All Day')) AND (event_id != '"+e_id+"')", null);
+
+        return c;
+    }
+
+    public Cursor up_conflictCheckerAllDay(String sd, String st, String ed, String et, String e_id) {
+
+        SQLiteDatabase sql = db.getReadableDatabase();
+
+
+        Cursor c = sql.rawQuery("SELECT user_id , event_id, event_name, event_description, start_date, start_time, end_date, end_time FROM " + DataInfo.TABLE_EVENTS+
+                " WHERE ((((start_date ||' '||start_time) BETWEEN ('"+sd+"'||'"+st+"') AND ('"+ed+" '||'"+et+"')) OR ((end_date||' '|| end_time) BETWEEN ('"+sd+
+                "'||'"+st+"') AND ('"+ed+" '||' "+et+"')) OR (('"+sd+" '||' "+st+"') BETWEEN (start_date ||' '|| start_time) AND (end_date || ' ' || end_time)))) AND (event_id != '"+e_id+"')", null );
+
+
+        return c;
+    }
+
+
+    public Cursor up_conflictCheckerReverseDaily(String sd, String st, String ed, String et, String e_id) {
+
+        SQLiteDatabase sql = db.getReadableDatabase();
+
+
+        String d1= "2000-12-01 ";
+        String d2= "2000-12-02 ";
+
+        Cursor c = sql.rawQuery("SELECT user_id , event_id, event_name, event_description, start_date, start_time, end_date, end_time FROM " + DataInfo.TABLE_EVENTS+
+                "WHERE ((((('"+d1+"'||end_time) BETWEEN ('"+d1+"'||'"+st+"') AND ('"+d2+"'||'"+et+"') AND ((start_date BETWEEN '"+sd+"' AND date('"+ed+
+                "','+1 day')) OR (end_date BETWEEN '"+sd+"' AND date('"+ed+"','+1 day')) OR ('"+sd+"' BETWEEN start_date AND end_date))) " +
+                "OR (('"+d2+"'||start_time) BETWEEN ('"+d1+"'||'"+st+"') AND ('"+d2+"'||'"+et+"') AND ((start_date BETWEEN '"+sd+"' AND date('"+ed+
+                "','+1 day')) OR (end_date BETWEEN '"+sd+"' AND date('"+ed+"','+1 day')) OR ('"+sd+"' BETWEEN start_date AND end_date)))) AND is_whole_day = 'Daily') " +
+                "OR ((((start_date ||' '||start_time) BETWEEN ('"+sd+" '||'"+st+"') AND (date('"+ed+"','+1 day')||' '||'"+et+
+                "')) OR ((end_date||' '|| end_time) BETWEEN ('"+sd+" '||'"+st+"') AND (date('"+ed+"','+1 day')||' '||'"+et+"')) OR (('"+sd+
+                " '||'"+st+"') BETWEEN (start_date ||' '|| start_time) AND (end_date ||' '|| end_time))) AND is_whole_day = 'All Day') OR "+
+                "(((start_date BETWEEN '"+sd+"' AND '"+ed+"') OR (date(end_date,'+1 day') BETWEEN '"+sd+"' AND date('"+ed+"','+1 day')) OR ('"+sd+
+                "' BETWEEN start_date AND end_date)) is_whole_day = 'Reverse Daily')) AND (event_id != '"+e_id+"')", null);
+
+
+
+        return c;
+    }
     public int retrieveDayEvent() {
         String countQuery = "SELECT  * FROM " + DataInfo.TABLE_EVENTS;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -373,6 +552,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         cv.put(DataInfo.END_TIME, end_time);
         cv.put(DataInfo.IS_WHOLE_DAY, is_whole_day);
         cv.put(DataInfo.RECIPIENTS, recipients);
+
 
         sql.update(DataInfo.TABLE_EVENTS, cv, DataInfo.EVENT_ID + " = " + event_id, null);
         sql.close();

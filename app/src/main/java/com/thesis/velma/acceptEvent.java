@@ -49,7 +49,7 @@ public class acceptEvent extends AppCompatActivity {
     ArrayList<String> myCurrentEvent = new ArrayList<>();
 
     String userEmail;
-    String eventAllDay = "allDay";
+    String ifAllDay;
     String friends;
 
 
@@ -117,6 +117,9 @@ public class acceptEvent extends AppCompatActivity {
             lng = b.getString("lng");
             creator = b.getString("creatorEmail");
             friends = b.getString("listinvitesid");
+            ifAllDay = b.getString("eventAllDay");
+
+
         }
 
         Log.i("Event Accept", lat + "," + lng);
@@ -126,13 +129,13 @@ public class acceptEvent extends AppCompatActivity {
         medate.setText(endDate);
         mstime.setText(sTime);
         metime.setText(eTime);
-        mfriends.setText(iFriends);
+        mfriends.setText(friends);
         mlocation.setText(locat);
 
 
-        Cursor c = db.getUserId();
-        c.moveToFirst();
-        final String userI = c.getString(0);
+//        Cursor c = db.getUserId();
+//        c.moveToFirst();
+//        final String userI = c.getString(0);
 
         Button acceptInvite = (Button) findViewById(R.id.accept);
         acceptInvite.setOnClickListener(new View.OnClickListener() {
@@ -141,11 +144,11 @@ public class acceptEvent extends AppCompatActivity {
 
                 String target[] = creator.split("@");
                 OkHttp.getInstance(mcontext).sendNotificationReply("confirmEvent", en, des, target[0] + "Velma", idEvent);
-                OkHttp.getInstance(mcontext).updateStatus(sharedPrefUserId, String.valueOf(idEvent), "Accepted");
+                OkHttp.getInstance(mcontext).updateStatus(sharedPrefUserId, idEvent, "Accepted");
                 Toast.makeText(getApplicationContext(), "Accept event invitation", Toast.LENGTH_SHORT).show();
 
-                LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId),String.valueOf(idEvent), en, des,
-                        locat, lng, lat, sDate, sTime, endDate, eTime, eventAllDay, "Participant", iFriends);
+                LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId),idEvent, en, des,
+                        locat, lng, lat, sDate, sTime, endDate, eTime, ifAllDay, "Participant", friends);
                 LandingActivity.db.updateEventStatus(idEvent, "ACCEPTED");
 
 
@@ -156,9 +159,13 @@ public class acceptEvent extends AppCompatActivity {
                 Log.d("MyData4EventDes: ", des);
                 Log.d("MyData5Friends: ", "" + friends);
                 Log.d("MyData5Sharedpref: ", "" + sharedPrefUserId);//this is the userid
+                Log.d("IfAllDay: ", ifAllDay);
 
-                Intent returnIntent = new Intent();
-                setResult(0, returnIntent);
+
+                Intent r = new Intent(acceptEvent.this, LandingActivity.class);
+                startActivity(r);
+                //                Intent returnIntent = new Intent();
+//                setResult(0, returnIntent);
                 finish();
 
                 //startActivity(i);

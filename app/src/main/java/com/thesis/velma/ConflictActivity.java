@@ -33,6 +33,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.AutocompleteFilter;
@@ -57,8 +58,12 @@ import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import static android.content.ContentValues.TAG;
@@ -86,7 +91,7 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
     String modetravel = "driving";
     Double latitude, longtiude;
     public static String geolocation;
-
+    String user_id;
     int REQUEST_INVITE = 1;
 
     ArrayList<String> myContacts = new ArrayList<String>();
@@ -100,6 +105,7 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
     ArrayList<String> myCurrentEvent = new ArrayList<>();
     String eventID;
     private PendingIntent pendingIntent;
+    Cursor con = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -611,8 +617,20 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
                 Log.i("Event ST: ", startTime);
                 Log.i("Event ET: ", endTime);
                 Log.i("Event email: ", useremail);
-                Cursor con = db.conflictCheckerDaily(startDate, startTime, endDate, endTime, eventAllDay);
+                if(allDay.equals("Daily")){
+                    con = db.conflictCheckerDaily(startDate, startTime, endDate, endTime);
+                    Log.i("Event errday", "daily" +allDay);
+                }
+                else if(allDay.equals("All Day")){
+                    con = db.conflictCheckerAllDay(startDate, startTime, endDate, endTime);
+                    Log.i("Event errday", "all day" +allDay);
 
+                }
+                else if(allDay.equals("Reverse Daily")){
+                    con = db.conflictCheckerReverseDaily(startDate, startTime, endDate, endTime);
+                    Log.i("Event errday", "reverse" +allDay);
+
+                }
                 Cursor all = LandingActivity. db.getids();
                 Log.i("Event all count", "" + all.getCount());
 
@@ -733,8 +751,7 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
                              String endDate, final String endTime, final String
                                      userEmail, final String lat, final String lng) {
         Log.i("Event con", "2");
-        final String flag="original";
-
+        final String flag = "original";
         myCurrentEvent.add(name);
         myCurrentEvent.add(eventDescription);
         myCurrentEvent.add(eventLocation);
@@ -765,9 +782,8 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-//                        saveEventFunction(unixtime, name, eventDescription, eventLocation, startDate,
-//                                startTime, endDate, endTime, notify, invitedContacts, userEmail, lat, lng);
-
+                        saveEventFunction(user_id, name, eventDescription, eventLocation, startDate, startTime,
+                                endDate, endTime, lat, lng, allDay, recipients);
                         dialog.dismiss();
 
 
@@ -787,7 +803,7 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
                                 editor.putString("enddate", endDate);
 //                                editor.putString("invitedfriends", invitedContacts);
 //                                editor.putString("flag", flag);
-                                editor.putLong("key",0);
+                                editor.putLong("key", 0);
                                 editor.apply();
                                 Intent in = new Intent(ConflictActivity.this, DateListView.class);
                                 finish();
@@ -802,7 +818,7 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
         myConflictEvents.clear();
         myConflictEvents.add(myCurrentEvent.get(0));
         con.moveToFirst();
-        eventID= con.getString(0);
+        eventID = con.getString(0);
         Log.i("Event con", "5");
 
         while (!con.isAfterLast()) {
@@ -872,19 +888,23 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
     public void saveEventFunction(String user_id, String name, String eventDescription, String eventLocation, String startDate, String startTime,
                                   String endDate, String endTime, String lat, String lng, String eventAllDay, ArrayList<String> recipients) {
 
+        Random r = new Random();
+        long unixtime = (long) (1293861599 + r.nextDouble() * 60 * 60 * 24 * 365);
+        Long tsLong = System.currentTimeMillis() / 1000;
+
+        String unique_id = String.valueOf(unixtime);
+
         String[] mydates = startDate.split("-");
         String[] mytimes = startTime.split(":");
 
         int count;
         Cursor c = db.getMaxId();
         c.moveToFirst();
-        if(c.getCount() == 0)
-        {
+        if (c.getCount() == 0) {
             count = 1;
-        }
-        else {
+        } else {
             count = Integer.parseInt(c.getString(0));
-            count +=1;
+            count += 1;
         }
 
         Log.d("Count", "" + count);
@@ -902,78 +922,65 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
         myIntent.putExtra("dateE", endDate);
         myIntent.putExtra("people", recipients);
         Log.d("MyData", name);
-        pendingIntent = PendingIntent.getBroadcast(mcontext, count+1, myIntent,
+        pendingIntent = PendingIntent.getBroadcast(mcontext, count + 1, myIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Calendar calNow = Calendar.getInstance();
-        Calendar calSet = (Calendar) calNow.clone();
-        calSet.setTimeInMillis(System.currentTimeMillis());
 
-//
-//        Log.d("Calendar.YEAR", "" + Integer.parseInt(mydates[2]));
-//        Log.d("Calendar.MONTH", "" + Integer.parseInt(mydates[1]));
-//        Log.d("Calendar.DATE", "" + Integer.parseInt(mydates[0]));
-//        Log.d("Calendar.HOUR_OF_DAY", "" + Integer.parseInt(mytimes[0]));
-//        Log.d("Calendar.MINUTE", "" + Integer.parseInt(mytimes[1]));
-
-        String date = "" + mydates[0] + "-" + mydates[1] + "-" + mydates[2];
-//        mytimes[0]= ""+(Integer.parseInt(mytimes[0]));
-//        int AM_PM=0;
-//        if (Integer.parseInt(mytimes[0]) == 12) {
-//            AM_PM = 1;
-//        } else if(Integer.parseInt(mytimes[0]) > 12) {
-//            mytimes[0]= ""+(Integer.parseInt(mytimes[0])-12);
-//            AM_PM = 1;
-//        }
-
-        calSet.set(Calendar.YEAR, Integer.parseInt(mydates[0]));
-        calSet.set(Calendar.MONTH, Integer.parseInt(mydates[1])-1);
-        calSet.set(Calendar.DATE, Integer.parseInt(mydates[2]));
-        calSet.set(Calendar.HOUR_OF_DAY, Integer.parseInt(mytimes[0]));
-        calSet.set(Calendar.MINUTE, Integer.parseInt(mytimes[1]));
-        calSet.set(Calendar.SECOND, 0);
-        calSet.set(Calendar.MILLISECOND, 0);
-//        calSet.set(Calendar.AM_PM, AM_PM);
-
-//        calSet.setTimeInMillis(System.currentTimeMillis());
-//        calSet.clear();
-//        calSet.set(Integer.parseInt(mydates[2]), Integer.parseInt(mydates[1]) - 1, Integer.parseInt
-        //   (mydates[0]), Integer.parseInt(mytimes[0]), Integer.parseInt(mytimes[1]));
-
-        Log.d("AlaramJeanne", "" + calSet.getTimeInMillis());
-        Log.d("AlaramJeanne1", "" + System.currentTimeMillis());
-
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calSet.getTimeInMillis(),
-                pendingIntent);
-
-        //  ArrayList<String> recipients = new ArrayList<>();
-
-
+        Log.i("Event allDay", eventAllDay);
+        Log.i("Event name", name);
+        Log.i("Event SD", startDate);
+        Log.i("Event coord", lat + "," + lng);
+        Toast.makeText(mcontext, "Event is added successfully.", Toast.LENGTH_SHORT).show();
         String invitedlist = editFriends.getText().toString();
 
         String[] separated = invitedlist.split("\n");
         Cursor b = LandingActivity.db.getContacts();
         ArrayList<String> invitesid = new ArrayList<String>();
-        ArrayList<String> invitesemail = new ArrayList<String>();
+       // ArrayList<String> invitesemail = new ArrayList<String>();
+
+
+        //Removing duplicate names
+        Set<String> names = new HashSet<String>(Arrays.asList(separated));
+        Log.d("NoduplicateNames: ", names.toString());
+        //Convert Hash set to string array
+        String[] array = names.toArray(new String[0]);
+        String arrayname = "";
+        for (int a = 0; a < array.length; a++)
+        {
+
+            arrayname = arrayname + array[a].concat(" (Pending)") + "\n";
+            Log.d("NameArrays: ", array[a]);
+            Log.d("NameStatus: ", arrayname);
+        }
 
         String[] listid = new String[separated.length];
+        String invitesemail = "";
+        String listinvitesid = "";
 
-        String listinvitesid="";
-
-        while (b.moveToNext()){
+        while (b.moveToNext()) {
             String contactsname = b.getString(b.getColumnIndex("contact_name"));
             String contactsid = b.getString(b.getColumnIndex("contact_user_id"));
             String contactsemail = b.getString(b.getColumnIndex("contact_email"));
 
             int i;
 
-            for (i=0; i<separated.length; i++){
+            for (i = 0; i < separated.length; i++) {
 
-                if (contactsname.equals(separated[i])){
+                int j;
 
-                    listid[i] = contactsid;
-                    invitesid.add(contactsid);
-                    invitesemail.add(contactsemail);
+                for (j = 0; j < separated.length; j++) {
+
+                    if (contactsname.equals(separated[j])) {
+                        Log.d("Contactsname: ", contactsname);
+
+                        listid[j] = contactsid;
+                        listinvitesid = listinvitesid + contactsname + " (Pending)\n";
+                        invitesid.add(contactsid);
+//                        invitesemail.add(contactsemail);
+
+                        invitesemail = invitesemail + contactsemail.replace("@gmail.com", "").trim() + "\n";
+                    }
+
                 }
 
             }
@@ -983,22 +990,69 @@ public class ConflictActivity  extends AppCompatActivity implements View.OnClick
         String invitedids = invitesid.toString();
         String invitedemails = invitesemail.toString();
 
+        Calendar calNow = Calendar.getInstance();
+        Calendar calSet = (Calendar) calNow.clone();
+        calSet.setTimeInMillis(System.currentTimeMillis());
+
+
+        String date = "" + mydates[0] + "-" + mydates[1] + "-" + mydates[2];
+
+        calSet.set(Calendar.YEAR, Integer.parseInt(mydates[0]));
+        calSet.set(Calendar.MONTH, Integer.parseInt(mydates[1]) - 1);
+        calSet.set(Calendar.DATE, Integer.parseInt(mydates[2]));
+        calSet.set(Calendar.HOUR_OF_DAY, Integer.parseInt(mytimes[0]));
+        calSet.set(Calendar.MINUTE, Integer.parseInt(mytimes[1]));
+        calSet.set(Calendar.SECOND, 0);
+        calSet.set(Calendar.MILLISECOND, 0);
+
+        Log.d("AlaramJeanne", "" + calSet.getTimeInMillis());
+        Log.d("AlaramJeanne1", "" + System.currentTimeMillis());
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calSet.getTimeInMillis(),
+                pendingIntent);
+
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mcontext);
         String sharedPrefUserId = sharedPreferences.getString("user_id", null);
 
+        // OkHttp.getInstance(getBaseContext()).saveEvent(sharedPrefUserId, name, eventDescription, eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
+        OkHttp.getInstance(getBaseContext()).saveEvent(unique_id, sharedPrefUserId, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
 
 
-       // OkHttp.getInstance(getBaseContext()).saveEvent(sharedPrefUserId, name, eventDescription, eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
-//        OkHttp.getInstance(getBaseContext()).saveEvent(unique_id, sharedPrefUserId, name, eventDescription, eventLocation, lng,  lat, startDate, startTime, endDate, endTime, eventAllDay, listid);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mcontext);
         eventID = prefs.getString("eventID", null);
-        Log.i("Event ID: ", eventID);
+//        Log.i("Event ID: ", eventID);
+//        Log.i("User ID: ", sharedPrefUserId);
 
 //
-        LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), eventID, name, eventDescription,
-                eventLocation, lng, lat, startDate, startTime, endDate, endTime, null, "Creator", null);
+//        LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), Integer.parseInt(eventID), name, eventDescription,
+//                eventLocation, lng, lat, startDate, startTime, endDate, endTime, null, "Creator", null);
+
+//        LandingActivity.db.saveEvent(Integer.valueOf(sharedPrefUserId), unique_id, name, eventDescription,
+//                eventLocation, lng, lat, startDate, startTime, endDate, endTime, eventAllDay, "Creator", listinvitesid);
+
+
+//        for (int i = 0; i <= invitedContacts.size() - 1; i++) {
+//            String[] target = invitedContacts.get(i).split("@");
+//            OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, unique_id, name,
+//                    eventDescription, eventLocation, startDate, startTime, endDate, endTime, target[0] + "Velma",
+//                    lat, lng, LandingActivity.useremail);//target[0]
+//        }
+
+        String[] target = invitesemail.split("\n");
+        //Removing duplicate email addresses
+        Set<String> emails = new HashSet<String>(Arrays.asList(target));
+        Log.d("Noduplicate: ", emails.toString());
+
+        for (String emai : emails) {
+            Log.d("Hashset1: ", emai.replace("(Pending)", ""));
+            OkHttp.getInstance(mcontext).sendNotification("Invitation", sharedPrefUserId, unique_id, name,
+                    eventDescription, eventLocation, startDate, startTime, endDate, endTime, emai.replace("@gmail", "") + "Velma",
+                    lat, lng, LandingActivity.useremail, arrayname, eventAllDay, "Invite");//eachemail[0]
+            Log.d("Emails:", emai.replace("@gmail", ""));
+        }
+
 
         Intent i = new Intent(ConflictActivity.this, LandingActivity.class);
         finish();
